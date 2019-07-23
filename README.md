@@ -1,3 +1,11 @@
+# Tutorials
+
+- [[OpenLDAP] Create an OpenLDAP container](https://karatejb.blogspot.com/2019/07/openldap-create-openldap-container.html)
+- [[ASP.NET Core] Identity Server 4 – LDAP authentication](https://karatejb.blogspot.com/2019/07/aspnet-core-identity-server-4-ldap.html)
+- [[ASP.NET Core] Identity Server 4 – Secure WebAPI]()
+
+
+
 # Create dotnet project
 
 ```
@@ -14,10 +22,18 @@ $ dotnet add package IdentityServer4 --version 2.4.0
 $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
 ```
 
-# Create in-memory initial config
+# Update appsettings.json file
+
+Update the following config to connect to your own OpenOLAP service.
 
 ```
-$ cd AspNetCore.IdentityServer4.Auth
-$ mkdir -p Utils/Config
-$ touch Utils/Config/InMemoryInitConfig.cs
+"LdapServer": {
+    "Url": "localhost",
+    "Port": 389,
+    "Ssl": false,
+    "BindDn": "cn=admin,dc=example,dc=org",
+    "BindCredentials": "admin",
+    "SearchBase": "dc=example,dc=org",
+    "searchFilter": "(&(objectClass=person)(uid={0}))"
+  }
 ```
