@@ -51,7 +51,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
         }
 
         [HttpPost("Validate")]
-        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Validate([FromBody]LdapUser user)
         {
             var isAuthorized = await this.ExecLdapAuthAsync(user.Username, user.Password);

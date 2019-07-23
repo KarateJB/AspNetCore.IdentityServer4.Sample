@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 
 namespace AspNetCore.IdentityServer4.Auth.Utils.Config
@@ -21,7 +23,16 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new ApiResource[]
             {
-                new ApiResource("MyBackend1"),
+                new ApiResource()
+                {
+                    Name = "MyBackend1",
+                    Scopes=
+                    {
+                        new Scope("MyBackend1"),
+                        new Scope(IdentityServerConstants.StandardScopes.Email),
+                        //new Scope(IdentityServerConstants.StandardScopes.Profile),
+                    }
+                },
                 new ApiResource("MyBackend2"),
             };
         }
@@ -36,7 +47,11 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     Enabled = true,
                     ClientId = "MyBackend",
                     ClientName = "MyBackend Client",
-                    AllowedScopes = { "MyBackend1","MyBackend2" },
+                    AllowedScopes = {
+                        "MyBackend1",
+                        "MyBackend2",
+                        IdentityServerConstants.StandardScopes.Email
+                    },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AlwaysSendClientClaims = true,
