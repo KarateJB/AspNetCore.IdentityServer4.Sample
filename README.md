@@ -13,3 +13,11 @@ $ cd AspNetCore.IdentityServer4.Auth
 $ dotnet add package IdentityServer4 --version 2.4.0
 $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
 ```
+
+# Create in-memory initial config
+
+```
+$ cd AspNetCore.IdentityServer4.Auth
+$ mkdir -p Utils/Config
+$ touch Utils/Config/InMemoryInitConfig.cs
+```
