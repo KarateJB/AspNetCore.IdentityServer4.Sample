@@ -6,11 +6,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-wahlee_sm*.jpg
-year_end_bk*.jpg
-year_end_pz*.jpg
-appsettings.*
-
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -216,4 +211,3 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-Src/Welfare.Web/src/assets/images/year_end_pz.jpg
