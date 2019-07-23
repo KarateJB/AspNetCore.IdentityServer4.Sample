@@ -14,6 +14,11 @@ $ dotnet new sln --name AspNetCore.IdentityServer4
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj
 ```
 
+```
+$ dotnet new webapi --name AspNetCore.IdentityServer4.WebApi
+$ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj
+```
+
 # Install packages
 
 ```
