@@ -31,6 +31,36 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
 
         public async Task<TokenResponse> SignInAsync(string userName, string password)
         {
+            var discoResponse = await this.discoverDocument();
+
+            TokenResponse tokenResponse = await this.httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
+            {
+                Address = discoResponse.TokenEndpoint,
+                ClientId = "MyBackend",
+                ClientSecret = SECRETKEY,
+                UserName = userName,
+                Password = password,
+                // Scope = "MyBackend1 openid email" // "openid" is must if request for any IdentityResource
+            });
+
+            return tokenResponse;
+        }
+
+        public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
+        {
+            var discoResponse = await this.discoverDocument();
+
+            UserInfoResponse userInfoResponse = await this.httpClient.GetUserInfoAsync(new UserInfoRequest()
+            {
+                Address = discoResponse.UserInfoEndpoint,
+                Token = accessToken
+            });
+
+            return userInfoResponse;
+        }
+
+        private async Task<DiscoveryResponse> discoverDocument()
+        {
             var discoResponse = await this.httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
                 Address = this.remoteServiceBaseUrl,
@@ -45,18 +75,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 throw new Exception(discoResponse.Error);
             }
 
-            TokenResponse tokenResponse = await this.httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
-            {
-                Address = discoResponse.TokenEndpoint,
-                ClientId = "MyBackend",
-                ClientSecret = SECRETKEY,
-                UserName = userName,
-                Password = password,
-            });
-
-            //await this.httpClient.Req
-
-            return tokenResponse;
+            return discoResponse;
         }
     }
 }

@@ -15,7 +15,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
+                new IdentityResources.Email(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Phone(),
+                new IdentityResources.Address()
             };
         }
 
@@ -29,8 +32,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     Scopes=
                     {
                         new Scope("MyBackend1"),
-                        new Scope(IdentityServerConstants.StandardScopes.Email),
-                        //new Scope(IdentityServerConstants.StandardScopes.Profile),
                     }
                 },
                 new ApiResource("MyBackend2"),
@@ -50,7 +51,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     AllowedScopes = {
                         "MyBackend1",
                         "MyBackend2",
-                        IdentityServerConstants.StandardScopes.Email
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Profile,
                     },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,

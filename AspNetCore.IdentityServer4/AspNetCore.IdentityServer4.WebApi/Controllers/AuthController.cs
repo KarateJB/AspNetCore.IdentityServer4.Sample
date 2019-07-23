@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
@@ -8,6 +9,7 @@ using AspNetCore.IdentityServer4.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace AspNetCore.IdentityServer4.WebApi.Controllers
 {
@@ -29,19 +31,20 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         // GET api/values
         [HttpPost("SignIn")]
         [AllowAnonymous]
-        public async Task<User> SignIn(LdapUser user)
+        public async Task<JObject> SignIn(LdapUser user)
         {
-            User matchedUser = new User();
             var tokenResponse = await this.auth.SignInAsync(user.Username, user.Password);
 
             if (!tokenResponse.IsError)
             {
                 // Authentication success
-                matchedUser.AccessToken = tokenResponse.AccessToken;
-                return matchedUser;
+                string accessToken = tokenResponse.AccessToken;
+                var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
+                return userInfoResponse.Json;
             }
 
-            return matchedUser;
+            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return null;
         }
     }
 }
