@@ -26,6 +26,15 @@ namespace AspNetCore.IdentityServer4.Auth {
         {
             services.AddMvc ().SetCompatibilityVersion (CompatibilityVersion.Version_2_2);
 
+            #region IISOptions
+            services.Configure<IISOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
+                options.AuthenticationDisplayName = "Windows";
+            });
+            #endregion
+
+
             #region Identity Server
 
             var builder = services.AddIdentityServer (options => {

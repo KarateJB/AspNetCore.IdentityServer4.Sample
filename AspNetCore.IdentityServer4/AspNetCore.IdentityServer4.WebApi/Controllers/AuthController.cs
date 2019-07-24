@@ -37,13 +37,32 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
             if (!tokenResponse.IsError)
             {
-                // Authentication success
-                string accessToken = tokenResponse.AccessToken;
-                var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
-                return userInfoResponse.Json;
+                return tokenResponse.Json;
             }
 
             this.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return null;
+        }
+
+        [HttpGet("UserInfo")]
+        //[Authorize]
+        public async Task<JObject> UserInfo()
+        {
+            string accessToken = string.Empty;
+            var authHeaderVal = this.Request.Headers["Authorization"];
+            if (!string.IsNullOrEmpty(authHeaderVal))
+            {
+                accessToken = authHeaderVal.ToString().Replace("Bearer ", "").Replace("bearer ", "");
+            }
+
+            var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
+
+            if (!userInfoResponse.IsError)
+            {
+                return userInfoResponse.Json;
+            }
+
+            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return null;
         }
     }

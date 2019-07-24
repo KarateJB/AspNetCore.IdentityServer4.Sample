@@ -26,15 +26,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new ApiResource[]
             {
-                new ApiResource()
-                {
-                    Name = "MyBackend1",
-                    Scopes=
-                    {
-                        new Scope("MyBackend1"),
-                    }
-                },
-                new ApiResource("MyBackend2"),
+                //new ApiResource("MyBackend", "My backend")
+                new ApiResource("MyBackendApi1", "My Backend API 1"),
+                new ApiResource("MyBackendApi2", "My Backend API 2"),
             };
         }
 
@@ -49,11 +43,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     ClientId = "MyBackend",
                     ClientName = "MyBackend Client",
                     AllowedScopes = {
-                        "MyBackend1",
-                        "MyBackend2",
+                        "MyBackendApi1",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Profile,
+                        //"MyBackend",
+                        //"MyBackendApi2",
                     },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
@@ -61,8 +56,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     UpdateAccessTokenClaimsOnRefresh = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowAccessTokensViaBrowser = true,
-                    // RefreshTokenUsage = TokenUsage.OneTimeOnly,
-                    // RefreshTokenExpiration = TokenExpiration.Sliding,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
 
@@ -71,7 +66,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                     // AbsoluteRefreshTokenLifetime = 30,
-                    // SlidingRefreshTokenLifetime = 36000,
+                    SlidingRefreshTokenLifetime = 36000,
                 }
             };
         }
