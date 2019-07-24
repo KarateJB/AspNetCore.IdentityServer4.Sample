@@ -26,7 +26,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new ApiResource[]
             {
-                //new ApiResource("MyBackend", "My backend")
                 new ApiResource("MyBackendApi1", "My Backend API 1"),
                 new ApiResource("MyBackendApi2", "My Backend API 2"),
             };
@@ -55,12 +54,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowOfflineAccess = true,
                     AccessTokenLifetime = 3600,
-                    // RefreshTokenUsage = TokenUsage.OneTimeOnly,
-                    // RefreshTokenExpiration = TokenExpiration.Sliding,
-                    // IdentityTokenLifetime = 30,
-                    // AuthorizationCodeLifetime = 30,
-                    // AbsoluteRefreshTokenLifetime = 30,
-                    // SlidingRefreshTokenLifetime = 36000,
                 },
 
                 new Client

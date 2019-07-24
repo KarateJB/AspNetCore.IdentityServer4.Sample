@@ -34,7 +34,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.Authority = "https://localhost:6001"; // Base-address of your identityserver
                 options.RequireHttpsMetadata = true;
                 options.Audience = "MyBackendApi1"; // API Resource name
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
             });
 
             // Inject AppSetting configuration
