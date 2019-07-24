@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
-using AspNetCore.IdentityServer4.WebApi.Models;
-using AspNetCore.IdentityServer4.WebApi.Services;
-using Microsoft.AspNetCore.Authentication;
+using AspNetCore.IdentityServer4.Oidc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
-namespace AspNetCore.IdentityServer4.WebApi.Controllers
+namespace AspNetCore.IdentityServer4.Oidc.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

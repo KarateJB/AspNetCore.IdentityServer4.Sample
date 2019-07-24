@@ -7,6 +7,7 @@ using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,8 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 // Response with authentication cookie
                 await this.HttpContext.SignInAsync(user.SubjectId, user.Username);
 
+                var token = await this.HttpContext.GetTokenAsync("access_token");
+
                 var claim = this.HttpContext;
 
                 return this.Ok();
@@ -64,6 +67,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 return this.Unauthorized();
             }
         }
+
         private async Task<bool> ExecLdapAuthAsync(string username, string password)
 {
             var host = "jblin"; // Host

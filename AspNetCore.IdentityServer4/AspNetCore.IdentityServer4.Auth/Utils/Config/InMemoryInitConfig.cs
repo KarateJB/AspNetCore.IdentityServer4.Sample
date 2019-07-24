@@ -36,37 +36,62 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new[]
             {
-                // client credentials flow client
+                new Client
+                {
+                    Enabled = true,
+                    ClientId = "OidcBackend",
+                    ClientName = "OpenId Connect Client",
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        //IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Profile,
+                    },
+                    AlwaysSendClientClaims = true,
+                    UpdateAccessTokenClaimsOnRefresh = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowAccessTokensViaBrowser = true,
+                    IncludeJwtId = true,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = 3600,
+                    // RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    // RefreshTokenExpiration = TokenExpiration.Sliding,
+                    // IdentityTokenLifetime = 30,
+                    // AuthorizationCodeLifetime = 30,
+                    // AbsoluteRefreshTokenLifetime = 30,
+                    // SlidingRefreshTokenLifetime = 36000,
+                },
+
                 new Client
                 {
                     Enabled = true,
                     ClientId = "MyBackend",
                     ClientName = "MyBackend Client",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
                         "MyBackendApi1",
+                        "MyBackendApi2",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Profile,
-                        //"MyBackend",
-                        //"MyBackendApi2",
                     },
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AccessTokenType = AccessTokenType.Jwt,
                     AlwaysSendClientClaims = true,
                     UpdateAccessTokenClaimsOnRefresh = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowAccessTokensViaBrowser = true,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
-                    RefreshTokenExpiration = TokenExpiration.Sliding,
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
-
                     AllowOfflineAccess = true,
                     AccessTokenLifetime = 3600,
+
+                    // RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    // RefreshTokenExpiration = TokenExpiration.Sliding,
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                     // AbsoluteRefreshTokenLifetime = 30,
-                    SlidingRefreshTokenLifetime = 36000,
+                    // SlidingRefreshTokenLifetime = 36000,
                 }
             };
         }
