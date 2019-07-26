@@ -31,7 +31,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
 
         public async Task<TokenResponse> SignInAsync(string userName, string password)
         {
-            var discoResponse = await this.discoverDocument();
+            var discoResponse = await this.discoverDocumentAsync();
 
             TokenResponse tokenResponse = await this.httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
@@ -48,7 +48,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
 
         public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
-            var discoResponse = await this.discoverDocument();
+            var discoResponse = await this.discoverDocumentAsync();
 
             UserInfoResponse userInfoResponse = await this.httpClient.GetUserInfoAsync(new UserInfoRequest()
             {
@@ -59,7 +59,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return userInfoResponse;
         }
 
-        private async Task<DiscoveryResponse> discoverDocument()
+        private async Task<DiscoveryResponse> discoverDocumentAsync()
         {
             var discoResponse = await this.httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
