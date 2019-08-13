@@ -41,7 +41,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.Configure<AppSettings>(this.Configuration);
 
             // Inject HttpClient
-            services.AddHttpClient<IAuthService, AuthService>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+            services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
 
         }
 

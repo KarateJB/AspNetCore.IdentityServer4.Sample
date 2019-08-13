@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
@@ -42,8 +39,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 await this.HttpContext.SignInAsync(user.SubjectId, user.Username);
 
                 var token = await this.HttpContext.GetTokenAsync("access_token");
-
-                var claim = this.HttpContext;
 
                 return this.Ok();
             }
