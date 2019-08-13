@@ -29,6 +29,8 @@ namespace AspNetCore.IdentityServer4.Auth {
         {
             services.AddMvc ().SetCompatibilityVersion (CompatibilityVersion.Version_2_2);
 
+            services.AddSession();
+
             #region IISOptions
             services.Configure<IISOptions>(options =>
             {
@@ -77,7 +79,10 @@ namespace AspNetCore.IdentityServer4.Auth {
 
             app.UseIdentityServer ();
 
+            app.UseSession();
+
             app.UseHttpsRedirection ();
+
             app.UseMvc ();
         }
     }

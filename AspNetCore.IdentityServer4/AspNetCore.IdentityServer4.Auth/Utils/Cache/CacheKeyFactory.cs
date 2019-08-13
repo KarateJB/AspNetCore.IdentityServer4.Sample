@@ -4,6 +4,6 @@
     {
         public string KeyPrefixUserProfile { get; } = "UserProfile";
 
-        public string UserProfile(string username) => $"{this.KeyPrefixUserProfile}-{username}";
+        public string UserProfile(string subject) => $"{this.KeyPrefixUserProfile}-{subject}";
     }
 }
