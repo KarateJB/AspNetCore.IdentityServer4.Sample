@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
-using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace AspNetCore.IdentityServer4.WebApi.Controllers
@@ -18,15 +12,30 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService auth = null;
+        private readonly IIdentityClient auth = null;
 
         public AuthController(
-            IAuthService authService)
+            IIdentityClient id4Client)
         {
-            this.auth = authService;
+            this.auth = id4Client;
         }
 
-        // GET api/values
+        [HttpPost("GetToken")]
+        [AllowAnonymous]
+        public async Task<JObject> GetToken(LdapUser user)
+        {
+            var response = await this.auth.GetTokenByFormDataAsync(user.Username, user.Password);
+
+            if (response.IsSuccessStatusCode == true)
+            {
+                var strResult = await response.Content.ReadAsStringAsync();
+                return JObject.Parse(strResult);
+            }
+
+            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return null;
+        }
+
         [HttpPost("SignIn")]
         [AllowAnonymous]
         public async Task<JObject> SignIn(LdapUser user)
@@ -46,12 +55,19 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [HttpPost("UserInfo")]
         public async Task<JObject> UserInfo([FromBody] string accessToken)
         {
-            //string accessToken = string.Empty;
-            //var authHeaderVal = this.Request.Headers["Authorization"];
-            //if (!string.IsNullOrEmpty(authHeaderVal))
-            //{
+            /*
+             * How to get Access token:
+             * 1. Get the Access token from Header: "Authorization" by API parameter: "[FromHeader] string authorization"
+             * 2. Get the Header: "Authorization"'s value from this.Request 
+             * and parse it as following...
+             */
+
+            // string accessToken = string.Empty;
+            // var authHeaderVal = this.Request.Headers["Authorization"];
+            // if (!string.IsNullOrEmpty(authHeaderVal))
+            // {
             //    accessToken = authHeaderVal.ToString().Replace("Bearer ", "").Replace("bearer ", "");
-            //}
+            // }
 
             var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
 
