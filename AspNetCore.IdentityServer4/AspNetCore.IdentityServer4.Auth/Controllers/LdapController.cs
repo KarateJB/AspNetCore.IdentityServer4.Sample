@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
+using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
+using IdentityServer4;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,14 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
     public class LdapController : ControllerBase
     {
         private readonly ILdapUserStore userStore = null;
+        private readonly IdentityServerTools tools = null;
 
         public LdapController(
-            ILdapUserStore userStore)
+            ILdapUserStore userStore,
+            IdentityServerTools tools)
         {
             this.userStore = userStore;
+            this.tools = tools;
         }
 
         [HttpPost("SignIn")]
@@ -32,6 +36,13 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             {
                 // Response with authentication cookie
                 await this.HttpContext.SignInAsync(user.SubjectId, user.Username);
+
+                // Get the Access token
+                var accessToken = await this.tools.IssueJwtAsync(lifetime: 3600, claims: new Claim[] { new Claim(JwtClaimTypes.Audience, model.ApiResource) });
+
+                // Write the Access token to response
+                await this.HttpContext.Response.WriteAsync(accessToken);
+
                 return this.Ok();
             }
             else
