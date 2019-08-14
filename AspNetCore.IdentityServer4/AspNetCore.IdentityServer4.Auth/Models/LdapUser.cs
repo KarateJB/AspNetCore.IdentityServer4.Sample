@@ -11,5 +11,10 @@ namespace AspNetCore.IdentityServer4.Auth.Models
         /// User password
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// API resource name of Scope
+        /// </summary>
+        public string ApiResource { get; set; }
     }
 }
