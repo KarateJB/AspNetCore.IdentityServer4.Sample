@@ -15,14 +15,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
     public class LdapController : ControllerBase
     {
         private readonly ILdapUserStore userStore = null;
-        private readonly IEventService events = null;
 
         public LdapController(
-            ILdapUserStore userStore,
-            IEventService events)
+            ILdapUserStore userStore)
         {
             this.userStore = userStore;
-            this.events = events;
         }
 
         [HttpPost("SignIn")]
@@ -33,8 +30,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
 
             if (user != default(IAppUser))
             {
-                await this.events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
-
                 // Response with authentication cookie
                 await this.HttpContext.SignInAsync(user.SubjectId, user.Username);
 
