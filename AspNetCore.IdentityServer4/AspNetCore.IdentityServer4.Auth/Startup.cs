@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Auth.Events;
+using AspNetCore.IdentityServer4.Auth.Utils.Cache;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +29,8 @@ namespace AspNetCore.IdentityServer4.Auth {
         {
             services.AddMvc ().SetCompatibilityVersion (CompatibilityVersion.Version_2_2);
 
+            services.AddSession();
+
             #region IISOptions
             services.Configure<IISOptions>(options =>
             {
@@ -33,7 +38,6 @@ namespace AspNetCore.IdentityServer4.Auth {
                 options.AuthenticationDisplayName = "Windows";
             });
             #endregion
-
 
             #region Identity Server
 
@@ -52,8 +56,17 @@ namespace AspNetCore.IdentityServer4.Auth {
             builder.AddInMemoryApiResources (InMemoryInitConfig.GetApiResources ());
             builder.AddInMemoryClients (InMemoryInitConfig.GetClients ());
             builder.AddLdapUsers<OpenLdapAppUser> (this.Configuration.GetSection ("LdapServer"), UserStore.InMemory); // OpenLDAP
-            // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+                                                                                                                      // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
 
+            #endregion
+
+            #region Cache
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheKeyFactory, CacheKeyFactory>();
+            #endregion
+
+            #region Custom sinks
+            services.AddScoped<IEventSink, UserProfileCacheSink>();
             #endregion
         }
 
@@ -66,7 +79,10 @@ namespace AspNetCore.IdentityServer4.Auth {
 
             app.UseIdentityServer ();
 
+            app.UseSession();
+
             app.UseHttpsRedirection ();
+
             app.UseMvc ();
         }
     }

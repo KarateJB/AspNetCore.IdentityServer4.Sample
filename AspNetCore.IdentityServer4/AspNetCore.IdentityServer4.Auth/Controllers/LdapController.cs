@@ -5,6 +5,8 @@ using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
 using IdentityServer4;
+using IdentityServer4.Events;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +18,16 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
     public class LdapController : ControllerBase
     {
         private readonly ILdapUserStore userStore = null;
+        private readonly IEventService events = null;
         private readonly IdentityServerTools tools = null;
 
         public LdapController(
             ILdapUserStore userStore,
+            IEventService events,
             IdentityServerTools tools)
         {
             this.userStore = userStore;
+            this.events = events;
             this.tools = tools;
         }
 
@@ -40,8 +45,14 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 // Get the Access token
                 var accessToken = await this.tools.IssueJwtAsync(lifetime: 3600, claims: new Claim[] { new Claim(JwtClaimTypes.Audience, model.ApiResource) });
 
+                // Save Access token to current session
+                this.HttpContext.Session.SetString("AccessToken", accessToken);
+
                 // Write the Access token to response
                 await this.HttpContext.Response.WriteAsync(accessToken);
+
+                // Raise UserLoginSuccessEvent
+                await this.events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
 
                 return this.Ok();
             }
