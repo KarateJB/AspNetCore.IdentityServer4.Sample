@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Utils.Cache;
@@ -42,12 +43,20 @@ namespace AspNetCore.IdentityServer4.Auth.Events
                             var user = this.httpContextAccessor.HttpContext.User;
                             var subject = user.Claims.Where(x => x.Type == "sub").FirstOrDefault()?.Value;
                             var token = session.GetString("AccessToken");
-                            _ = await this.cache.GetOrCreateAsync<JObject>(this.cacheKeyFactory.UserProfile(subject), async entry =>
+                            string cacheKey = this.cacheKeyFactory.UserProfile(subject);
+                            _ = await this.cache.GetOrCreateAsync<JObject>(cacheKey, async entry =>
                             {
                                 entry.SlidingExpiration = TimeSpan.FromSeconds(600);
                                 string jsonStr = $"{{\"{subject}\":\"{token}\"}}";
                                 return JObject.Parse(jsonStr);
                             });
+
+                            // Check if the cache exist
+                            if (this.cache.TryGetValue<JObject>(cacheKey, out JObject tokenInfo))
+                            {
+                               Debug.WriteLine($"Cached: {tokenInfo.ToString()}");
+                            }
+                            
                         }
                     }
                     catch (Exception)
