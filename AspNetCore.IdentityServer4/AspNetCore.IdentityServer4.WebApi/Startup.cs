@@ -1,6 +1,7 @@
 ﻿using System;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
+using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,6 +49,9 @@ namespace AspNetCore.IdentityServer4.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Custom Token expired response
+            app.UseTokenExpiredResponse();
+
             // Authentication
             app.UseAuthentication();
 
