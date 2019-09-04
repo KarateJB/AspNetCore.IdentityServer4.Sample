@@ -4,7 +4,7 @@
 - [[ASP.NET Core] Identity Server 4 – LDAP authentication](https://karatejb.blogspot.com/2019/07/aspnet-core-identity-server-4-ldap.html)
 - [[ASP.NET Core] Identity Server 4 – Secure WebAPI](https://karatejb.blogspot.com/2019/07/aspnet-core-identity-server-4-secure.html)
 - [[ASP.NET Core] Identity Server 4 – Custom EventSink](https://karatejb.blogspot.com/2019/07/aspnet-core-identity-server-4-secure.html)
-- [[ASP.NET Core] Identity Server 4 – Refresh Token]()
+- [ASP.NET Core] Identity Server 4 – Refresh Token
 
 
 # Create New Poject
