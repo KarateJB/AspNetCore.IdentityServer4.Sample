@@ -79,12 +79,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     AllowOfflineAccess = true,
                     AccessTokenLifetime = 3600,
 
-                    // RefreshTokenUsage = TokenUsage.OneTimeOnly,
-                    // RefreshTokenExpiration = TokenExpiration.Sliding,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = 30,
+                    SlidingRefreshTokenLifetime = 36000,
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
-                    // AbsoluteRefreshTokenLifetime = 30,
-                    // SlidingRefreshTokenLifetime = 36000,
                 }
             };
         }
