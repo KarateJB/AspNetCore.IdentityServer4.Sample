@@ -20,6 +20,13 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             this.auth = id4Client;
         }
 
+        #region GetToken
+
+        /// <summary>
+        /// Get Access Token by form data
+        /// </summary>
+        /// <param name="user">LDAP user</param>
+        /// <returns>JSON object</returns>
         [HttpPost("GetToken")]
         [AllowAnonymous]
         public async Task<JObject> GetToken(LdapUser user)
@@ -35,23 +42,32 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             this.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return null;
         }
+        #endregion
 
+        #region SignIn
+
+        /// <summary>
+        /// Sign in and get Access Token
+        /// </summary>
+        /// <param name="user">LDAP user</param>
+        /// <returns>JSON object</returns>
         [HttpPost("SignIn")]
         [AllowAnonymous]
         public async Task<JObject> SignIn(LdapUser user)
         {
             var tokenResponse = await this.auth.SignInAsync(user.Username, user.Password);
-
-
-            if (!tokenResponse.IsError)
-            {
-                return tokenResponse.Json;
-            }
-
-            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            return null;
+            this.HttpContext.Response.StatusCode = tokenResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
+            return tokenResponse.Json;
         }
+        #endregion
 
+        #region UserInfo
+
+        /// <summary>
+        /// Get user information from Access Token
+        /// </summary>
+        /// <param name="accessToken">Access Token</param>
+        /// <returns>JSON object</returns>
         [HttpPost("UserInfo")]
         public async Task<JObject> UserInfo([FromBody] string accessToken)
         {
@@ -70,14 +86,44 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             // }
 
             var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
+            this.HttpContext.Response.StatusCode = userInfoResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
 
-            if (!userInfoResponse.IsError)
-            {
-                return userInfoResponse.Json;
-            }
-
-            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return null;
+            return userInfoResponse.Json;
         }
+        #endregion
+
+        #region RefreshToken
+
+        /// <summary>
+        /// Refresh token and get new tokens
+        /// </summary>
+        /// <param name="refreshToken">Refresh Token</param>
+        /// <returns>JSON object with new tokens</returns>
+        [HttpPost("RefreshToken")]
+        [AllowAnonymous]
+        public async Task<JObject> RefreshToken([FromBody] string refreshToken)
+        {
+            var tokenResponse = await this.auth.RefreshTokenAsync(refreshToken);
+            this.HttpContext.Response.StatusCode = tokenResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
+            return tokenResponse.Json;
+        }
+        #endregion
+
+        #region RevokeToken
+
+        /// <summary>
+        /// Revoke token (Can be Refresh token/Reference token)
+        /// </summary>
+        /// <param name="token">Refresh token or Reference token</param>
+        /// <returns></returns>
+        [HttpPost("RevokeToken")]
+        [Authorize]
+        public async Task<string> RevokeToken([FromBody] string token)
+        {
+            var revokeResponse = await this.auth.RevokeTokenAsync(token);
+            this.HttpContext.Response.StatusCode = revokeResponse.IsError ? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
+            return revokeResponse.Error;
+        }
+        #endregion
     }
 }

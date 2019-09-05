@@ -31,6 +31,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             this.remoteServiceBaseUrl = this.configuration.Host.AuthServer;
         }
 
+        /// <summary>
+        /// Get token by form data (Grant Type: password)
+        /// </summary>
+        /// <param name="userName">User name</param>
+        /// <param name="password">Password</param>
+        /// <returns>HttpResponseMessage</returns>
         public async Task<HttpResponseMessage> GetTokenByFormDataAsync(string userName, string password)
         {
             var endpoint = new Uri(string.Concat(this.remoteServiceBaseUrl, "/connect/token"));
@@ -56,6 +62,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return response;
         }
 
+        /// <summary>
+        /// Sign in
+        /// </summary>
+        /// <param name="userName">User name</param>
+        /// <param name="password">Password</param>
+        /// <returns>TokenResponse</returns>
         public async Task<TokenResponse> SignInAsync(string userName, string password)
         {
             var discoResponse = await this.discoverDocumentAsync();
@@ -73,6 +85,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return tokenResponse;
         }
 
+        /// <summary>
+        /// Get User's information by Access Token
+        /// </summary>
+        /// <param name="accessToken">Access Token</param>
+        /// <returns>UserInfoReponse</returns>
         public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
             var discoResponse = await this.discoverDocumentAsync();
@@ -86,6 +103,31 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return userInfoResponse;
         }
 
+        /// <summary>
+        /// Refresh token
+        /// </summary>
+        /// <param name="refreshToken">Refresh-token</param>
+        /// <returns>TokenResponse</returns>
+        public async Task<TokenResponse> RefreshTokenAsync(string refreshToken)
+        {
+            var discoResponse = await this.discoverDocumentAsync();
+
+            TokenResponse tokenResponse = await this.httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            {
+                Address = discoResponse.TokenEndpoint,
+                ClientId = CLIENTID,
+                ClientSecret = SECRETKEY,
+                RefreshToken = refreshToken
+            });
+
+            return tokenResponse;
+        }
+
+        /// <summary>
+        /// Revoke Reference|Refresh token
+        /// </summary>
+        /// <param name="token">Reference|Refresh Token</param>
+        /// <returns>TokenRevocationResponse</returns>
         public async Task<TokenRevocationResponse> RevokeTokenAsync(string token)
         {
             var discoResponse = await this.discoverDocumentAsync();

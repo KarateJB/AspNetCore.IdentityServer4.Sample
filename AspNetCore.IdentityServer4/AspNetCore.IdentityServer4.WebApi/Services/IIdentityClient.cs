@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using IdentityModel.Client;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using IdentityModel.Client;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
 {
@@ -31,6 +29,13 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <param name="accessToken">Access Token</param>
         /// <returns>UserInfoReponse</returns>
         Task<UserInfoResponse> GetUserInfoAsync(string accessToken);
+
+        /// <summary>
+        /// Refresh token
+        /// </summary>
+        /// <param name="refreshToken">Refresh-token</param>
+        /// <returns>TokenResponse</returns>
+        Task<TokenResponse> RefreshTokenAsync(string refreshToken);
 
         /// <summary>
         /// Revoke Reference|Refresh token
