@@ -81,7 +81,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
 
                     RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
                     RefreshTokenExpiration = TokenExpiration.Sliding,
-                    AbsoluteRefreshTokenLifetime = 30,
+                    AbsoluteRefreshTokenLifetime = 360000, 
                     SlidingRefreshTokenLifetime = 36000,
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
