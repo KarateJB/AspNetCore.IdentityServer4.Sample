@@ -35,62 +35,30 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
         /// <returns></returns>
         public override JsonContract ResolveContract(Type type)
         {
-            var contextAccessor = this.serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            var httpMethod = contextAccessor?.HttpContext?.Request.Method;
-            string key = string.Format("{0}-{1}", type.ToString(), httpMethod);
             JsonContract contract = null;
+            var contextAccessor = this.serviceProvider.GetRequiredService<IHttpContextAccessor>();
+            var httpMethod = contextAccessor?.HttpContext?.Request?.Method;
 
-            if (!this.contractCache.ContainsKey(key))
+            if (string.IsNullOrEmpty(httpMethod))
             {
                 contract = this.CreateContract(type);
-                this.contractCache.Add(key, contract);
             }
             else
             {
-                contract = this.contractCache[key] as JsonContract;
-            }
+                string key = string.Format("{0}-{1}", type.ToString(), httpMethod);
 
-            return contract;
-        }
-
-        /// <summary>
-        /// Create Property
-        /// </summary>
-        /// <param name="member">MemberInfo</param>
-        /// <param name="memberSerialization">MemberSerialization</param>
-        /// <returns></returns>
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-        {
-            JsonProperty property = base.CreateProperty(member, memberSerialization);
-
-            // 1. Check [JsonIgnore]
-            if (member.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length > 0)
-            {
-                property.ShouldSerialize = instance => { return false; };
-                property.ShouldDeserialize = instance => { return false; };
-            }
-            else
-            {
-                // 2. Check [ApiJsonIgnore]
-                var customAttr = member.GetCustomAttributes(typeof(ApiIgnoreAttribute), true).FirstOrDefault() as ApiIgnoreAttribute;
-                if (customAttr != null)
+                if (!this.contractCache.ContainsKey(key))
                 {
-                    var contextAccessor = this.serviceProvider.GetRequiredService<IHttpContextAccessor>();
-                    var httpMethod = contextAccessor.HttpContext.Request.Method;
-
-                    property.ShouldSerialize = instance =>
-                    {
-                        return !this.CheckIfIgnore(customAttr.IgnoreSerializeOn, customAttr.EnableSerializeOn, httpMethod);
-                    };
-
-                    property.ShouldDeserialize = instance =>
-                    {
-                        return !this.CheckIfIgnore(customAttr.IgnoreDeserializeOn, customAttr.EnableDeserializeOn, httpMethod);
-                    };
+                    contract = this.CreateContract(type);
+                    this.contractCache.Add(key, contract);
+                }
+                else
+                {
+                    contract = this.contractCache[key] as JsonContract;
                 }
             }
 
-            return property;
+            return contract;
         }
 
         /// <summary>
@@ -100,7 +68,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
         /// <param name="enableOn">Enable methods</param>
         /// <param name="method">Target Http method</param>
         /// <returns>true(Should be ignored)|false(Should not be ignored)</returns>
-        protected virtual bool CheckIfIgnore(string ignoreOn, string enableOn, string method)
+        internal virtual bool CheckIfIgnore(string ignoreOn, string enableOn, string method)
         {
             if (string.IsNullOrEmpty(ignoreOn) && string.IsNullOrEmpty(enableOn))
             {
@@ -134,6 +102,46 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
                 // Just check EnableOn
                 return !enableOn.Contains(method, StringComparison.OrdinalIgnoreCase);
             }
+        }
+
+        /// <summary>
+        /// Create Property
+        /// </summary>
+        /// <param name="member">MemberInfo</param>
+        /// <param name="memberSerialization">MemberSerialization</param>
+        /// <returns></returns>
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            JsonProperty property = base.CreateProperty(member, memberSerialization);
+
+            // 1. Check [JsonIgnore]
+            if (member.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length > 0)
+            {
+                property.ShouldSerialize = instance => { return false; };
+                property.ShouldDeserialize = instance => { return false; };
+            }
+            else
+            {
+                // 2. Check [ApiJsonIgnore]
+                var customAttr = member.GetCustomAttributes(typeof(ApiIgnoreAttribute), true).FirstOrDefault() as ApiIgnoreAttribute;
+                if (customAttr != null)
+                {
+                    var contextAccessor = this.serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                    var httpMethod = contextAccessor?.HttpContext?.Request?.Method;
+
+                    property.ShouldSerialize = instance =>
+                    {
+                        return string.IsNullOrEmpty(httpMethod) ? true : !this.CheckIfIgnore(customAttr.IgnoreSerializeOn, customAttr.EnableSerializeOn, httpMethod);
+                    };
+
+                    property.ShouldDeserialize = instance =>
+                    {
+                        return string.IsNullOrEmpty(httpMethod) ? true : !this.CheckIfIgnore(customAttr.IgnoreDeserializeOn, customAttr.EnableDeserializeOn, httpMethod);
+                    };
+                }
+            }
+
+            return property;
         }
     }
 }
