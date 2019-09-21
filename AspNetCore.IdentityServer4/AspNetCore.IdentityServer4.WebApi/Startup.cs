@@ -1,13 +1,16 @@
 ﻿using System;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
+using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
@@ -23,6 +26,9 @@ namespace AspNetCore.IdentityServer4.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IConfigureOptions<MvcJsonOptions>, CustomJsonOptionWrapper>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Enable Authentication
