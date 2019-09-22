@@ -90,7 +90,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "RolebasedBackend",
+                    ClientId = "RoleBasedBackend",
                     ClientName = "MyBackend Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,

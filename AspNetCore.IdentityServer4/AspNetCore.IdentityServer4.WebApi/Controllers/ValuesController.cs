@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            var user = this.HttpContext.User;
+            this.HttpContext.User.Claims.ToList().ForEach(c => Debug.WriteLine($"Claim: {c.Type}/{c.Value}"));
             return new string[] { "value1", "value2" };
         }
 

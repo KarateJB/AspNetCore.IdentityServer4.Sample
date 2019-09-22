@@ -17,7 +17,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         }
 
         private const string SECRETKEY = "secret";
-        private const string CLIENTID = "RolebasedBackend";
+        private const string CLIENTID = "RoleBasedBackend";
         private readonly AppSettings configuration = null;
         private readonly HttpClient httpClient = null;
         private readonly string remoteServiceBaseUrl = string.Empty;
@@ -79,7 +79,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 ClientSecret = SECRETKEY,
                 UserName = userName,
                 Password = password,
-                // Scope = "MyBackend1 openid email" // "openid" is must if request for any IdentityResource
+                //Scope = "MyBackendApi1 openid email" // "openid" is must if request for any IdentityResource
             });
 
             return tokenResponse;

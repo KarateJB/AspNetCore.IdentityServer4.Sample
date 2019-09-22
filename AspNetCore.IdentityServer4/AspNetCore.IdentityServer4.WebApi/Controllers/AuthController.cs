@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
@@ -57,6 +59,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         {
             var tokenResponse = await this.auth.SignInAsync(user.Username, user.Password);
             this.HttpContext.Response.StatusCode = tokenResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
+            
             return tokenResponse.Json;
         }
         #endregion
