@@ -16,6 +16,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            var user = this.HttpContext.User;
             return new string[] { "value1", "value2" };
         }
 

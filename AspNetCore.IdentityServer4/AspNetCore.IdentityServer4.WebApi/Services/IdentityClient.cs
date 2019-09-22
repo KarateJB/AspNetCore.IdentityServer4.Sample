@@ -17,7 +17,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         }
 
         private const string SECRETKEY = "secret";
-        private const string CLIENTID = "MyBackend";
+        private const string CLIENTID = "RolebasedBackend";
         private readonly AppSettings configuration = null;
         private readonly HttpClient httpClient = null;
         private readonly string remoteServiceBaseUrl = string.Empty;
@@ -75,7 +75,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             TokenResponse tokenResponse = await this.httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = discoResponse.TokenEndpoint,
-                ClientId = "MyBackend",
+                ClientId = CLIENTID,
                 ClientSecret = SECRETKEY,
                 UserName = userName,
                 Password = password,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -27,7 +28,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             return new ApiResource[]
             {
                 new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2"),
+                new ApiResource("MyBackendApi2", "My Backend API 2", new List<string>(){ JwtClaimTypes.Role }),
             };
         }
 
@@ -65,7 +66,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
                         "MyBackendApi1",
-                        "MyBackendApi2",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Profile,
@@ -81,11 +81,40 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
 
                     RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
                     RefreshTokenExpiration = TokenExpiration.Sliding,
-                    AbsoluteRefreshTokenLifetime = 360000, 
+                    AbsoluteRefreshTokenLifetime = 360000,
+                    SlidingRefreshTokenLifetime = 36000,
+                    // IdentityTokenLifetime = 30,
+                    // AuthorizationCodeLifetime = 30,
+                },
+
+                new Client
+                {
+                    Enabled = true,
+                    ClientId = "RolebasedBackend",
+                    ClientName = "MyBackend Client",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AllowedScopes = {
+                        "MyBackendApi2",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                    },
+                    AlwaysSendClientClaims = true,
+                    UpdateAccessTokenClaimsOnRefresh = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowAccessTokensViaBrowser = true,
+                    IncludeJwtId = true,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = 3600,
+
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = 360000,
                     SlidingRefreshTokenLifetime = 36000,
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                 }
+
             };
         }
     }
