@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace AspNetCore.IdentityServer4.WebApi.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class ValuesController : ControllerBase
     {
         // GET api/values
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult<IEnumerable<string>> Get()
         {
             this.HttpContext.User.Claims.ToList().ForEach(c => Debug.WriteLine($"Claim: {c.Type}/{c.Value}"));
@@ -23,6 +23,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Fucker")]
         public ActionResult<string> Get(int id)
         {
             return "value";

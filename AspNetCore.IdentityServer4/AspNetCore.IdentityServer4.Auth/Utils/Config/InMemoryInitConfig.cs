@@ -111,8 +111,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AbsoluteRefreshTokenLifetime = 360000,
                     SlidingRefreshTokenLifetime = 36000,
-                    // IdentityTokenLifetime = 30,
-                    // AuthorizationCodeLifetime = 30,
+                    Claims = new Claim[] { new Claim(JwtClaimTypes.Role, "admin")}
                 }
 
             };
