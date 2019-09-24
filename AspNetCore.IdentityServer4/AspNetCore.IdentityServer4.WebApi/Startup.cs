@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
@@ -10,15 +11,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IHostingEnvironment env = null;
+        private readonly ILogger<Startup> logger = null;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
+            this.env = env;
+            this.logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -42,6 +49,14 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.RequireHttpsMetadata = true;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
+                options.Events = new JwtBearerEvents()
+                {
+                    OnAuthenticationFailed = (e) =>
+                    {
+                        this.logger.LogError(e.Exception.Message);
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             // Inject AppSetting configuration
@@ -53,13 +68,16 @@ namespace AspNetCore.IdentityServer4.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             // Custom Token expired response
             app.UseTokenExpiredResponse();
 
             // Authentication
             app.UseAuthentication();
+
+            // Use ExceptionHandler
+            app.ConfigureExceptionHandler(loggerFactory);
 
             app.UseHttpsRedirection();
             app.UseMvc();

@@ -14,7 +14,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     {
         // GET api/values
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public ActionResult<IEnumerable<string>> Get()
         {
             this.HttpContext.User.Claims.ToList().ForEach(c => Debug.WriteLine($"Claim: {c.Type}/{c.Value}"));
@@ -23,9 +23,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Fucker")]
+        [Authorize(Roles = "user")]
         public ActionResult<string> Get(int id)
         {
+            this.HttpContext.User.Claims.ToList().ForEach(c => Debug.WriteLine($"Claim: {c.Type}/{c.Value}"));
             return "value";
         }
 

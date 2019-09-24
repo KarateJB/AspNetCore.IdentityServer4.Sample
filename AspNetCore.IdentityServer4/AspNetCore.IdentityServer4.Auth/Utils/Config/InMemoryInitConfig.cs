@@ -28,7 +28,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             return new ApiResource[]
             {
                 new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2", new List<string>(){ JwtClaimTypes.Role }),
+                new ApiResource("MyBackendApi2", "My Backend API 2", new List<string>(){ ClaimTypes.Role }),
             };
         }
 
@@ -111,6 +111,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AbsoluteRefreshTokenLifetime = 360000,
                     SlidingRefreshTokenLifetime = 36000,
+
+                    ClientClaimsPrefix = string.Empty,
                     Claims = new Claim[] { new Claim(JwtClaimTypes.Role, "admin")}
                 }
 

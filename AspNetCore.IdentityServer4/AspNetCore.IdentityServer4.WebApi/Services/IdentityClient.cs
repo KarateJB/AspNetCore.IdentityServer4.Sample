@@ -17,6 +17,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         }
 
         private const string SECRETKEY = "secret";
+        //private const string CLIENTID = "MyBackend";
         private const string CLIENTID = "RoleBasedBackend";
         private readonly AppSettings configuration = null;
         private readonly HttpClient httpClient = null;
