@@ -80,7 +80,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 ClientSecret = SECRETKEY,
                 UserName = userName,
                 Password = password,
-                //Parameters = new Dictionary<string, string>() { { "Role", "Admin"} }
+                 
                 //Scope = "MyBackendApi1 openid email" // "openid" is must if request for any IdentityResource
             });
 

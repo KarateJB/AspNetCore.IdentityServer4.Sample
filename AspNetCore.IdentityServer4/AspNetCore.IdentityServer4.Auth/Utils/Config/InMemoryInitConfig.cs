@@ -111,9 +111,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AbsoluteRefreshTokenLifetime = 360000,
                     SlidingRefreshTokenLifetime = 36000,
+                     
 
                     ClientClaimsPrefix = string.Empty,
-                    Claims = new Claim[] { new Claim(JwtClaimTypes.Role, "admin")}
+                    //Claims = new Claim[] { new Claim(JwtClaimTypes.Role, "admin")} // Assign const role
                 }
 
             };

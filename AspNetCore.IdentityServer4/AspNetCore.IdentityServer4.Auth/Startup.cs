@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Cache;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
+using AspNetCore.IdentityServer4.Auth.Utils.Service;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
@@ -56,7 +57,9 @@ namespace AspNetCore.IdentityServer4.Auth {
             builder.AddInMemoryApiResources (InMemoryInitConfig.GetApiResources ());
             builder.AddInMemoryClients (InMemoryInitConfig.GetClients ());
             builder.AddLdapUsers<OpenLdapAppUser> (this.Configuration.GetSection ("LdapServer"), UserStore.InMemory); // OpenLDAP
-                                                                                                                      // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+            // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+
+            builder.AddProfileService<ProfileService>();
 
             #endregion
 
