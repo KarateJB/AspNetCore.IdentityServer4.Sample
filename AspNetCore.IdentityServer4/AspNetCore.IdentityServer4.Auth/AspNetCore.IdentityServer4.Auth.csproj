@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="IdentityServer.LdapExtension" Version="2.1.8" />
     <PackageReference Include="IdentityServer4" Version="2.4.0" />
+    <PackageReference Include="JB.Infra.Util" Version="1.0.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
