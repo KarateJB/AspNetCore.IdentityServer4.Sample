@@ -4,7 +4,6 @@ using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
-using JB.Infra.Service.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,7 +66,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
 
             // Inject Cache service
-            services.AddSingleton<ICacheService, RedisService>();
+            services.AddCacheServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

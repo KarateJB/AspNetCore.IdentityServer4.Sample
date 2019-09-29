@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AspNetCore.IdentityServer4.WebApi.Utils.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
@@ -9,7 +6,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
     /// <summary>
     /// ServiceCollections extensions
     /// </summary>
-    public class ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Add Cache service
@@ -18,7 +15,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
         /// <returns>Self</returns>
         public static IServiceCollection AddCacheServices(this IServiceCollection services)
         {
-            services.AddSingleton<ICacheKeyFactory, RedisKeyFactory>();
+            services.AddSingleton<RedisKeyFactory, RedisKeyFactory>();
             services.AddScoped<ICacheService, RedisService>();
             return services;
         }
