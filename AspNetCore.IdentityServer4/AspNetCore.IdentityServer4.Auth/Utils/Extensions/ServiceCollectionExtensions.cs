@@ -2,7 +2,7 @@
 using JB.Infra.Service.Redis;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
+namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
 {
     /// <summary>
     /// ServiceCollections extensions

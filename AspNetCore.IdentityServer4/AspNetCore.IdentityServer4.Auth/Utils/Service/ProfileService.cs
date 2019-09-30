@@ -54,12 +54,17 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 
         private List<Claim> getClaims(string userId)
         {
+            #region Method 1.Add extra const roles
             var claims = new List<Claim>
                 {
                     new Claim(JwtClaimTypes.Role, "admin"),
                     new Claim(JwtClaimTypes.Role, "user")
                 };
+            #endregion
 
+            #region Method 2. Add extra roles from redis
+
+            #endregion
 
             return claims;
         }

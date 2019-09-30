@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.WebApi.Models;
-using AspNetCore.IdentityServer4.WebApi.Utils;
-using AspNetCore.IdentityServer4.WebApi.Utils.Services;
+using JB.Infra.Service.Redis;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.IdentityServer4.WebApi.Controllers
@@ -13,11 +13,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     public class RoleController : ControllerBase
     {
         private readonly ICacheService cache = null;
-        private readonly RedisKeyFactory cacheKeys = null;
+        private readonly CacheKeyFactory cacheKeys = null;
 
         public RoleController(
             ICacheService cache,
-            RedisKeyFactory cacheKeys)
+            CacheKeyFactory cacheKeys)
         {
             this.cache = cache;
             this.cacheKeys = cacheKeys;
