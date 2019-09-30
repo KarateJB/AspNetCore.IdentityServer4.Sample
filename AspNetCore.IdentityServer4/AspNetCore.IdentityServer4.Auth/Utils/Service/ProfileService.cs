@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core;
+using AspNetCore.IdentityServer4.Core.Models;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
+using JB.Infra.Service.Redis;
 
 namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 {
@@ -15,7 +18,21 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
     /// </summary>
     public class ProfileService : IProfileService
     {
-        public Task GetProfileDataAsync(ProfileDataRequestContext context)
+        private readonly ICacheService cache = null;
+        private readonly CacheKeyFactory cacheKeys = null;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ProfileService(
+            ICacheService cache,
+            CacheKeyFactory cacheKeys)
+        {
+            this.cache = cache;
+            this.cacheKeys = cacheKeys;
+        }
+        
+        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
 
             //sub is your userId.
@@ -23,47 +40,41 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 
             if (!string.IsNullOrEmpty(subClaim?.Value))
             {
-                
-                context.IssuedClaims = this.getClaims(subClaim.Value);
-
-                //get the actual user object from the database
-                //var user = await _userService.GetUserAsync(long.Parse(userId.Value));
-
-                // issue the claims for the user
-                //if (user != null)
-                //{
-                //    var claims = this.GetClaims(user);
-
-                //    //add the claims
-                //    context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
-                //}
+                context.IssuedClaims = await this.getClaims(subClaim.Value);
             }
 
-            return Task.CompletedTask;
+            // return Task.CompletedTask;
         }
 
-        public Task IsActiveAsync(IsActiveContext context)
+        public async Task IsActiveAsync(IsActiveContext context)
         {
             // Find user by context.Subject.GetSubjectId()
             //var user = Users.FindBySubjectId(context.Subject.GetSubjectId());
             //context.IsActive = user?.IsActive == true;
 
             context.IsActive = true;
-            return Task.CompletedTask;
+            // return Task.CompletedTask;
         }
 
-        private List<Claim> getClaims(string userId)
+        private async Task<List<Claim>> getClaims(string userName)
         {
+            var claims = new List<Claim>();
             #region Method 1.Add extra const roles
-            var claims = new List<Claim>
-                {
-                    new Claim(JwtClaimTypes.Role, "admin"),
-                    new Claim(JwtClaimTypes.Role, "user")
-                };
+            //claims = new List<Claim>
+            //    {
+            //        new Claim(JwtClaimTypes.Role, "admin"),
+            //        new Claim(JwtClaimTypes.Role, "user")
+            //    };
             #endregion
 
             #region Method 2. Add extra roles from redis
+            var cacheKey = this.cacheKeys.GetKeyRoles(userName);
+            (UserRole userRole, bool isOK) = await this.cache.GetCacheAsync<UserRole>(cacheKey);
 
+            if (isOK)
+            {
+                claims = userRole.Roles.Split(',').Select( x => new Claim(JwtClaimTypes.Role, x)).ToList();
+            }
             #endregion
 
             return claims;

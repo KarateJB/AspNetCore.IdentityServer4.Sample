@@ -2,7 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core;
-using AspNetCore.IdentityServer4.WebApi.Models;
+using AspNetCore.IdentityServer4.Core.Models;
 using JB.Infra.Service.Redis;
 using Microsoft.AspNetCore.Mvc;
 
