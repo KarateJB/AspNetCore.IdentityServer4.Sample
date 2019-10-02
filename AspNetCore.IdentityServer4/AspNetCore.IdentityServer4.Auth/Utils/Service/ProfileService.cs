@@ -59,6 +59,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
         private async Task<List<Claim>> getClaims(string userName)
         {
             var claims = new List<Claim>();
+
             #region Method 1.Add extra const roles
             //claims = new List<Claim>
             //    {

@@ -29,6 +29,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             this.userStore = userStore;
             this.events = events;
             this.tools = tools;
+            
         }
 
         [HttpPost("SignIn")]
