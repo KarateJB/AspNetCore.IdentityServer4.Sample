@@ -114,14 +114,14 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     SlidingRefreshTokenLifetime = 36000,
                      
                     ClientClaimsPrefix = string.Empty,
-                    Claims = new Claim[]
-                    {
-                        // Assign const roles
-                        new Claim(JwtClaimTypes.Role, "admin"), // or new Claim(ClaimTypes.Role, "admin")
-                        new Claim(JwtClaimTypes.Role, "user"),
-                        // Assign const department
-                        new Claim(CustomClaimTypes.Department, "Sales")
-                    }
+                    //Claims = new Claim[]
+                    //{
+                    //    // Assign const roles
+                    //    new Claim(JwtClaimTypes.Role, "admin"), // or new Claim(ClaimTypes.Role, "admin")
+                    //    new Claim(JwtClaimTypes.Role, "user"),
+                    //    // Assign const department
+                    //    new Claim(CustomClaimTypes.Department, "Sales")
+                    //}
                 }
 
             };

@@ -69,12 +69,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             #endregion
 
             #region Method 2. Add extra roles from redis
-            var cacheKey = this.cacheKeys.GetKeyRoles(userName);
-            (UserProfile userRole, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
+            var cacheKey = this.cacheKeys.UserProfile(userName);
+            (UserProfile user, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (isOK)
             {
-                claims = userRole.Roles.Split(',').Select( x => new Claim(ClaimTypes.Role, x.Trim())).ToList();
+                claims = user.Roles.Split(',').Select( x => new Claim(JwtClaimTypes.Role, x.Trim())).ToList();
             }
             #endregion
 
