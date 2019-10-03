@@ -74,7 +74,11 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 
             if (isOK)
             {
-                claims = user.Roles.Split(',').Select( x => new Claim(JwtClaimTypes.Role, x.Trim())).ToList();
+                // Role claim
+                user.Roles.Split(',').Select(x => new Claim(ClaimTypes.Role, x.Trim())).ToList().ForEach(claim => claims.Add(claim));
+
+                // Department claim
+                claims.Add(new Claim(CustomClaimTypes.Department, user.Department));
             }
             #endregion
 

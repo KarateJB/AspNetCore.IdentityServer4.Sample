@@ -117,8 +117,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //Claims = new Claim[]
                     //{
                     //    // Assign const roles
-                    //    new Claim(JwtClaimTypes.Role, "admin"), // or new Claim(ClaimTypes.Role, "admin")
-                    //    new Claim(JwtClaimTypes.Role, "user"),
+                    //    new Claim(ClaimTypes.Role, "admin"), // or new Claim(JwtClaimTypes.Role, "admin")
+                    //    new Claim(ClaimTypes.Role, "user"),
                     //    // Assign const department
                     //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
