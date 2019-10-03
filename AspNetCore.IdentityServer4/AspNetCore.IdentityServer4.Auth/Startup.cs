@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Auth.Events;
-using AspNetCore.IdentityServer4.Auth.Utils.Cache;
+﻿using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
+using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
+using AspNetCore.IdentityServer4.Auth.Utils.Service;
+using AspNetCore.IdentityServer4.Core;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace AspNetCore.IdentityServer4.Auth {
+namespace AspNetCore.IdentityServer4.Auth
+{
     public class Startup {
         public Startup (IConfiguration configuration) {
             Configuration = configuration;
@@ -56,13 +52,15 @@ namespace AspNetCore.IdentityServer4.Auth {
             builder.AddInMemoryApiResources (InMemoryInitConfig.GetApiResources ());
             builder.AddInMemoryClients (InMemoryInitConfig.GetClients ());
             builder.AddLdapUsers<OpenLdapAppUser> (this.Configuration.GetSection ("LdapServer"), UserStore.InMemory); // OpenLDAP
-                                                                                                                      // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+            // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+
+            builder.AddProfileService<ProfileService>();
 
             #endregion
 
-            #region Cache
+            #region  Inject Cache service
             services.AddMemoryCache();
-            services.AddSingleton<ICacheKeyFactory, CacheKeyFactory>();
+            services.AddCacheServices();
             #endregion
 
             #region Custom sinks

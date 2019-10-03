@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Auth.Utils.Cache;
+using AspNetCore.IdentityServer4.Core;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +15,11 @@ namespace AspNetCore.IdentityServer4.Auth.Events
     public class UserProfileCacheSink : IEventSink
     {
         private IHttpContextAccessor httpContextAccessor = null;
-        private readonly ICacheKeyFactory cacheKeyFactory = null;
+        private readonly CacheKeyFactory cacheKeyFactory = null;
         private readonly IMemoryCache cache = null;
         private readonly ILogger<UserProfileCacheSink> logger = null;
 
-        public UserProfileCacheSink(IHttpContextAccessor httpContextAccessor, ICacheKeyFactory cacheKeyFactory, IMemoryCache cache, ILogger<UserProfileCacheSink> logger)
+        public UserProfileCacheSink(IHttpContextAccessor httpContextAccessor, CacheKeyFactory cacheKeyFactory, IMemoryCache cache, ILogger<UserProfileCacheSink> logger)
         {
             this.httpContextAccessor = httpContextAccessor;
             this.cacheKeyFactory = cacheKeyFactory;
