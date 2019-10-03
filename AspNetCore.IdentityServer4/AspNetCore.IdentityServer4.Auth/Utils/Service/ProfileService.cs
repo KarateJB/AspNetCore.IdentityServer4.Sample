@@ -70,7 +70,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 
             #region Method 2. Add extra roles from redis
             var cacheKey = this.cacheKeys.GetKeyRoles(userName);
-            (UserRole userRole, bool isOK) = await this.cache.GetCacheAsync<UserRole>(cacheKey);
+            (UserProfile userRole, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (isOK)
             {

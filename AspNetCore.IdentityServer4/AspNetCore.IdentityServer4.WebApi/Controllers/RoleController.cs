@@ -24,10 +24,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         }
 
         [HttpGet("Get/{userName}")]
-        public async Task<UserRole> Get([FromRoute] string userName)
+        public async Task<UserProfile> Get([FromRoute] string userName)
         {
             var cacheKey = this.cacheKeys.GetKeyRoles(userName);
-            (UserRole userRole, bool isOK) = await this.cache.GetCacheAsync<UserRole>(cacheKey);
+            (UserProfile userRole, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (!isOK)
             {
@@ -38,10 +38,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult> Create([FromBody] UserRole userRole)
+        public async Task<ActionResult> Create([FromBody] UserProfile userRole)
         {
             var cacheKey = this.cacheKeys.GetKeyRoles(userRole.Username);
-            await this.cache.SaveCacheAsync<UserRole>(cacheKey, userRole);
+            await this.cache.SaveCacheAsync<UserProfile>(cacheKey, userRole);
             return this.Ok();
         }
 

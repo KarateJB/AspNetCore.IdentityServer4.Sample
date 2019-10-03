@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using AspNetCore.IdentityServer4.Core.Models;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -28,7 +29,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             return new ApiResource[]
             {
                 new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2", new List<string>(){ ClaimTypes.Role }),
+                new ApiResource("MyBackendApi2", "My Backend API 2")
             };
         }
 
@@ -113,13 +114,14 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     SlidingRefreshTokenLifetime = 36000,
                      
                     ClientClaimsPrefix = string.Empty,
-
-                    // Assign const roles
-                    //Claims = new Claim[]  
-                    //{
-                    //    new Claim(ClaimTypes.Role, "admin"), // Or new Claim(JwtClaimTypes.Role, "admin"),
-                    //    new Claim(ClaimTypes.Role, "user")
-                    //}
+                    Claims = new Claim[]
+                    {
+                        // Assign const roles
+                        new Claim(JwtClaimTypes.Role, "admin"), // or new Claim(ClaimTypes.Role, "admin")
+                        new Claim(JwtClaimTypes.Role, "user"),
+                        // Assign const department
+                        new Claim(CustomClaimTypes.Department, "Sales")
+                    }
                 }
 
             };

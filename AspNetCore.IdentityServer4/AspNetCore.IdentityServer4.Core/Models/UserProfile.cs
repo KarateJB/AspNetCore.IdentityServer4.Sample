@@ -1,6 +1,9 @@
 ﻿namespace AspNetCore.IdentityServer4.Core.Models
 {
-    public class UserRole
+    /// <summary>
+    /// User profile for caching in Redis
+    /// </summary>
+    public class UserProfile
     {
         /// <summary>
         /// User name
@@ -11,5 +14,10 @@
         /// User roles
         /// </summary>
         public string Roles { get; set; }
+
+        /// <summary>
+        /// Department
+        /// </summary>
+        public string Department { get; set; }
     }
 }
