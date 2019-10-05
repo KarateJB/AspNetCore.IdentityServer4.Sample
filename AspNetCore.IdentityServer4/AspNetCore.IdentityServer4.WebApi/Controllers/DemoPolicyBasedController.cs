@@ -84,11 +84,20 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         [HttpGet]
         [Route("Sales/Admin/Get")]
-        [Authorize(Policy = "SalesDepartmentPolicy")]
-        [Authorize(Policy = "AdminPolicy")]
+        //[Authorize(Policy = "SalesDepartmentPolicy")]
+        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SalesDepartmentAndAdminPolicy")]
         public ActionResult<string> SalesAdminGet()
         {
             return "Yes, only an Admin of Sales Deparment can access this API!";
+        }
+
+        [HttpGet]
+        [Route("SalesOrAdmin/Get")]
+        [Authorize(Policy = "SalesDepartmentOrAdminPolicy")]
+        public ActionResult<string> SalesOrAdminGet()
+        {
+            return "Yes, only that in Sales Deparment or an Admin can access this API!";
         }
 
         private void logtUserClaims()

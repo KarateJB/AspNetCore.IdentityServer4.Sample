@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
@@ -68,7 +70,10 @@ namespace AspNetCore.IdentityServer4.WebApi
 
             services.AddAuthorization(options => options.AddPolicy("SalesDepartmentPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales")));
             services.AddAuthorization(options => options.AddPolicy("CrmDepartmentPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "CRM")));
-
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales").RequireRole("admin")));
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentOrAdminPolicy", policy => policy.RequireAssertion( 
+                context => context.User.Claims.Any(
+                    x => (x.Type.Equals(CustomClaimTypes.Department) && x.Value.Equals("Sales")) || (x.Type.Equals(ClaimTypes.Role) && x.Value.Equals("admin"))))));
 
             // Inject AppSetting configuration
             services.Configure<AppSettings>(this.Configuration);
