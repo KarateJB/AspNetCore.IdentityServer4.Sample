@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using AspNetCore.IdentityServer4.Core.Models;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -28,7 +29,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             return new ApiResource[]
             {
                 new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2", new List<string>(){ ClaimTypes.Role }),
+                new ApiResource("MyBackendApi2", "My Backend API 2")
             };
         }
 
@@ -90,7 +91,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "RoleBasedBackend",
+                    ClientId = "PolicyBasedBackend",
                     ClientName = "MyBackend Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
@@ -113,12 +114,13 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     SlidingRefreshTokenLifetime = 36000,
                      
                     ClientClaimsPrefix = string.Empty,
-
-                    // Assign const roles
-                    //Claims = new Claim[]  
+                    //Claims = new Claim[]
                     //{
-                    //    new Claim(ClaimTypes.Role, "admin"), // Or new Claim(JwtClaimTypes.Role, "admin"),
-                    //    new Claim(ClaimTypes.Role, "user")
+                    //    // Assign const roles
+                    //    new Claim(ClaimTypes.Role, "admin"), // or new Claim(JwtClaimTypes.Role, "admin")
+                    //    new Claim(ClaimTypes.Role, "it"),
+                    //    // Assign const department
+                    //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
                 }
 

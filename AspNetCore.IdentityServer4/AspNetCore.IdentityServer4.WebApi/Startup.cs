@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
@@ -38,7 +41,7 @@ namespace AspNetCore.IdentityServer4.WebApi
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // Enable Authentication
+            #region Enable Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,15 +61,46 @@ namespace AspNetCore.IdentityServer4.WebApi
                     }
                 };
             });
+            #endregion
 
-            // Inject AppSetting configuration
+            #region Enable policy-based authorization
+
+            // Required: Role "admin"
+            services.AddAuthorization(options => options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin")));
+            // Required: Role "user"
+            services.AddAuthorization(options => options.AddPolicy("UserPolicy", policy => policy.RequireRole("user")));
+            // Required: Role "sit"
+            services.AddAuthorization(options => options.AddPolicy("SitPolicy", policy => policy.RequireRole("sit")));
+            // Required: Role "admin" OR "user"
+            services.AddAuthorization(options => options.AddPolicy("AdminOrUserPolicy", policy => policy.RequireRole("admin", "user")));
+            // Required: Department "Sales"
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales")));
+            // Required: Department "CRM"
+            services.AddAuthorization(options => options.AddPolicy("CrmDepartmentPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "CRM")));
+            // Required: Department "Sales" AND Role "admin"
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminPolicy", 
+                policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales").RequireRole("admin")));
+            // Required: Department "Sales" AND Role "admin" or "user"
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminOrUserPolicy",
+                            policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales").RequireRole("admin", "user")));
+            // Required: Department "Sales" OR Role "admin"
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentOrAdminPolicy", policy => policy.RequireAssertion(
+                context => context.User.Claims.Any(
+                    x => (x.Type.Equals(CustomClaimTypes.Department) && x.Value.Equals("Sales")) || (x.Type.Equals(ClaimTypes.Role) && x.Value.Equals("admin"))))));
+            #endregion
+
+            #region Inject AppSetting configuration
+
             services.Configure<AppSettings>(this.Configuration);
+            #endregion
 
-            // Inject HttpClient
+            #region Inject HttpClient
             services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+            #endregion
 
-            // Inject Cache service
+            #region Inject Cache service
             services.AddCacheServices();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

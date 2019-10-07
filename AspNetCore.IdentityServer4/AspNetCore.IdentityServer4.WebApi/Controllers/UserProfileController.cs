@@ -10,12 +10,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class UserProfileController : ControllerBase
     {
         private readonly ICacheService cache = null;
         private readonly CacheKeyFactory cacheKeys = null;
 
-        public RoleController(
+        public UserProfileController(
             ICacheService cache,
             CacheKeyFactory cacheKeys)
         {
@@ -24,10 +24,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         }
 
         [HttpGet("Get/{userName}")]
-        public async Task<UserRole> Get([FromRoute] string userName)
+        public async Task<UserProfile> Get([FromRoute] string userName)
         {
-            var cacheKey = this.cacheKeys.GetKeyRoles(userName);
-            (UserRole userRole, bool isOK) = await this.cache.GetCacheAsync<UserRole>(cacheKey);
+            var cacheKey = this.cacheKeys.UserProfile(userName);
+            (UserProfile userRole, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (!isOK)
             {
@@ -38,17 +38,17 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult> Create([FromBody] UserRole userRole)
+        public async Task<ActionResult> Create([FromBody] UserProfile user)
         {
-            var cacheKey = this.cacheKeys.GetKeyRoles(userRole.Username);
-            await this.cache.SaveCacheAsync<UserRole>(cacheKey, userRole);
+            var cacheKey = this.cacheKeys.UserProfile(user.Username);
+            await this.cache.SaveCacheAsync<UserProfile>(cacheKey, user);
             return this.Ok();
         }
 
         [HttpPost("Remove/{userName}")]
         public async Task<ActionResult> Remove([FromRoute] string userName)
         {
-            var cacheKey = this.cacheKeys.GetKeyRoles(userName);
+            var cacheKey = this.cacheKeys.UserProfile(userName);
             await this.cache.ClearCacheAsync(cacheKey);
             return this.Ok();
         }
