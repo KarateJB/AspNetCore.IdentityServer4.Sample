@@ -91,7 +91,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "RoleBasedBackend",
+                    ClientId = "PolicyBasedBackend",
                     ClientName = "MyBackend Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
@@ -118,7 +118,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //{
                     //    // Assign const roles
                     //    new Claim(ClaimTypes.Role, "admin"), // or new Claim(JwtClaimTypes.Role, "admin")
-                    //    new Claim(ClaimTypes.Role, "user"),
+                    //    new Claim(ClaimTypes.Role, "it"),
                     //    // Assign const department
                     //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
