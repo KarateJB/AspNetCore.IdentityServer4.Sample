@@ -1,11 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core.Models;
-using AspNetCore.IdentityServer4.WebApi.Models;
+﻿using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
-using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,20 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
     public class Startup
     {
-        private readonly IHostingEnvironment env = null;
-        private readonly ILogger<Startup> logger = null;
+        private readonly IWebHostEnvironment env = null;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.Configuration = configuration;
             this.env = env;
-            this.logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,9 +30,10 @@ namespace AspNetCore.IdentityServer4.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IConfigureOptions<MvcJsonOptions>, CustomJsonOptionWrapper>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             #region Enable Authentication
             services.AddAuthentication(options =>
@@ -56,7 +50,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 {
                     OnAuthenticationFailed = (e) =>
                     {
-                        this.logger.LogError(e.Exception.Message);
+                        // Some callback here ...
                         return Task.CompletedTask;
                     }
                 };
@@ -116,7 +110,13 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.ConfigureExceptionHandler(loggerFactory);
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

@@ -145,7 +145,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return revokeResposne;
         }
 
-        private async Task<DiscoveryResponse> discoverDocumentAsync()
+        private async Task<DiscoveryDocumentResponse> discoverDocumentAsync()
         {
             var discoResponse = await this.httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
