@@ -11,18 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
-    public class Startup {
-        public Startup (IConfiguration configuration) {
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
             this.Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices (IServiceCollection services) 
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
                  .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -39,7 +40,8 @@ namespace AspNetCore.IdentityServer4.Auth
 
             #region Identity Server
 
-            var builder = services.AddIdentityServer (options => {
+            var builder = services.AddIdentityServer(options =>
+            {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -47,14 +49,14 @@ namespace AspNetCore.IdentityServer4.Auth
             });
 
             // Signing credential
-            builder.AddDeveloperSigningCredential ();
+            builder.AddDeveloperSigningCredential();
 
             // Set in-memory, code config
-            builder.AddInMemoryIdentityResources (InMemoryInitConfig.GetIdentityResources ());
-            builder.AddInMemoryApiResources (InMemoryInitConfig.GetApiResources ());
-            builder.AddInMemoryClients (InMemoryInitConfig.GetClients ());
-            builder.AddLdapUsers<OpenLdapAppUser> (this.Configuration.GetSection ("LdapServer"), UserStore.InMemory); // OpenLDAP
-                                                                                                                      // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+            builder.AddInMemoryIdentityResources(InMemoryInitConfig.GetIdentityResources());
+            builder.AddInMemoryApiResources(InMemoryInitConfig.GetApiResources());
+            builder.AddInMemoryClients(InMemoryInitConfig.GetClients());
+            builder.AddLdapUsers<OpenLdapAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // OpenLDAP
+                                                                                                                    // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
 
             builder.AddProfileService<ProfileService>();
 
@@ -71,18 +73,18 @@ namespace AspNetCore.IdentityServer4.Auth
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure (IApplicationBuilder app, IWebHostEnvironment env) 
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseIdentityServer ();
+            app.UseIdentityServer();
 
             app.UseSession();
 
-            app.UseHttpsRedirection ();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

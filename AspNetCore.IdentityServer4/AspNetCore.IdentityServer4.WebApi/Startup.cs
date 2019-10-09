@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -39,6 +42,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             #region Enable Authentication
+            IdentityModelEventSource.ShowPII = true; //Add this line
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -93,6 +97,15 @@ namespace AspNetCore.IdentityServer4.WebApi
 
             #region Inject HttpClient
             services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+                //.ConfigurePrimaryHttpMessageHandler(h => //Allow untrusted Https connection
+                //{
+                //    var handler = new HttpClientHandler();
+                //    if (this.env.IsDevelopment())
+                //    {
+                //        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                //    }
+                //    return handler;
+                //});
             #endregion
 
             #region Inject Cache service
@@ -106,15 +119,14 @@ namespace AspNetCore.IdentityServer4.WebApi
             // Custom Token expired response
             app.UseTokenExpiredResponse();
 
-            // Authentication
-            app.UseAuthentication();
-
             // Use ExceptionHandler
             app.ConfigureExceptionHandler(loggerFactory);
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
