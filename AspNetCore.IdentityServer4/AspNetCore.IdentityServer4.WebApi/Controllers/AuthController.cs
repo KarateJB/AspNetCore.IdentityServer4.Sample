@@ -6,6 +6,7 @@ using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace AspNetCore.IdentityServer4.WebApi.Controllers
@@ -14,11 +15,14 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ILogger<AuthController> logger = null;
         private readonly IIdentityClient auth = null;
 
         public AuthController(
+            ILogger<AuthController> logger,
             IIdentityClient id4Client)
         {
+            this.logger = logger;
             this.auth = id4Client;
         }
 

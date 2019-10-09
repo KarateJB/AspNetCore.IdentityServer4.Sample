@@ -49,8 +49,13 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:6001"; // Base-address of your identityserver
-                options.RequireHttpsMetadata = true;
+                //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
+                //options.RequireHttpsMetadata = true;
+
+                string authServerBaseUrl = this.Configuration["Host:AuthServer"];
+                bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
+                options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
+                options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.Events = new JwtBearerEvents()
@@ -95,17 +100,22 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.Configure<AppSettings>(this.Configuration);
             #endregion
 
-            #region Inject HttpClient
-            services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
-                //.ConfigurePrimaryHttpMessageHandler(h => //Allow untrusted Https connection
-                //{
-                //    var handler = new HttpClientHandler();
-                //    if (this.env.IsDevelopment())
-                //    {
-                //        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                //    }
-                //    return handler;
-                //});
+            #region HttpClient Factory
+            // services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+            //.ConfigurePrimaryHttpMessageHandler(h => //Allow untrusted Https connection
+            //{
+            //    var handler = new HttpClientHandler();
+            //    if (this.env.IsDevelopment())
+            //    {
+            //        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            //    }
+            //    return handler;
+            //});
+            services.AddHttpClient("AuthHttpClient", x => x.Timeout = TimeSpan.FromMinutes(5));
+            #endregion
+
+            #region Identity Client
+            services.AddSingleton<IIdentityClient, IdentityClient>();
             #endregion
 
             #region Inject Cache service
@@ -125,8 +135,8 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthentication(); // Must after app.UseRouting()
+            app.UseAuthorization(); // Must after app.UseRouting()
 
             app.UseEndpoints(endpoints =>
             {
