@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AspNetCore.IdentityServer4.WebApi.Models;
+using IdentityModel.Client;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.WebApi.Models;
-using IdentityModel.Client;
-using Microsoft.Extensions.Options;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
 {
@@ -17,19 +18,23 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         }
 
         private const string SECRETKEY = "secret";
-        //private const string CLIENTID = "MyBackend";
         private const string CLIENTID = "PolicyBasedBackend";
         private readonly AppSettings configuration = null;
-        private readonly HttpClient httpClient = null;
+        private readonly ILogger<IdentityClient> logger;
+        private readonly IHttpClientFactory httpClientFactory = null;
         private readonly string remoteServiceBaseUrl = string.Empty;
+        private DiscoveryDocumentResponse discoResponse = null;
 
         public IdentityClient(
             IOptions<AppSettings> configuration,
-            HttpClient httpClient)
+            ILogger<IdentityClient> logger,
+            IHttpClientFactory httpClientFactory)
         {
             this.configuration = configuration.Value;
-            this.httpClient = httpClient;
+            this.logger = logger;
+            this.httpClientFactory = httpClientFactory;
             this.remoteServiceBaseUrl = this.configuration.Host.AuthServer;
+            this.logger.LogCritical("Initialize Identity Client ok.");
         }
 
         /// <summary>
@@ -40,10 +45,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>HttpResponseMessage</returns>
         public async Task<HttpResponseMessage> GetTokenByFormDataAsync(string userName, string password)
         {
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
             var endpoint = new Uri(string.Concat(this.remoteServiceBaseUrl, "/connect/token"));
 
             // Set Http request's Accept header
-            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // Const
             const string grantType = "password";
@@ -59,7 +65,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 new KeyValuePair<string, string>("password", password)
             });
 
-            var response = await this.httpClient.PostAsync(endpoint, formData);
+            var response = await httpClient.PostAsync(endpoint, formData);
             return response;
         }
 
@@ -71,11 +77,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenResponse</returns>
         public async Task<TokenResponse> SignInAsync(string userName, string password)
         {
-            var discoResponse = await this.discoverDocumentAsync();
-
-            TokenResponse tokenResponse = await this.httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
+            if (this.discoResponse == null)
             {
-                Address = discoResponse.TokenEndpoint,
+                this.discoResponse = await this.discoverDocumentAsync();
+            }
+
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            TokenResponse tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
+            {
+                Address = this.discoResponse.TokenEndpoint,
                 ClientId = CLIENTID,
                 ClientSecret = SECRETKEY,
                 UserName = userName,
@@ -94,11 +104,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>UserInfoReponse</returns>
         public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
-            var discoResponse = await this.discoverDocumentAsync();
-
-            UserInfoResponse userInfoResponse = await this.httpClient.GetUserInfoAsync(new UserInfoRequest()
+            if (this.discoResponse == null)
             {
-                Address = discoResponse.UserInfoEndpoint,
+                this.discoResponse = await this.discoverDocumentAsync();
+            }
+
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            UserInfoResponse userInfoResponse = await httpClient.GetUserInfoAsync(new UserInfoRequest()
+            {
+                Address = this.discoResponse.UserInfoEndpoint,
                 Token = accessToken
             });
 
@@ -112,11 +126,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenResponse</returns>
         public async Task<TokenResponse> RefreshTokenAsync(string refreshToken)
         {
-            var discoResponse = await this.discoverDocumentAsync();
-
-            TokenResponse tokenResponse = await this.httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            if (this.discoResponse == null)
             {
-                Address = discoResponse.TokenEndpoint,
+                this.discoResponse = await this.discoverDocumentAsync();
+            }
+
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            TokenResponse tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            {
+                Address = this.discoResponse.TokenEndpoint,
                 ClientId = CLIENTID,
                 ClientSecret = SECRETKEY,
                 RefreshToken = refreshToken
@@ -132,11 +150,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenRevocationResponse</returns>
         public async Task<TokenRevocationResponse> RevokeTokenAsync(string token)
         {
-            var discoResponse = await this.discoverDocumentAsync();
-
-            TokenRevocationResponse revokeResposne = await this.httpClient.RevokeTokenAsync(new TokenRevocationRequest
+            if (this.discoResponse == null)
             {
-                Address = discoResponse.RevocationEndpoint,
+                this.discoResponse = await this.discoverDocumentAsync();
+            }
+
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            TokenRevocationResponse revokeResposne = await httpClient.RevokeTokenAsync(new TokenRevocationRequest
+            {
+                Address = this.discoResponse.RevocationEndpoint,
                 ClientId = CLIENTID,
                 ClientSecret = SECRETKEY,
                 Token = token
@@ -145,16 +167,26 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return revokeResposne;
         }
 
-        private async Task<DiscoveryResponse> discoverDocumentAsync()
+        private async Task<DiscoveryDocumentResponse> discoverDocumentAsync()
         {
-            var discoResponse = await this.httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            DiscoveryDocumentResponse discoResponse = null;
+
+            if (this.remoteServiceBaseUrl.StartsWith("https"))
             {
-                Address = this.remoteServiceBaseUrl,
-                Policy =
+                discoResponse = await httpClient.GetDiscoveryDocumentAsync(this.remoteServiceBaseUrl);
+            }
+            else
+            {
+                discoResponse = await httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
                 {
-                    RequireHttps = true // default: true
+                    Address = this.remoteServiceBaseUrl,
+                    Policy =
+                {
+                    RequireHttps = false // default: true
                 }
-            });
+                });
+            }
 
             if (discoResponse.IsError)
             {

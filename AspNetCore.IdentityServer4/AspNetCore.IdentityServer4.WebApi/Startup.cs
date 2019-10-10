@@ -1,11 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core.Models;
+﻿using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
-using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -14,21 +9,25 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
     public class Startup
     {
-        private readonly IHostingEnvironment env = null;
-        private readonly ILogger<Startup> logger = null;
+        private readonly IWebHostEnvironment env = null;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.Configuration = configuration;
             this.env = env;
-            this.logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,26 +36,33 @@ namespace AspNetCore.IdentityServer4.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IConfigureOptions<MvcJsonOptions>, CustomJsonOptionWrapper>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             #region Enable Authentication
+            IdentityModelEventSource.ShowPII = true; //Add this line
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:6001"; // Base-address of your identityserver
-                options.RequireHttpsMetadata = true;
+                //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
+                //options.RequireHttpsMetadata = true;
+
+                string authServerBaseUrl = this.Configuration["Host:AuthServer"];
+                bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
+                options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
+                options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.Events = new JwtBearerEvents()
                 {
                     OnAuthenticationFailed = (e) =>
                     {
-                        this.logger.LogError(e.Exception.Message);
+                        // Some callback here ...
                         return Task.CompletedTask;
                     }
                 };
@@ -94,8 +100,22 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.Configure<AppSettings>(this.Configuration);
             #endregion
 
-            #region Inject HttpClient
-            services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+            #region HttpClient Factory
+            // services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
+            //.ConfigurePrimaryHttpMessageHandler(h => //Allow untrusted Https connection
+            //{
+            //    var handler = new HttpClientHandler();
+            //    if (this.env.IsDevelopment())
+            //    {
+            //        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            //    }
+            //    return handler;
+            //});
+            services.AddHttpClient("AuthHttpClient", x => x.Timeout = TimeSpan.FromMinutes(5));
+            #endregion
+
+            #region Identity Client
+            services.AddSingleton<IIdentityClient, IdentityClient>();
             #endregion
 
             #region Inject Cache service
@@ -109,14 +129,19 @@ namespace AspNetCore.IdentityServer4.WebApi
             // Custom Token expired response
             app.UseTokenExpiredResponse();
 
-            // Authentication
-            app.UseAuthentication();
-
             // Use ExceptionHandler
             app.ConfigureExceptionHandler(loggerFactory);
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseRouting();
+            app.UseAuthentication(); // Must after app.UseRouting()
+            app.UseAuthorization(); // Must after app.UseRouting()
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
