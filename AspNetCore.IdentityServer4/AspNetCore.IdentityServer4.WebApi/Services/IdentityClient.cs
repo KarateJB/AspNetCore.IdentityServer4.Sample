@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
@@ -23,6 +24,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         private readonly ILogger<IdentityClient> logger;
         private readonly IHttpClientFactory httpClientFactory = null;
         private readonly string remoteServiceBaseUrl = string.Empty;
+        private readonly Semaphore semaphore = null;
         private DiscoveryDocumentResponse discoResponse = null;
 
         public IdentityClient(
@@ -34,6 +36,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             this.logger = logger;
             this.httpClientFactory = httpClientFactory;
             this.remoteServiceBaseUrl = this.configuration.Host.AuthServer;
+            this.semaphore = new Semaphore(1, 1);
             this.logger.LogCritical("Initialize Identity Client ok.");
         }
 
@@ -83,6 +86,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             }
 
             var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+
+            // Wait until it is safe to enter.
+            this.semaphore.WaitOne();
+
             TokenResponse tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = this.discoResponse.TokenEndpoint,
@@ -90,9 +97,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 ClientSecret = SECRETKEY,
                 UserName = userName,
                 Password = password,
-                 
                 //Scope = "MyBackendApi1 openid email" // "openid" is must if request for any IdentityResource
             });
+
+            // Release the Mutex.
+            this.semaphore.Release(1);
 
             return tokenResponse;
         }
