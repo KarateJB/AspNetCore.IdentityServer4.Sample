@@ -101,17 +101,26 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region HttpClient Factory
-            // services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)); // HttpMessageHandler lifetime = 2 min
-            //.ConfigurePrimaryHttpMessageHandler(h => //Allow untrusted Https connection
-            //{
-            //    var handler = new HttpClientHandler();
-            //    if (this.env.IsDevelopment())
-            //    {
-            //        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            //    }
-            //    return handler;
-            //});
-            services.AddHttpClient("AuthHttpClient", x => x.Timeout = TimeSpan.FromMinutes(5));
+            services.AddHttpClient("AuthHttpClient", 
+                config => 
+                {
+                    config.Timeout = TimeSpan.FromMinutes(5);
+                    // config.BaseAddress = new Uri("https://localhost:6001/");
+                    config.DefaultRequestHeaders.Add("Accept", "application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5)); // HttpMessageHandler lifetime = 2 min
+
+            // services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)) // HttpMessageHandler default lifetime = 2 min
+            // .ConfigurePrimaryHttpMessageHandler(h =>
+            // {
+            //   var handler = new HttpClientHandler();
+            //   if (this.env.IsDevelopment())
+            //   {
+            //       //Allow untrusted Https connection
+            //       handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            //   }
+            //   return handler;
+            // });
             #endregion
 
             #region Identity Client
