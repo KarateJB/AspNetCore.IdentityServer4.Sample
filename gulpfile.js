@@ -16,7 +16,7 @@ gulp.task('auth', function() {
     .src('./**')
     .pipe(
       exec(
-        'dotnet run  --no-build --project ./AspNetCore.IdentityServer4/AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj'
+        'dotnet run  --no-build --project ./src/AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj'
       )
     )
     .pipe(exec.reporter(reportOptions));
@@ -27,7 +27,7 @@ gulp.task('webapi', function() {
     .src('./**')
     .pipe(
       exec(
-        'dotnet run  --no-build --project ./AspNetCore.IdentityServer4/AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj'
+        'dotnet run  --no-build --project ./src/AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj'
       )
     )
     .pipe(exec.reporter(reportOptions));
