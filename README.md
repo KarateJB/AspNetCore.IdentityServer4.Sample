@@ -57,7 +57,7 @@ Update the following config to connect to your own OpenOLAP service.
 ## Restore packages
 
 ```
-$ cd AspNetCore.IdentityServer4.Auth
+$ cd src
 $ dotnet restore
 ```
 
@@ -93,4 +93,38 @@ $ gulp run auth
 $ gulp run webapi
 ```
 
+# Run on docker
+
+## Restore packages
+
+```
+$ cd src
+$ dotnet restore
+```
+
+
+## Build the projects
+
+1. Auth server
+
+```
+$ cd src/AspNetCore.IdentityServer4.Auth
+$ dotnet publish --output ../Docker/build/auth --configuration release
+```
+
+2. Backend (Web API)
+
+```
+$ cd src/AspNetCore.IdentityServer4.WebApi
+$ dotnet publish --output ../Docker/build/webapi --configuration release
+```
+
+
+## Build Docker images and start containers
+
+```
+$ cd docker
+$ docker-compose build [--no-cache]
+$ docker-compose up -d
+```
 

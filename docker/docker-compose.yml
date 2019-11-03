@@ -3,17 +3,20 @@ services:
   webapi:
     image: idsrv4-webapi:latest
     build:
-      context: ./src
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: webapi.dockerfile
       args:
         env: ${DOCKER_ENV}
     container_name: minitis
-    environment:
+    # environment:
       # ASPNETCORE_ENVIRONMENT: Docker
       # ASPNETCORE_Kestrel__Certificates__Default__Password:
       # ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/docker/certs/docker.pfx"
     networks: 
       - default
+    ports:
+      - ${BACKEND_PORT}:5000
+      - ${BACKEND_HTTPS_PORT}:5001
     volumes:
       - ../idsrv4/webapi/Logs:/App_Data/Logs
     depends_on:
@@ -23,16 +26,15 @@ services:
     image: redis:latest
     container_name: idsrv4-redis
     volumes:
-      - redis-data:/data
+      - redis_data:/data
     ports:
        - ${REDIS_PORT}:6379
     expose: 
        - 6379
-    command: ["redis-server", "--appendonly", "yes"]
 
 networks:
   default:
     driver: bridge
 
 volumes:
-  redis-data:
+  redis_data:
