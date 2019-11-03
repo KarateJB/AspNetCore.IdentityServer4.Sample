@@ -1,5 +1,28 @@
 version: "3"
 services:
+  auth:
+    image: idsrv4-auth:latest
+    build:
+      context: .
+      dockerfile: auth.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv4-auth
+    # environment:
+      # ASPNETCORE_ENVIRONMENT: Docker
+      # ASPNETCORE_Kestrel__Certificates__Default__Password:
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/docker/certs/docker.pfx"
+    networks: 
+      - default
+    ports:
+      - ${BACKEND_PORT}:6000
+      - ${BACKEND_HTTPS_PORT}:6001
+    volumes:
+      # - logs:/App_Data/Logs
+      - ../idsrv4/auth/Logs:/App_Data/Logs
+    depends_on:
+      - redis
+
   webapi:
     image: idsrv4-webapi:latest
     build:
@@ -7,7 +30,7 @@ services:
       dockerfile: webapi.dockerfile
       args:
         env: ${DOCKER_ENV}
-    container_name: minitis
+    container_name: idsrv4-webapi
     # environment:
       # ASPNETCORE_ENVIRONMENT: Docker
       # ASPNETCORE_Kestrel__Certificates__Default__Password:
@@ -18,6 +41,7 @@ services:
       - ${BACKEND_PORT}:5000
       - ${BACKEND_HTTPS_PORT}:5001
     volumes:
+      # - logs:/App_Data/Logs
       - ../idsrv4/webapi/Logs:/App_Data/Logs
     depends_on:
       - redis
@@ -37,4 +61,5 @@ networks:
     driver: bridge
 
 volumes:
+  # logs:
   redis_data:

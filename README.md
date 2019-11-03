@@ -109,14 +109,14 @@ $ dotnet restore
 
 ```
 $ cd src/AspNetCore.IdentityServer4.Auth
-$ dotnet publish --output ../Docker/build/auth --configuration release
+$ dotnet publish --output ../../docker/build/auth --configuration release
 ```
 
 2. Backend (Web API)
 
 ```
 $ cd src/AspNetCore.IdentityServer4.WebApi
-$ dotnet publish --output ../Docker/build/webapi --configuration release
+$ dotnet publish --output ../../docker/build/webapi --configuration release
 ```
 
 
