@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Logging;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -58,6 +59,8 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
+                options.BackchannelHttpHandler = this.getHandler();
+
                 options.Events = new JwtBearerEvents()
                 {
                     OnAuthenticationFailed = (e) =>
@@ -108,6 +111,12 @@ namespace AspNetCore.IdentityServer4.WebApi
                     // config.BaseAddress = new Uri("https://localhost:6001/");
                     config.DefaultRequestHeaders.Add("Accept", "application/json");
                 })
+                .ConfigurePrimaryHttpMessageHandler(h =>
+                {
+                    var handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    return handler;
+                })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5)); // HttpMessageHandler lifetime = 2 min
 
             // services.AddHttpClient<IIdentityClient, IdentityClient>().SetHandlerLifetime(TimeSpan.FromMinutes(2)) // HttpMessageHandler default lifetime = 2 min
@@ -151,6 +160,15 @@ namespace AspNetCore.IdentityServer4.WebApi
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private HttpClientHandler getHandler()
+        {
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.SslProtocols = SslProtocols.Tls12;
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            return handler;
         }
     }
 }

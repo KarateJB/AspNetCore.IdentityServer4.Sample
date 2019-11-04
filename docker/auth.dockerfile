@@ -12,9 +12,9 @@ RUN mv /etc/docker/certs/${env}.pfx /etc/docker/certs/docker.pfx
 COPY ./build/auth ./
 
 ENV TZ "Asia/Taipei"
-ENV LANG "zh_TW.UTF-8"
-ENV LANGUAGE "zh_TW.UTF-8"
-ENV LC_ALL "zh_TW.UTF-8"
+# ENV LANG "zh_TW.UTF-8"
+# ENV LANGUAGE "zh_TW.UTF-8"
+# ENV LC_ALL "zh_TW.UTF-8"
 ENV ASPNETCORE_URLS "http://+:6000;https://+:6001"
 ENV ASPNETCORE_ENVIRONMENT ${env}
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password ""

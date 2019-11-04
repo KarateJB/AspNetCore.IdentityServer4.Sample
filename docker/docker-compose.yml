@@ -7,7 +7,7 @@ services:
       dockerfile: auth.dockerfile
       args:
         env: ${DOCKER_ENV}
-    container_name: idsrv4-auth
+    container_name: demo-auth
     # environment:
       # ASPNETCORE_ENVIRONMENT: Docker
       # ASPNETCORE_Kestrel__Certificates__Default__Password:
@@ -15,8 +15,8 @@ services:
     networks: 
       - default
     ports:
-      - ${BACKEND_PORT}:6000
-      - ${BACKEND_HTTPS_PORT}:6001
+      - ${AUTH_PORT}:6000
+      - ${AUTH_HTTPS_PORT}:6001
     volumes:
       # - logs:/App_Data/Logs
       - ../idsrv4/auth/Logs:/App_Data/Logs
@@ -24,13 +24,13 @@ services:
       - redis
 
   webapi:
-    image: idsrv4-webapi:latest
+    image: idsrv4-backend:latest
     build:
       context: .
       dockerfile: webapi.dockerfile
       args:
         env: ${DOCKER_ENV}
-    container_name: idsrv4-webapi
+    container_name: demo-backend
     # environment:
       # ASPNETCORE_ENVIRONMENT: Docker
       # ASPNETCORE_Kestrel__Certificates__Default__Password:
