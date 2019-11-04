@@ -27,7 +27,7 @@ services:
     image: idsrv4-backend:latest
     build:
       context: .
-      dockerfile: webapi.dockerfile
+      dockerfile: backend.dockerfile
       args:
         env: ${DOCKER_ENV}
     container_name: demo-backend

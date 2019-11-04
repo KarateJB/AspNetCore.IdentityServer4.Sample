@@ -9,7 +9,7 @@ VOLUME /app/App_Data/Logs
 RUN mkdir -p /etc/docker/certs/ 
 COPY ./certs/${env}.pfx /etc/docker/certs/
 RUN mv /etc/docker/certs/${env}.pfx /etc/docker/certs/docker.pfx
-COPY ./build/webapi ./
+COPY ./build/backend ./
 
 ENV TZ "Asia/Taipei"
 # ENV LANG "zh_TW.UTF-8"

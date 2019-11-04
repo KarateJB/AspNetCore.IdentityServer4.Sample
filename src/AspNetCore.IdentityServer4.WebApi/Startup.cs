@@ -1,6 +1,7 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
+using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -59,7 +60,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
-                options.BackchannelHttpHandler = this.getHandler();
+                options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
 
                 options.Events = new JwtBearerEvents()
                 {
@@ -160,15 +161,6 @@ namespace AspNetCore.IdentityServer4.WebApi
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private HttpClientHandler getHandler()
-        {
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.SslProtocols = SslProtocols.Tls12;
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-            return handler;
         }
     }
 }

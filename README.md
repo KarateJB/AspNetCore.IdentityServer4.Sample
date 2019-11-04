@@ -116,7 +116,7 @@ $ dotnet publish --output ../../docker/build/auth --configuration release
 
 ```
 $ cd src/AspNetCore.IdentityServer4.WebApi
-$ dotnet publish --output ../../docker/build/webapi --configuration release
+$ dotnet publish --output ../../docker/build/backend --configuration release
 ```
 
 
