@@ -1,5 +1,24 @@
 version: "3"
 services:
+  
+  openldap:
+    image: osixia/openldap:stable
+    container_name: idsrv4-openldap
+    ports:
+      - ${LDAP_PORT}:389
+    expose:
+      - 389
+
+  redis:
+    image: redis:latest
+    container_name: idsrv4-redis
+    volumes:
+      - redis_data:/data
+    ports:
+       - ${REDIS_PORT}:6379
+    expose: 
+       - 6379
+
   auth:
     image: idsrv4-auth:latest
     build:
@@ -21,6 +40,7 @@ services:
       # - logs:/App_Data/Logs
       - ../idsrv4/auth/Logs:/App_Data/Logs
     depends_on:
+      - openldap
       - redis
 
   webapi:
@@ -44,17 +64,8 @@ services:
       # - logs:/App_Data/Logs
       - ../idsrv4/webapi/Logs:/App_Data/Logs
     depends_on:
+      - openldap
       - redis
-
-  redis:
-    image: redis:latest
-    container_name: idsrv4-redis
-    volumes:
-      - redis_data:/data
-    ports:
-       - ${REDIS_PORT}:6379
-    expose: 
-       - 6379
 
 networks:
   default:

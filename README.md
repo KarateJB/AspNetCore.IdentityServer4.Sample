@@ -128,3 +128,10 @@ $ docker-compose build [--no-cache]
 $ docker-compose up -d
 ```
 
+
+# Reference
+
+- [OpenLDAP – How To Add a User](https://tylersguides.com/guides/openldap-how-to-add-a-user/)
+- [OpenLdap: How to create users in command line?](https://github.com/osixia/docker-openldap/issues/227#issuecomment-431375243)
+
+
