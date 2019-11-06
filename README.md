@@ -9,6 +9,7 @@
 - [[ASP.NET Core] Identity Server 4 – Refresh Token](https://karatejb.blogspot.com/2019/09/aspnet-core-identity-server-4-refresh.html)
 - [[ASP.NET Core] Identity Server 4 – Role based authorization](https://karatejb.blogspot.com/2019/10/aspnet-core-identity-server-4-role.html)
 - [[ASP.NET Core] Identity Server 4 – Policy based authorization](https://karatejb.blogspot.com/2019/10/aspnet-core-identity-server-4-policy.html)
+- [[ASP.NET Core] Identity Server 4 – Dockerize](https://karatejb.blogspot.com/2019/11/aspnet-core-identity-server-4-dockerize.html)
 
 
 # Create New Poject
@@ -16,12 +17,14 @@
 ## Create dotnet project
 
 ```
+$ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.Auth
 $ dotnet new sln --name AspNetCore.IdentityServer4
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj
 ```
 
 ```
+$ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.WebApi
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj
 ```
@@ -30,7 +33,7 @@ $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebAp
 
 ```
 $ cd AspNetCore.IdentityServer4.Auth
-$ dotnet add package IdentityServer4 --version 2.4.0
+$ dotnet add package IdentityServer4 --version 3.0.1
 $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
 ```
 
