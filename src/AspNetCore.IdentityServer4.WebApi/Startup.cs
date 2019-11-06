@@ -1,6 +1,7 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Services;
+using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Logging;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -58,6 +60,8 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
+                options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
+
                 options.Events = new JwtBearerEvents()
                 {
                     OnAuthenticationFailed = (e) =>
@@ -107,6 +111,12 @@ namespace AspNetCore.IdentityServer4.WebApi
                     config.Timeout = TimeSpan.FromMinutes(5);
                     // config.BaseAddress = new Uri("https://localhost:6001/");
                     config.DefaultRequestHeaders.Add("Accept", "application/json");
+                })
+                .ConfigurePrimaryHttpMessageHandler(h =>
+                {
+                    var handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    return handler;
                 })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5)); // HttpMessageHandler lifetime = 2 min
 

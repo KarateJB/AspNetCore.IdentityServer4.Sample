@@ -9,6 +9,7 @@
 - [[ASP.NET Core] Identity Server 4 – Refresh Token](https://karatejb.blogspot.com/2019/09/aspnet-core-identity-server-4-refresh.html)
 - [[ASP.NET Core] Identity Server 4 – Role based authorization](https://karatejb.blogspot.com/2019/10/aspnet-core-identity-server-4-role.html)
 - [[ASP.NET Core] Identity Server 4 – Policy based authorization](https://karatejb.blogspot.com/2019/10/aspnet-core-identity-server-4-policy.html)
+- [[ASP.NET Core] Identity Server 4 – Dockerize](https://karatejb.blogspot.com/2019/11/aspnet-core-identity-server-4-dockerize.html)
 
 
 # Create New Poject
@@ -16,12 +17,14 @@
 ## Create dotnet project
 
 ```
+$ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.Auth
 $ dotnet new sln --name AspNetCore.IdentityServer4
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj
 ```
 
 ```
+$ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.WebApi
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj
 ```
@@ -30,7 +33,7 @@ $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebAp
 
 ```
 $ cd AspNetCore.IdentityServer4.Auth
-$ dotnet add package IdentityServer4 --version 2.4.0
+$ dotnet add package IdentityServer4 --version 3.0.1
 $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
 ```
 
@@ -57,7 +60,7 @@ Update the following config to connect to your own OpenOLAP service.
 ## Restore packages
 
 ```
-$ cd AspNetCore.IdentityServer4.Auth
+$ cd src
 $ dotnet restore
 ```
 
@@ -92,5 +95,46 @@ or run Auth Service(`auth`) or API Service(`webapi`) individually.
 $ gulp run auth
 $ gulp run webapi
 ```
+
+# Run on docker
+
+## Restore packages
+
+```
+$ cd src
+$ dotnet restore
+```
+
+
+## Build the projects
+
+1. Auth server
+
+```
+$ cd src/AspNetCore.IdentityServer4.Auth
+$ dotnet publish --output ../../docker/build/auth --configuration release
+```
+
+2. Backend (Web API)
+
+```
+$ cd src/AspNetCore.IdentityServer4.WebApi
+$ dotnet publish --output ../../docker/build/backend --configuration release
+```
+
+
+## Build Docker images and start containers
+
+```
+$ cd docker
+$ docker-compose build [--no-cache]
+$ docker-compose up -d
+```
+
+
+# Reference
+
+- [OpenLDAP – How To Add a User](https://tylersguides.com/guides/openldap-how-to-add-a-user/)
+- [OpenLdap: How to create users in command line?](https://github.com/osixia/docker-openldap/issues/227#issuecomment-431375243)
 
 

@@ -1,0 +1,101 @@
+version: "3"
+services:
+  
+  openldap:
+    image: osixia/openldap:stable
+    container_name: idsrv-openldap
+    volumes:
+      - openldap_database:/var/lib/ldap
+      - openldap_slapd:/etc/ldap/slapd.d
+    ports:
+      - ${LDAP_PORT}:389
+    expose:
+      - 389
+
+  redis:
+    image: redis:latest
+    container_name: idsrv-redis
+    volumes:
+      - redis_data:/data
+    ports:
+       - ${REDIS_PORT}:6379
+    expose: 
+       - 6379
+
+  auth:
+    image: idsrv4-auth:latest
+    build:
+      context: .
+      dockerfile: auth.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv-auth
+    # environment:
+      # ASPNETCORE_ENVIRONMENT: Docker
+      # ASPNETCORE_Kestrel__Certificates__Default__Password:
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/docker/certs/docker.pfx"
+    networks: 
+      - default
+    # ports:
+    #   - ${AUTH_PORT}:6000
+    #   - ${AUTH_HTTPS_PORT}:6001
+    volumes:
+      # - logs:/App_Data/Logs
+      - ../Logs/Auth:/App_Data/Logs
+    depends_on:
+      - openldap
+      - redis
+
+  backend:
+    image: idsrv4-backend:latest
+    build:
+      context: .
+      dockerfile: backend.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv-backend
+    # environment:
+      # ASPNETCORE_ENVIRONMENT: Docker
+      # ASPNETCORE_Kestrel__Certificates__Default__Password:
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: "/etc/docker/certs/docker.pfx"
+    networks: 
+      - default
+    # ports:
+    #   - ${BACKEND_PORT}:5000
+    #   - ${BACKEND_HTTPS_PORT}:5001
+    volumes:
+      # - logs:/App_Data/Logs
+      - ../Logs/Backend:/App_Data/Logs
+    depends_on:
+      - openldap
+      - redis
+
+  nginx:
+    image: idsrv4-nginx:latest
+    container_name: idsrv-nginx
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    networks: 
+      - default
+    ports:
+      - 80:80
+      - ${AUTH_PORT}:6000
+      - ${AUTH_HTTPS_PORT}:6001
+      - ${BACKEND_PORT}:5000
+      - ${BACKEND_HTTPS_PORT}:5001
+    depends_on:
+      - auth
+      - backend
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  openldap_database:
+  openldap_slapd:
+  redis_data:
+  # logs:
