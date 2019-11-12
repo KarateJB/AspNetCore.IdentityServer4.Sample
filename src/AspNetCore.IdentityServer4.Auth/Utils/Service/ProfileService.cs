@@ -5,11 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models;
-using IdentityModel;
-using IdentityServer4.Extensions;
+using AspNetCore.IdentityServer4.Service.Cache;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
-using JB.Infra.Service.Redis;
 
 namespace AspNetCore.IdentityServer4.Auth.Utils.Service
 {
