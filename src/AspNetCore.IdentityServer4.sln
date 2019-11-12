@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.IdentityServer4.Auth", "AspNetCore.IdentityServer4.Auth\AspNetCore.IdentityServer4.Auth.csproj", "{7646B6D4-D3C8-476E-9377-11FB39BE9D40}"
 EndProject
@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.IdentityServer4.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Backend", "01 Backend", "{C6AA0361-359D-41D0-918F-83BCA7AF346A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Infra", "02 Infra", "{360F4263-E246-41E5-8FBC-EAEEF46E1555}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Infra", "03 Infra", "{360F4263-E246-41E5-8FBC-EAEEF46E1555}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Service", "02 Service", "{F110A61B-EFE1-4330-977B-11E1B9EFBCED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.IdentityServer4.Service", "AspNetCore.IdentityServer4.Service\AspNetCore.IdentityServer4.Service.csproj", "{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +63,18 @@ Global
 		{D2593884-B490-419A-B531-DA2C54A2F2B5}.Release|x64.Build.0 = Release|Any CPU
 		{D2593884-B490-419A-B531-DA2C54A2F2B5}.Release|x86.ActiveCfg = Release|Any CPU
 		{D2593884-B490-419A-B531-DA2C54A2F2B5}.Release|x86.Build.0 = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|x64.Build.0 = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Debug|x86.Build.0 = Debug|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x64.ActiveCfg = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x64.Build.0 = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x86.ActiveCfg = Release|Any CPU
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +83,7 @@ Global
 		{7646B6D4-D3C8-476E-9377-11FB39BE9D40} = {C6AA0361-359D-41D0-918F-83BCA7AF346A}
 		{D314A383-B6FB-48C5-881B-E4C855184A5C} = {C6AA0361-359D-41D0-918F-83BCA7AF346A}
 		{D2593884-B490-419A-B531-DA2C54A2F2B5} = {360F4263-E246-41E5-8FBC-EAEEF46E1555}
+		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7} = {F110A61B-EFE1-4330-977B-11E1B9EFBCED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51A8DB13-AD5E-42FF-B127-1EA1B8A97F01}

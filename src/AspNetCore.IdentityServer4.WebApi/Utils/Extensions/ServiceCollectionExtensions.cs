@@ -1,5 +1,5 @@
 ﻿using AspNetCore.IdentityServer4.Core;
-using JB.Infra.Service.Redis;
+using AspNetCore.IdentityServer4.Service.Cache;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
