@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Service", "02 Service", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.IdentityServer4.Service", "AspNetCore.IdentityServer4.Service\AspNetCore.IdentityServer4.Service.csproj", "{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.IdentityServer4.UnitTest", "AspNetCore.IdentityServer4.UnitTest\AspNetCore.IdentityServer4.UnitTest.csproj", "{42FD54EE-976D-4692-BC7E-90031BABF78D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x64.Build.0 = Release|Any CPU
 		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x86.ActiveCfg = Release|Any CPU
 		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7}.Release|x86.Build.0 = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|x64.Build.0 = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Debug|x86.Build.0 = Debug|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|x64.ActiveCfg = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|x64.Build.0 = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|x86.ActiveCfg = Release|Any CPU
+		{42FD54EE-976D-4692-BC7E-90031BABF78D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
