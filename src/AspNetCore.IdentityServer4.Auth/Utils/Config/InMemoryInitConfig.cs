@@ -40,27 +40,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "OidcBackend",
-                    ClientName = "OpenId Connect Client",
-                    AllowedGrantTypes = GrantTypes.Hybrid,
-                    AllowedScopes = {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        //IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.StandardScopes.Profile,
-                    },
-                    AlwaysSendClientClaims = true,
-                    UpdateAccessTokenClaimsOnRefresh = true,
-                    AlwaysIncludeUserClaimsInIdToken = true,
-                    AllowAccessTokensViaBrowser = true,
-                    IncludeJwtId = true,
-                    ClientSecrets = { new Secret("secret".Sha256()) },
-                    AllowOfflineAccess = true,
-                    AccessTokenLifetime = 3600,
-                },
-
-                new Client
-                {
-                    Enabled = true,
                     ClientId = "MyBackend",
                     ClientName = "MyBackend Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
@@ -122,8 +101,26 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //    // Assign const department
                     //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
-                }
+                },
 
+                // Client credentials
+                new Client
+                {
+                    Enabled = true,
+                    ClientId = "Resources",
+                    ClientName = "Resource Owners",
+                    AllowedScopes =
+                    {
+                        "MyBackendApi2",
+                    },
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AlwaysSendClientClaims = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    IncludeJwtId = true,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AccessTokenLifetime = 36000,
+                }
             };
         }
     }
