@@ -42,6 +42,8 @@ namespace AspNetCore.IdentityServer4.Auth
 
             var builder = services.AddIdentityServer(options =>
             {
+                // options.PublicOrigin = "https://localhost:6001";
+                // options.IssuerUri = "https://localhost:6001";
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
