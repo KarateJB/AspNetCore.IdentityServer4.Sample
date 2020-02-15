@@ -133,6 +133,34 @@ $ docker-compose build [--no-cache]
 $ docker-compose up -d
 ```
 
+## (Optional) How to trust Self-signed certificate in Linux container
+
+```s
+$ apt-get install ca-certificates
+
+$ CERT=Docker.crt
+$ cp /etc/docker/$CERT /usr/share/ca-certificates
+```
+
+Then include the certificate,
+
+```s
+$ dpkg-reconfigure ca-certificates
+```
+
+Choose `3. ask` options and select the Self-signed certificate.
+
+
+Finally, 
+
+```s
+$ CERT=Docker.crt
+$ echo "+$CERT" >/etc/ca-certificates/update.d/activate_my_cert
+$ cp /etc/docker/$CERT /usr/local/share/ca-certificates/
+$ update-ca-certificates
+```
+
+
 
 # Reference
 

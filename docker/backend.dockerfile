@@ -7,6 +7,8 @@ WORKDIR /app
 VOLUME /app/App_Data/Logs
 
 RUN mkdir -p /etc/docker/certs/ 
+COPY ./certs/${env}.crt /etc/docker/certs/
+COPY ./certs/${env}.key /etc/docker/certs/
 COPY ./certs/${env}.pfx /etc/docker/certs/
 RUN mv /etc/docker/certs/${env}.pfx /etc/docker/certs/docker.pfx
 COPY ./build/backend ./

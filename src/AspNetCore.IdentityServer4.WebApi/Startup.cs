@@ -115,6 +115,8 @@ namespace AspNetCore.IdentityServer4.WebApi
                 .ConfigurePrimaryHttpMessageHandler(h =>
                 {
                     var handler = new HttpClientHandler();
+
+                    // Enable sending request to server with untrusted SSL cert 
                     handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                     return handler;
                 })
