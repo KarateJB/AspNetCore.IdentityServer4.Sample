@@ -1,9 +1,12 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models;
+using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -97,6 +100,19 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.AddAuthorization(options => options.AddPolicy("SalesDepartmentOrAdminPolicy", policy => policy.RequireAssertion(
                 context => context.User.Claims.Any(
                     x => (x.Type.Equals(CustomClaimTypes.Department) && x.Value.Equals("Sales")) || (x.Type.Equals(ClaimTypes.Role) && x.Value.Equals("admin"))))));
+            #endregion
+
+            #region Enable custom Authorization Handlers
+            services.AddSingleton<IAuthorizationHandler, EmailDomainAuthHandler>();
+            services.AddSingleton<IAuthorizationHandler, UserNameAuthHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                var emailDomainRequirement = new EmailDomainRequirement("google.com");
+                var userNameRequirement = new UserNameRequirement("jblin");
+                options.AddPolicy("DoaminAndUsernamePolicy", policy =>
+                         policy.AddRequirements(emailDomainRequirement, userNameRequirement));
+            });
             #endregion
 
             #region Inject AppSetting configuration
