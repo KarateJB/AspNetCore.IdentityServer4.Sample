@@ -102,14 +102,16 @@ namespace AspNetCore.IdentityServer4.WebApi
                     x => (x.Type.Equals(CustomClaimTypes.Department) && x.Value.Equals("Sales")) || (x.Type.Equals(ClaimTypes.Role) && x.Value.Equals("admin"))))));
             #endregion
 
-            #region Enable custom Authorization Handlers
+            #region Enable custom Authorization Handlers (The registration order matters!)
             services.AddSingleton<IAuthorizationHandler, EmailDomainAuthHandler>();
             services.AddSingleton<IAuthorizationHandler, UserNameAuthHandler>();
 
             services.AddAuthorization(options =>
             {
-                var emailDomainRequirement = new EmailDomainRequirement("google.com");
+                var emailDomainRequirement = new EmailDomainRequirement("fake.com");
                 var userNameRequirement = new UserNameRequirement("jblin");
+
+                options.InvokeHandlersAfterFailure = false; // Default: true
                 options.AddPolicy("DoaminAndUsernamePolicy", policy =>
                          policy.AddRequirements(emailDomainRequirement, userNameRequirement));
             });

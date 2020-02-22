@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -32,25 +29,31 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
             string validateMsgOK = $"Validate OK with {nameof(UserNameAuthHandler)}";
             string validateMsgNG = $"Validate NG with {nameof(UserNameAuthHandler)}";
 
-            this.logger.LogDebug($"Start validating user claim with {nameof(UserNameAuthHandler)}");
-
             ClaimsPrincipal userClaim = context.User;
-            // Verify the result of last Authorization handler
-            if (userClaim.Identity == null || !userClaim.Identities.Any(i => i.IsAuthenticated))
+
+            if (context.HasFailed || userClaim.Identity == null || !userClaim.Identities.Any(i => i.IsAuthenticated))
             {
+                context.Fail();
                 return;
             }
 
-            var username = userClaim.Identity.Name;
+            var nameClaim = userClaim.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier));
 
-            // Verify User name
-            if (!username.Equals(requirement.UserName))
+            if (nameClaim != null)
             {
-                this.logger.LogDebug(validateMsgNG);
-                return;
+                // Verify name
+                if (nameClaim.Value.Equals(requirement.UserName))
+                {
+                    this.logger.LogDebug(validateMsgOK);
+                    context.Succeed(requirement);
+                    return;
+                }
             }
 
-            this.logger.LogDebug(validateMsgOK);
+            this.logger.LogDebug(validateMsgNG);
+            context.Fail();
+
+            await Task.CompletedTask;
         }
     }
 }

@@ -28,15 +28,14 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
         /// </summary>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, EmailDomainRequirement requirement)
         {
-            string validateMsgOK = $"Validate OK with {nameof(UserNameAuthHandler)}";
-            string validateMsgNG = $"Validate NG with {nameof(UserNameAuthHandler)}";
-
-            this.logger.LogDebug($"Start validating user claim with {nameof(UserNameAuthHandler)}");
+            string validateMsgOK = $"Validate OK with {nameof(EmailDomainAuthHandler)}";
+            string validateMsgNG = $"Validate NG with {nameof(EmailDomainAuthHandler)}";
 
             ClaimsPrincipal userClaim = context.User;
-            // Verify the result of last Authorization handler
-            if (userClaim.Identity == null || !userClaim.Identities.Any(i => i.IsAuthenticated))
+
+            if (context.HasFailed || userClaim.Identity == null || !userClaim.Identities.Any(i => i.IsAuthenticated))
             {
+                context.Fail();
                 return;
             }
 
@@ -52,15 +51,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
                 if (userDomain.Equals(requirement.Domain))
                 {
                     this.logger.LogDebug(validateMsgOK);
+                    context.Succeed(requirement);
                     return;
                 }
             }
-            else
-            {
-                this.logger.LogDebug(validateMsgNG);
-                return;
 
-            }
+            this.logger.LogDebug(validateMsgNG);
+            context.Fail();
+
+            await Task.CompletedTask;
         }
     }
 }

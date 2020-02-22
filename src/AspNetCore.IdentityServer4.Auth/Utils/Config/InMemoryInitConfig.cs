@@ -77,6 +77,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     AllowedScopes = {
                         "MyBackendApi2",
                         IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Email
                     },
                     AlwaysSendClientClaims = true,
                     UpdateAccessTokenClaimsOnRefresh = true,
