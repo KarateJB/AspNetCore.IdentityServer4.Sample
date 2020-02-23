@@ -34,6 +34,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
             if (context.HasFailed || userClaim.Identity == null || !userClaim.Identities.Any(i => i.IsAuthenticated))
             {
                 context.Fail();
+                this.logger.LogWarning($"Skip validating with {nameof(UserNameAuthHandler)} cus the authorization process had been failed!");
                 return;
             }
 

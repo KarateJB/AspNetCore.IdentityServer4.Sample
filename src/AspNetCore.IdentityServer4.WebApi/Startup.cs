@@ -111,7 +111,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 var emailDomainRequirement = new EmailDomainRequirement("fake.com");
                 var userNameRequirement = new UserNameRequirement("jblin");
 
-                options.InvokeHandlersAfterFailure = false; // Default: true
+                // options.InvokeHandlersAfterFailure = false; // Default: true
                 options.AddPolicy("DoaminAndUsernamePolicy", policy =>
                          policy.AddRequirements(emailDomainRequirement, userNameRequirement));
             });
