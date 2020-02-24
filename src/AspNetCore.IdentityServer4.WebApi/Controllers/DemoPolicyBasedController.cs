@@ -108,6 +108,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             return "Yes, only that in Sales Deparment or an Admin can access this API!";
         }
 
+        [HttpGet]
+        [Route("AdminOrUserWithCusomHandler/Get")]
+        [Authorize(Policy = "AdminOrUserPolicy")]
+        [Authorize(Policy = "DoaminAndUsernamePolicy")]
+        public ActionResult<string> AdminOrUserWithCusomHandlerGet()
+        {
+            return "Yes, only an Admin or User can access this API!";
+        }
+
         private void logtUserClaims()
         {
             this.HttpContext.User.Claims.ToList().ForEach(c => this._logger.LogInformation($"Type= {c.Type}, Value= {c.Value}"));

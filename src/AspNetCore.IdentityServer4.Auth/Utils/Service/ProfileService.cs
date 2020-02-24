@@ -29,19 +29,26 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             this.cache = cache;
             this.cacheKeys = cacheKeys;
         }
-        
+
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
 
             //sub is your userId.
             var subClaim = context.Subject.Claims.FirstOrDefault(x => x.Type == "sub");
 
+
+            // Custom claims
             if (!string.IsNullOrEmpty(subClaim?.Value))
             {
                 context.IssuedClaims = await this.getClaims(subClaim.Value);
             }
 
-            // return Task.CompletedTask;
+            // Add more claims, such as Email (See https://github.com/IdentityServer/IdentityServer4/issues/678)
+            var emailClaim = context.Subject.Claims.FirstOrDefault(c => c.Type.Equals(IdentityModel.JwtClaimTypes.Email));
+            if (emailClaim != null)
+                context.IssuedClaims.Add(emailClaim);
+
+            await Task.CompletedTask;
         }
 
         public async Task IsActiveAsync(IsActiveContext context)
@@ -51,7 +58,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             //context.IsActive = user?.IsActive == true;
 
             context.IsActive = true;
-            // return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
         private async Task<List<Claim>> getClaims(string userName)
