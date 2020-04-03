@@ -72,32 +72,8 @@ namespace AspNetCore.IdentityServer4.Auth
             }
             else
             {
-                var key = CryptoHelper.CreateRsaSecurityKey();
-
-                RSAParameters parameters;
-
-                if (key.Rsa != null)
-                {
-                    parameters = key.Rsa.ExportParameters(includePrivateParameters: true);
-                }
-                else
-                {
-                    parameters = key.Parameters;
-                }
-
-                // var tempKey = new CryptoHelper.TemporaryRsaKey
-                // {
-                //     Parameters = parameters,
-                //     KeyId = key.KeyId
-                // };
-
-                // if (persistKey)
-                // {
-                //     File.WriteAllText(filename, JsonConvert.SerializeObject(tempKey, new JsonSerializerSettings { ContractResolver = new CryptoHelper.RsaKeyContractResolver() }));
-                // }
-
-                builder.AddSigningCredential(key, IdentityServerConstants.RsaSigningAlgorithm.RS256);
-
+                builder.AddSigningCredentialFromRedis(this.configuration);
+                
                 // Or Use self-signed cert
                 // var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
                 // var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);

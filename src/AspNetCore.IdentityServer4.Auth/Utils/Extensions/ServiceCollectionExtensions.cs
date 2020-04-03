@@ -16,8 +16,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
         /// <returns>Self</returns>
         public static IServiceCollection AddCacheServices(this IServiceCollection services)
         {
-            services.AddSingleton<CacheKeyFactory, CacheKeyFactory>();
-            services.AddScoped<ICacheService, RedisService>();
+            services.AddSingleton<ICacheService, RedisService>();
             return services;
         }
     }

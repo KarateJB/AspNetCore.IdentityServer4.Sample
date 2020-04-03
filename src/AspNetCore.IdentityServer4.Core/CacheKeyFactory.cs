@@ -3,15 +3,26 @@
     /// <summary>
     /// Cache key factory
     /// </summary>
-    public class CacheKeyFactory
+    public static class CacheKeyFactory
     {
-        private string KeyPrefixUserProfile { get; } = "UserProfile";
+        private static string KeyPrefixUserProfile { get; } = "UserProfile";
 
         /// <summary>
         /// Key for UserProfile
         /// </summary>
         /// <param name="subject">Sub</param>
         /// <returns>Key</returns>
-        public string UserProfile(string subject) => $"{this.KeyPrefixUserProfile}-{subject}";
+        public static string UserProfile(string subject) => $"{KeyPrefixUserProfile}-{subject}";
+
+        /// <summary>
+        /// Key for Auth Server's Signing credential
+        /// </summary>
+        /// <param name="isDeprecated">Enable getting the key for deprecated Signing credential</param>
+        /// <returns>Key</returns>
+        public static string SigningCredential(bool isDeprecated = false)
+        {
+            const string prefix = "SigningCredential";
+            return isDeprecated ? $"{prefix}Deprecated" : $"{prefix}";
+        }
     }
 }

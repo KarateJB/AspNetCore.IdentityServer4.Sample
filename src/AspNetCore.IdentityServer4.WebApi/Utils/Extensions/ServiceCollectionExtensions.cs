@@ -16,7 +16,6 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
         /// <returns>Self</returns>
         public static IServiceCollection AddCacheServices(this IServiceCollection services)
         {
-            services.AddSingleton<CacheKeyFactory, CacheKeyFactory>();
             services.AddScoped<ICacheService, RedisService>();
             return services;
         }

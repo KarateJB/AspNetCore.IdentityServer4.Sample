@@ -13,20 +13,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     public class UserProfileController : ControllerBase
     {
         private readonly ICacheService cache = null;
-        private readonly CacheKeyFactory cacheKeys = null;
 
-        public UserProfileController(
-            ICacheService cache,
-            CacheKeyFactory cacheKeys)
+        public UserProfileController(ICacheService cache)
         {
             this.cache = cache;
-            this.cacheKeys = cacheKeys;
         }
 
         [HttpGet("Get/{userName}")]
         public async Task<UserProfile> Get([FromRoute] string userName)
         {
-            var cacheKey = this.cacheKeys.UserProfile(userName);
+            var cacheKey = CacheKeyFactory.UserProfile(userName);
             (UserProfile userRole, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (!isOK)
@@ -40,7 +36,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult> Create([FromBody] UserProfile user)
         {
-            var cacheKey = this.cacheKeys.UserProfile(user.Username);
+            var cacheKey = CacheKeyFactory.UserProfile(user.Username);
             await this.cache.SaveCacheAsync<UserProfile>(cacheKey, user);
             return this.Ok();
         }
@@ -48,7 +44,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [HttpPost("Remove/{userName}")]
         public async Task<ActionResult> Remove([FromRoute] string userName)
         {
-            var cacheKey = this.cacheKeys.UserProfile(userName);
+            var cacheKey = CacheKeyFactory.UserProfile(userName);
             await this.cache.ClearCacheAsync(cacheKey);
             return this.Ok();
         }

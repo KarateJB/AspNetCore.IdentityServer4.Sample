@@ -1,5 +1,8 @@
 namespace AspNetCore.IdentityServer4.Auth.Models
 {
+    /// <summary>
+    /// LDAP User
+    /// </summary>
     public class LdapUser
     {
          /// <summary>

@@ -15,14 +15,15 @@ namespace AspNetCore.IdentityServer4.Auth.Events
     public class UserProfileCacheSink : IEventSink
     {
         private IHttpContextAccessor httpContextAccessor = null;
-        private readonly CacheKeyFactory cacheKeyFactory = null;
         private readonly IMemoryCache cache = null;
         private readonly ILogger<UserProfileCacheSink> logger = null;
 
-        public UserProfileCacheSink(IHttpContextAccessor httpContextAccessor, CacheKeyFactory cacheKeyFactory, IMemoryCache cache, ILogger<UserProfileCacheSink> logger)
+        public UserProfileCacheSink(
+            IHttpContextAccessor httpContextAccessor, 
+            IMemoryCache cache,
+            ILogger<UserProfileCacheSink> logger)
         {
             this.httpContextAccessor = httpContextAccessor;
-            this.cacheKeyFactory = cacheKeyFactory;
             this.cache = cache;
             this.logger = logger;
         }
@@ -43,7 +44,7 @@ namespace AspNetCore.IdentityServer4.Auth.Events
                             var user = this.httpContextAccessor.HttpContext.User;
                             var subject = user.Claims.Where(x => x.Type == "sub").FirstOrDefault()?.Value;
                             var token = session.GetString("AccessToken");
-                            string cacheKey = this.cacheKeyFactory.UserProfile(subject);
+                            string cacheKey = CacheKeyFactory.UserProfile(subject);
                             _ = await this.cache.GetOrCreateAsync<JObject>(cacheKey, async entry =>
                             {
                                 entry.SlidingExpiration = TimeSpan.FromSeconds(600);
