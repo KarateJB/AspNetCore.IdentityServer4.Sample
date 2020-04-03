@@ -9,8 +9,10 @@ using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Service.Cache;
 using IdentityServer4;
 using IdentityServer4.Configuration;
+using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
 {
@@ -28,18 +30,26 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
         public static IIdentityServerBuilder AddSigningCredentialFromRedis(
             this IIdentityServerBuilder builder, IConfiguration configuration)
         {
+            // Variables
             const double DEFAULT_EXPIRY = 201600; // 201600 sec = 7 days
             var utcNow = DateTimeOffset.UtcNow;
-            Microsoft.IdentityModel.Tokens.RsaSecurityKey key = null; // The Key for Identity Server
-            SigningCredential credential = null; // The Signing credential stored in Redis
+            var redisKeyWorkingSk = CacheKeyFactory.SigningCredential();
+            var redisKeyDeprecatedSk = CacheKeyFactory.SigningCredential(isDeprecated: true);
 
-            // Bind configuration
+            // RSA key object
+            Microsoft.IdentityModel.Tokens.RsaSecurityKey key = null; // The Key for Idsrv
+
+            // Signing credetial object from Redis
+            SigningCredential credential = null; // The Signing credential stored in Redis
+            List<SigningCredential> deprecatedCredentials = null; // The Deprecated Signing credentials stored in Redis
+
+            // Configuration
             var appSettings = new AppSettings();
             configuration.Bind(appSettings);
 
             using (ICacheService redis = new RedisService(configuration))
             {
-                bool isSigningCredentialExists = redis.GetCache(CacheKeyFactory.SigningCredential(), out credential);
+                bool isSigningCredentialExists = redis.GetCache(redisKeyWorkingSk, out credential);
 
                 if (isSigningCredentialExists && credential.ExpireOn >= utcNow)
                 {
@@ -49,9 +59,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                 else if (isSigningCredentialExists && credential.ExpireOn < utcNow)
                 {
                     #region Move the expired Signing credential to Redis's Decprecated-Signing-Credential key
-                    var deprecatedRedisKey = CacheKeyFactory.SigningCredential(isDeprecated: true);
 
-                    _ = redis.GetCache(deprecatedRedisKey, out List<SigningCredential> deprecatedCredentials);
+                    _ = redis.GetCache(redisKeyDeprecatedSk, out deprecatedCredentials);
 
                     if (deprecatedCredentials == null)
                     {
@@ -60,12 +69,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
 
                     deprecatedCredentials.Add(credential);
 
-                    redis.SaveCache(deprecatedRedisKey, deprecatedCredentials);
+                    redis.SaveCache(redisKeyDeprecatedSk, deprecatedCredentials);
                     #endregion
 
                     #region Clear the expired Signing credential from Redis's Signing-Credential key
 
-                    redis.ClearCache(CacheKeyFactory.SigningCredential());
+                    redis.ClearCache(redisKeyWorkingSk);
                     #endregion
 
                     // Set flag as False
@@ -78,8 +87,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                 {
                     key = CryptoHelper.CreateRsaSecurityKey();
 
-                    RSAParameters parameters = key.Rsa == null ? 
-                        parameters = key.Parameters : 
+                    RSAParameters parameters = key.Rsa == null ?
+                        parameters = key.Parameters :
                         key.Rsa.ExportParameters(includePrivateParameters: true);
 
                     credential = new SigningCredential
@@ -88,17 +97,38 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                         KeyId = key.KeyId,
                         ExpireOn = DateTimeOffset.UtcNow.AddSeconds(
                             appSettings.Global?.SigningCredential?.AbsoluteExpiry != null ?
-                            (double)appSettings.Global?.SigningCredential?.AbsoluteExpiry.Value:
+                            (double)appSettings.Global?.SigningCredential?.AbsoluteExpiry.Value :
                             DEFAULT_EXPIRY)
                     };
 
                     // Save to Redis
-                    redis.SaveCache(CacheKeyFactory.SigningCredential(), credential);
+                    redis.SaveCache(redisKeyWorkingSk, credential);
                 }
                 #endregion
 
-                // Add the Signing credential
+                // Add the key as the Signing credential for Idsrv
                 builder.AddSigningCredential(key, IdentityServerConstants.RsaSigningAlgorithm.RS256);
+
+                // Also add the expired key for clients' old tokens 
+                if (redis.GetCache(redisKeyDeprecatedSk, out deprecatedCredentials))
+                {
+                    IList<SecurityKeyInfo> deprecatedKeyInfos = new List<SecurityKeyInfo>();
+                    deprecatedCredentials.ForEach(dc =>
+                    {
+                    var deprecatedKeyInfo = new SecurityKeyInfo
+                    {
+                        Key = CryptoHelper.CreateRsaSecurityKey(dc.Parameters, dc.KeyId),
+                        SigningAlgorithm = SecurityAlgorithms.RsaSha256
+                    };
+                    deprecatedKeyInfos.Add(deprecatedKeyInfo);
+                    
+
+                    builder.AddValidationKey(deprecatedKeyInfos.ToArray());
+
+                    // Or add only one
+                    // builder.AddValidationKey(deprecatedKey, IdentityServerConstants.RsaSigningAlgorithm.RS256));
+                });
+            }
             }
 
             return builder;

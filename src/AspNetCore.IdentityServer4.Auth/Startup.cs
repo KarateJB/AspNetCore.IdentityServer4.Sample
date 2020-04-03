@@ -1,18 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using AspNetCore.IdentityServer4.Auth.Events;
+﻿using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
-using AspNetCore.IdentityServer4.Service.Crypto;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
-using IdentityServer4;
-using IdentityServer4.Configuration;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -63,6 +54,8 @@ namespace AspNetCore.IdentityServer4.Auth
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+
+                options.Discovery.ResponseCacheInterval = 60;
             });
 
             // Signing credential
