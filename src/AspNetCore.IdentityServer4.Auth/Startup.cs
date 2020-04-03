@@ -1,7 +1,14 @@
-﻿using AspNetCore.IdentityServer4.Auth.Events;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
+using AspNetCore.IdentityServer4.Service.Crypto;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
@@ -16,11 +23,17 @@ namespace AspNetCore.IdentityServer4.Auth
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IConfiguration configuration { get; }
+
+        private IWebHostEnvironment env { get; }
+
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment env)
         {
-            this.Configuration = configuration;
+            this.configuration = configuration;
+            this.env = env;
         }
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -51,13 +64,35 @@ namespace AspNetCore.IdentityServer4.Auth
             });
 
             // Signing credential
-            builder.AddDeveloperSigningCredential();
+            if (this.env.IsDevelopment())
+            {
+                builder.AddDeveloperSigningCredential();
+            }
+            else
+            {
+                using (var rsa = new RsaService())
+                {
+                    var key = rsa.CreateKeyAsync().Result;
+                    ////byte[] publicKeyBytes = Encoding.ASCII.GetBytes(key.PublicKey);
+                    var publicKeyBytes = Convert.FromBase64String(key.PublicKey);
+
+                    var cert = new X509Certificate2(publicKeyBytes);
+                    RSA privateKey = RSA.Create();
+                    privateKey.FromXmlString(key.PrivateKey);
+                    cert.PrivateKey = privateKey;
+                    builder.AddSigningCredential(cert);
+                }
+                // Or Use self-signed cert
+                // var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
+                // var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
+                // builder.AddSigningCredential(cert);
+            }
 
             // Set in-memory, code config
             builder.AddInMemoryIdentityResources(InMemoryInitConfig.GetIdentityResources());
             builder.AddInMemoryApiResources(InMemoryInitConfig.GetApiResources());
             builder.AddInMemoryClients(InMemoryInitConfig.GetClients());
-            builder.AddLdapUsers<OpenLdapAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // OpenLDAP
+            builder.AddLdapUsers<OpenLdapAppUser>(this.configuration.GetSection("LdapServer"), UserStore.InMemory); // OpenLDAP
                                                                                                                     // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
 
             builder.AddProfileService<ProfileService>();
