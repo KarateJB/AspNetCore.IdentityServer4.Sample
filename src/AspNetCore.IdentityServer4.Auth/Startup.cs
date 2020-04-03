@@ -11,6 +11,8 @@ using AspNetCore.IdentityServer4.Auth.Utils.Service;
 using AspNetCore.IdentityServer4.Service.Crypto;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
+using IdentityServer4;
+using IdentityServer4.Configuration;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,24 +66,38 @@ namespace AspNetCore.IdentityServer4.Auth
             });
 
             // Signing credential
-            if (this.env.IsDevelopment())
+            if (!this.env.IsDevelopment())
             {
                 builder.AddDeveloperSigningCredential();
             }
             else
             {
-                using (var rsa = new RsaService())
-                {
-                    var key = rsa.CreateKeyAsync().Result;
-                    ////byte[] publicKeyBytes = Encoding.ASCII.GetBytes(key.PublicKey);
-                    var publicKeyBytes = Convert.FromBase64String(key.PublicKey);
+                var key = CryptoHelper.CreateRsaSecurityKey();
 
-                    var cert = new X509Certificate2(publicKeyBytes);
-                    RSA privateKey = RSA.Create();
-                    privateKey.FromXmlString(key.PrivateKey);
-                    cert.PrivateKey = privateKey;
-                    builder.AddSigningCredential(cert);
+                RSAParameters parameters;
+
+                if (key.Rsa != null)
+                {
+                    parameters = key.Rsa.ExportParameters(includePrivateParameters: true);
                 }
+                else
+                {
+                    parameters = key.Parameters;
+                }
+
+                // var tempKey = new CryptoHelper.TemporaryRsaKey
+                // {
+                //     Parameters = parameters,
+                //     KeyId = key.KeyId
+                // };
+
+                // if (persistKey)
+                // {
+                //     File.WriteAllText(filename, JsonConvert.SerializeObject(tempKey, new JsonSerializerSettings { ContractResolver = new CryptoHelper.RsaKeyContractResolver() }));
+                // }
+
+                builder.AddSigningCredential(key, IdentityServerConstants.RsaSigningAlgorithm.RS256);
+
                 // Or Use self-signed cert
                 // var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
                 // var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
