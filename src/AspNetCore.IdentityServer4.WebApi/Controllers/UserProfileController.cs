@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
 using Microsoft.AspNetCore.Mvc;
 

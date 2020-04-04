@@ -1,4 +1,5 @@
-﻿using AspNetCore.IdentityServer4.WebApi.Models;
+﻿using AspNetCore.IdentityServer4.Core.Utils.Factory;
+using AspNetCore.IdentityServer4.WebApi.Models;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,12 +13,11 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
 {
+    /// <summary>
+    /// IdentityClient
+    /// </summary>
     public class IdentityClient : IIdentityClient
     {
-        public void Dispose()
-        {
-        }
-
         private const string SECRETKEY = "secret";
         private const string CLIENTID = "PolicyBasedBackend"; // Or "MyBackend"
         private readonly AppSettings configuration = null;
@@ -25,6 +25,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         private readonly IHttpClientFactory httpClientFactory = null;
         private readonly string remoteServiceBaseUrl = string.Empty;
         private readonly Semaphore semaphore = null;
+        private readonly DiscoveryCache discoCacheClient = null;
         private DiscoveryDocumentResponse discoResponse = null;
 
         public IdentityClient(
@@ -37,7 +38,24 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             this.httpClientFactory = httpClientFactory;
             this.remoteServiceBaseUrl = this.configuration.Host.AuthServer;
             this.semaphore = new Semaphore(1, 1);
-            this.logger.LogCritical("Initialize Identity Client ok.");
+
+            #region Create Discovery Cache client
+
+            var discoPolicy = this.remoteServiceBaseUrl.StartsWith("https") ?
+                null :
+                new DiscoveryPolicy
+                {
+                    RequireHttps = false,
+                };
+
+            this.discoCacheClient = new DiscoveryCache(
+                this.remoteServiceBaseUrl,
+                () => this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient),
+                discoPolicy);
+
+            // Set cache duration
+            discoCacheClient.CacheDuration = TimeSpan.FromHours(8);
+            #endregion
         }
 
         /// <summary>
@@ -48,7 +66,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>HttpResponseMessage</returns>
         public async Task<HttpResponseMessage> GetTokenByFormDataAsync(string userName, string password)
         {
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
             var endpoint = new Uri(string.Concat(this.remoteServiceBaseUrl, "/connect/token"));
 
             // Set Http request's Accept header
@@ -80,12 +98,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenResponse</returns>
         public async Task<TokenResponse> SignInAsync(string userName, string password)
         {
-            if (this.discoResponse == null)
-            {
-                this.discoResponse = await this.discoverDocumentAsync();
-            }
+            // if (this.discoResponse == null)
+            // {
+            //     this.discoResponse = await this.discoverDocumentAsync();
+            // }
 
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            // Use Cached Discovery Document
+            this.discoResponse = await this.discoverCachedDocumentAsync();
+
+
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
 
             // Wait until it is safe to enter.
             this.semaphore.WaitOne();
@@ -113,12 +135,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>UserInfoReponse</returns>
         public async Task<UserInfoResponse> GetUserInfoAsync(string accessToken)
         {
-            if (this.discoResponse == null)
-            {
-                this.discoResponse = await this.discoverDocumentAsync();
-            }
+            // Use Cached Discovery Document
+            this.discoResponse = await this.discoverCachedDocumentAsync();
 
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
             UserInfoResponse userInfoResponse = await httpClient.GetUserInfoAsync(new UserInfoRequest()
             {
                 Address = this.discoResponse.UserInfoEndpoint,
@@ -135,12 +155,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenResponse</returns>
         public async Task<TokenResponse> RefreshTokenAsync(string refreshToken)
         {
-            if (this.discoResponse == null)
-            {
-                this.discoResponse = await this.discoverDocumentAsync();
-            }
+            // Use Cached Discovery Document
+            this.discoResponse = await this.discoverCachedDocumentAsync();
 
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
             TokenResponse tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
             {
                 Address = this.discoResponse.TokenEndpoint,
@@ -159,12 +177,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <returns>TokenRevocationResponse</returns>
         public async Task<TokenRevocationResponse> RevokeTokenAsync(string token)
         {
-            if (this.discoResponse == null)
-            {
-                this.discoResponse = await this.discoverDocumentAsync();
-            }
+            // Use Cached Discovery Document
+            this.discoResponse = await this.discoverCachedDocumentAsync();
 
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
             TokenRevocationResponse revokeResposne = await httpClient.RevokeTokenAsync(new TokenRevocationRequest
             {
                 Address = this.discoResponse.RevocationEndpoint,
@@ -176,9 +192,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             return revokeResposne;
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+        }
+
         private async Task<DiscoveryDocumentResponse> discoverDocumentAsync()
         {
-            var httpClient = this.httpClientFactory.CreateClient("AuthHttpClient");
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
             DiscoveryDocumentResponse discoResponse = null;
 
             if (this.remoteServiceBaseUrl.StartsWith("https"))
@@ -196,6 +219,20 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 }
                 });
             }
+
+            if (discoResponse.IsError)
+            {
+                throw new Exception(discoResponse.Error);
+            }
+
+            return discoResponse;
+        }
+
+        private async Task<DiscoveryDocumentResponse> discoverCachedDocumentAsync()
+        {
+            DiscoveryDocumentResponse discoResponse = null;
+            
+            discoResponse = await this.discoCacheClient.GetAsync();
 
             if (discoResponse.IsError)
             {

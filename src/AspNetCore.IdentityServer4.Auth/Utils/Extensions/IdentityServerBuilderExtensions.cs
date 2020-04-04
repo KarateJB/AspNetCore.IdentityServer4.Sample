@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models.Config;
-using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
 using IdentityServer4;
 using IdentityServer4.Configuration;

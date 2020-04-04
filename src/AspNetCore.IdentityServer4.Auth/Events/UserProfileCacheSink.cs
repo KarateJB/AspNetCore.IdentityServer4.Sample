@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http;
@@ -15,16 +15,16 @@ namespace AspNetCore.IdentityServer4.Auth.Events
     public class UserProfileCacheSink : IEventSink
     {
         private IHttpContextAccessor httpContextAccessor = null;
-        private readonly IMemoryCache cache = null;
+        private readonly IMemoryCache memoryCache = null;
         private readonly ILogger<UserProfileCacheSink> logger = null;
 
         public UserProfileCacheSink(
             IHttpContextAccessor httpContextAccessor, 
-            IMemoryCache cache,
+            IMemoryCache memoryCache,
             ILogger<UserProfileCacheSink> logger)
         {
             this.httpContextAccessor = httpContextAccessor;
-            this.cache = cache;
+            this.memoryCache = memoryCache;
             this.logger = logger;
         }
 
@@ -45,15 +45,15 @@ namespace AspNetCore.IdentityServer4.Auth.Events
                             var subject = user.Claims.Where(x => x.Type == "sub").FirstOrDefault()?.Value;
                             var token = session.GetString("AccessToken");
                             string cacheKey = CacheKeyFactory.UserProfile(subject);
-                            _ = await this.cache.GetOrCreateAsync<JObject>(cacheKey, async entry =>
+                            _ = await this.memoryCache.GetOrCreateAsync<JObject>(cacheKey, async entry =>
                             {
                                 entry.SlidingExpiration = TimeSpan.FromSeconds(600);
                                 string jsonStr = $"{{\"{subject}\":\"{token}\"}}";
-                                return JObject.Parse(jsonStr);
+                                return await Task.FromResult(JObject.Parse(jsonStr));
                             });
 
                             // Check if the cache exist
-                            if (this.cache.TryGetValue<JObject>(cacheKey, out JObject tokenInfo))
+                            if (this.memoryCache.TryGetValue<JObject>(cacheKey, out JObject tokenInfo))
                             {
                                Debug.WriteLine($"Cached: {tokenInfo.ToString()}");
                             }

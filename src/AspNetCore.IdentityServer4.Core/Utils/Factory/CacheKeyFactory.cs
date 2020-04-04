@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.IdentityServer4.Core
+﻿namespace AspNetCore.IdentityServer4.Core.Utils.Factory
 {
     /// <summary>
     /// Cache key factory
