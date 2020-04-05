@@ -1,4 +1,5 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
@@ -123,7 +124,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region HttpClient Factory
-            services.AddHttpClient("AuthHttpClient", 
+            services.AddHttpClient(HttpClientNameFactory.AuthHttpClient, 
                 config => 
                 {
                     config.Timeout = TimeSpan.FromMinutes(5);
