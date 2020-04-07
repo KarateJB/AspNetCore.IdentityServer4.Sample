@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Models.Config;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -25,6 +26,21 @@ namespace AspNetCore.IdentityServer4.Service.Cache
             IConfiguration config)
         {
             string redisHost = config["Host:Redis"];
+            if (string.IsNullOrEmpty(redisHost))
+            {
+                throw new NullReferenceException("Host:Redis configuration not set!");
+            }
+
+            this.server = redisHost;
+            this.init();
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public RedisService(IAppSettings appSettings)
+        {
+            string redisHost = appSettings.Host.Redis;
             if (string.IsNullOrEmpty(redisHost))
             {
                 throw new NullReferenceException("Host:Redis configuration not set!");

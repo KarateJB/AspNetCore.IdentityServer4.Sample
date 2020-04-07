@@ -1,4 +1,4 @@
-namespace AspNetCore.IdentityServer4.WebApi.Models
+namespace AspNetCore.IdentityServer4.Core.Models.Config
 {
     /// <summary>
     /// Host options

@@ -1,4 +1,5 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models;

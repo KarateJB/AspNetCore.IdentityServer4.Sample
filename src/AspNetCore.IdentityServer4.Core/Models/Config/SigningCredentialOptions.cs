@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.IdentityServer4.Auth.Models.Config
+﻿namespace AspNetCore.IdentityServer4.Core.Models.Config
 {
     /// <summary>
     /// Signing Credential options
@@ -6,8 +6,8 @@
     public class SigningCredentialOptions
     {
         /// <summary>
-        /// Absolute expiry (Seconds)
+        /// Expiry, default is 1 year
         /// </summary>
-        public int? AbsoluteExpiry { get; set; }
+        public DefaultExpiryOptions DefaultExpiry { get; set; }
     }
 }

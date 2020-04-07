@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.IdentityServer4.Auth.Models.Config
+﻿namespace AspNetCore.IdentityServer4.Core.Models.Config
 {
     /// <summary>
     /// Global options

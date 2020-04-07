@@ -2,6 +2,7 @@
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
+using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
@@ -11,13 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
     public class Startup
     {
-        private IConfiguration configuration { get; }
+        private readonly AppSettings appSettings = null;
 
+        private IConfiguration configuration { get; }
         private IWebHostEnvironment env { get; }
 
         public Startup(
@@ -26,9 +29,10 @@ namespace AspNetCore.IdentityServer4.Auth
         {
             this.configuration = configuration;
             this.env = env;
+            this.appSettings = new AppSettings();
+            this.configuration.Bind(this.appSettings);
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
@@ -59,15 +63,20 @@ namespace AspNetCore.IdentityServer4.Auth
             });
 
             // Signing credential
-            if (this.env.IsDevelopment())
+            if (!this.env.IsDevelopment())
             {
                 builder.AddDeveloperSigningCredential();
             }
             else
             {
-                builder.AddSigningCredentialFromRedis(this.configuration);
-                
-                // Or Use self-signed cert
+                // 1. Store in file
+                builder.AddSigningCredentialsByFile(this.appSettings);
+
+                // 2. Store in Redis
+                ////builder.AddSigningCredentialByRedis(this.appSettings);
+
+                // 3. Use self-signed cert
+                ////builder.AddSigningCredentialByCert(this.appSettings);
                 // var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
                 // var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
                 // builder.AddSigningCredential(cert);

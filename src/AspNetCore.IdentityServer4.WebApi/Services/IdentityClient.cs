@@ -1,15 +1,14 @@
-﻿using AspNetCore.IdentityServer4.Core.Utils.Factory;
-using AspNetCore.IdentityServer4.WebApi.Models;
-using IdentityModel.Client;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
+using IdentityModel.Client;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
 {

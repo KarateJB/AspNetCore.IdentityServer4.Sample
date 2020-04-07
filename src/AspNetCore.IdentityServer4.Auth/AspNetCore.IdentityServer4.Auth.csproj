@@ -22,4 +22,17 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Keys\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Keys\DeprecatedSigningCredentials.rsa">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Keys\SigningCredential.rsa">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
