@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
 using AspNetCore.IdentityServer4.Core.Utils;
@@ -222,6 +224,44 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
 
                     builder.AddValidationKey(deprecatedKeyInfos.ToArray());
                 }
+            }
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Add Signing credential by Certificate
+        /// </summary>
+        /// <param name="builder">IIdentityServerBuilder</param>
+        /// <param name="appSettings"></param>
+        /// <param name="isFromCertStore"></param>
+        /// <returns></returns>
+        public static IIdentityServerBuilder AddSigningCredentialByCert(
+            this IIdentityServerBuilder builder, AppSettings appSettings, bool isFromCertStore = false)
+        {
+            if (isFromCertStore)
+            {
+                // See https://www.teilin.net/2018/07/05/self-signed-certificate-and-configuring-identityserver-4-with-certificate/
+                using (var certStore = new X509Store(StoreName.My, StoreLocation.LocalMachine))
+                {
+                    certStore.Open(OpenFlags.ReadOnly);
+                    var certCollection = certStore.Certificates.Find(
+                        X509FindType.FindByThumbprint,
+                        string.Empty, // Change this with the thumbprint of your certifiacte
+                        false);
+
+                    if (certCollection.Count > 0)
+                    {
+                        X509Certificate2 cert = certCollection[0];
+                        builder.AddSigningCredential(cert);
+                    }
+                }
+            }
+            else
+            { 
+                var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
+                var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
+                builder.AddSigningCredential(cert);
             }
 
             return builder;

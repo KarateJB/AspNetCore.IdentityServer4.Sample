@@ -24,6 +24,13 @@
 
   <ItemGroup>
     <Folder Include="Keys\" />
+    <Folder Include="Certs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\docker\certs\Docker.pfx" Link="Certs\Docker.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

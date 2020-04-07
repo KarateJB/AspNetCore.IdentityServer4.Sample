@@ -70,16 +70,13 @@ namespace AspNetCore.IdentityServer4.Auth
             else
             {
                 // 1. Store in file
-                builder.AddSigningCredentialsByFile(this.appSettings);
+                ////builder.AddSigningCredentialsByFile(this.appSettings);
 
                 // 2. Store in Redis
                 ////builder.AddSigningCredentialByRedis(this.appSettings);
 
                 // 3. Use self-signed cert
-                ////builder.AddSigningCredentialByCert(this.appSettings);
-                // var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
-                // var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
-                // builder.AddSigningCredential(cert);
+                builder.AddSigningCredentialByCert(this.appSettings, isFromCertStore: false);
             }
 
             // Set in-memory, code config
