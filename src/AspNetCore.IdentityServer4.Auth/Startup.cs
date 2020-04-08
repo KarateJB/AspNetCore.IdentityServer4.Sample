@@ -69,14 +69,14 @@ namespace AspNetCore.IdentityServer4.Auth
             }
             else
             {
-                // 1. Store in file
-                ////builder.AddSigningCredentialsByFile(this.appSettings);
+                // 1. Store in file (Support renew manually)
+                // builder.AddSigningCredentialsByFile(this.appSettings);
 
-                // 2. Store in Redis
-                ////builder.AddSigningCredentialByRedis(this.appSettings);
+                // 2. Store in Redis (Support renew automatically)
+                builder.AddSigningCredentialByRedis(this.appSettings);
 
-                // 3. Use self-signed cert
-                builder.AddSigningCredentialByCert(this.appSettings, isFromCertStore: false);
+                // 3. Use cert
+                // builder.AddSigningCredentialByCert(this.appSettings, isFromWindowsCertStore: true);
             }
 
             // Set in-memory, code config

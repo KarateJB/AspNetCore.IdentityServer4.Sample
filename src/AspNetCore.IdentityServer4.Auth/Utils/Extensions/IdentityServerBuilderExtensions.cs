@@ -206,7 +206,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                 // Add the key as the Signing credential for Idsrv
                 builder.AddSigningCredential(key, IdentityServerConstants.RsaSigningAlgorithm.RS256);
 
-                // Also add the expired key for clients' old tokens 
+                // Also add the expired key for clients' old tokens
                 if (redis.GetCache(redisKeyDeprecatedSk, out deprecatedCredentials))
                 {
                     IList<SecurityKeyInfo> deprecatedKeyInfos = new List<SecurityKeyInfo>();
@@ -233,13 +233,13 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
         /// Add Signing credential by Certificate
         /// </summary>
         /// <param name="builder">IIdentityServerBuilder</param>
-        /// <param name="appSettings"></param>
-        /// <param name="isFromCertStore"></param>
-        /// <returns></returns>
+        /// <param name="appSettings">AppSettings</param>
+        /// <param name="isFromWindowsCertStore">Is from Windows's Certificate Store</param>
+        /// <returns>IIdentityServerBuilder</returns>
         public static IIdentityServerBuilder AddSigningCredentialByCert(
-            this IIdentityServerBuilder builder, AppSettings appSettings, bool isFromCertStore = false)
+            this IIdentityServerBuilder builder, AppSettings appSettings, bool isFromWindowsCertStore = false)
         {
-            if (isFromCertStore)
+            if (isFromWindowsCertStore)
             {
                 // See https://www.teilin.net/2018/07/05/self-signed-certificate-and-configuring-identityserver-4-with-certificate/
                 using (var certStore = new X509Store(StoreName.My, StoreLocation.LocalMachine))
@@ -247,8 +247,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                     certStore.Open(OpenFlags.ReadOnly);
                     var certCollection = certStore.Certificates.Find(
                         X509FindType.FindByThumbprint,
-                        string.Empty, // Change this with the thumbprint of your certifiacte
-                        false);
+                        "3c9928221048e7358611a7606c2ed35144c93caa", // Change this with the thumbprint of your certifiacte
+                        validOnly: false);
 
                     if (certCollection.Count > 0)
                     {
@@ -263,6 +263,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                 var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
                 builder.AddSigningCredential(cert);
             }
+
+            // Add validation keys if any
+
 
             return builder;
         }
