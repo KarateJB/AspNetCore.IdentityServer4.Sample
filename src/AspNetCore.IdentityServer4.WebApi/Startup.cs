@@ -66,6 +66,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
+                //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
 
                 options.Events = new JwtBearerEvents()
                 {
