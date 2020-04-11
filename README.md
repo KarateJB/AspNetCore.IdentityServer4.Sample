@@ -21,6 +21,8 @@
 - [[ASP.NET Core] Identity Server 4 – Dockerize](https://karatejb.blogspot.com/2019/11/aspnet-core-identity-server-4-dockerize.html)
 - [[ASP.NET Core] Identity Server 4 – Client Credential](https://karatejb.blogspot.com/2019/11/aspnet-core-identity-server-4-client.html)
 - [[ASP.NET Core] Identity Server 4 – Policy based authorization with custom Authorization handler](https://karatejb.blogspot.com/2020/02/aspnet-core-identity-server-4-policy.html)
+- [[ASP.NET Core] Identity Server 4 – Signing credential](https://karatejb.blogspot.com/2020/04/aspnet-core-identity-server-4-signing.html)
+
 
 
 # Create New Poject
@@ -140,6 +142,13 @@ $ dotnet publish --output ../../docker/build/backend --configuration release
 $ cd docker
 $ docker-compose build [--no-cache]
 $ docker-compose up -d
+```
+
+## (Optional) Create certificate by OpenSSL
+
+```s
+$ openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/Docker.key -x509 -days 3650 -out certs/Docker.crt
+$ openssl pkcs12 -export -out certs/Docker.pfx -inkey certs/Docker.key -in certs/Docker.crt
 ```
 
 ## (Optional) How to trust Self-signed certificate in Linux container

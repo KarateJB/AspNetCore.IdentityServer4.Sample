@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityModel;
 using IdentityServer4.Validation;
 
 namespace AspNetCore.IdentityServer4.Auth.Utils.Validator
 {
+    /// <summary>
+    /// Custom ResourceOwnerPassword validator
+    /// </summary>
     public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {
         //private readonly IUserService _userService;
@@ -23,7 +22,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Validator
             //var user = await _userService.Login(context.UserName, context.Password);
             //if (user != null)
             //{
-            //    var claims = new List<Claim>() { new Claim(JwtClaimTypes.Role, "admin") }; //根据 user 对象，设置不同的 role
+            //    var claims = new List<Claim>() { new Claim(JwtClaimTypes.Role, "admin") };
             //    context.Result = new GrantValidationResult(user.UserId.ToString(), OidcConstants.AuthenticationMethods.Password, claims.AsEnumerable());
             //}
         }

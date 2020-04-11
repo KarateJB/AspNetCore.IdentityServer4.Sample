@@ -1,4 +1,6 @@
 ﻿using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
@@ -64,6 +66,7 @@ namespace AspNetCore.IdentityServer4.WebApi
                 options.Audience = "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
+                //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
 
                 options.Events = new JwtBearerEvents()
                 {
@@ -123,7 +126,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region HttpClient Factory
-            services.AddHttpClient("AuthHttpClient", 
+            services.AddHttpClient(HttpClientNameFactory.AuthHttpClient, 
                 config => 
                 {
                     config.Timeout = TimeSpan.FromMinutes(5);

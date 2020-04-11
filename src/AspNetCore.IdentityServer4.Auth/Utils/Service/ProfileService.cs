@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -17,17 +17,13 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
     public class ProfileService : IProfileService
     {
         private readonly ICacheService cache = null;
-        private readonly CacheKeyFactory cacheKeys = null;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProfileService(
-            ICacheService cache,
-            CacheKeyFactory cacheKeys)
+        public ProfileService(ICacheService cache)
         {
             this.cache = cache;
-            this.cacheKeys = cacheKeys;
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -74,7 +70,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             #endregion
 
             #region Method 2. Add extra roles from redis
-            var cacheKey = this.cacheKeys.UserProfile(userName);
+            var cacheKey = CacheKeyFactory.UserProfile(userName);
             (UserProfile user, bool isOK) = await this.cache.GetCacheAsync<UserProfile>(cacheKey);
 
             if (isOK)

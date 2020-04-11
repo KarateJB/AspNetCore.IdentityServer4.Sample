@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 
 # Arg for current environment, eg. Development, Docker, Production. Use docker-compose file to overwrite.
 ARG env="Docker"

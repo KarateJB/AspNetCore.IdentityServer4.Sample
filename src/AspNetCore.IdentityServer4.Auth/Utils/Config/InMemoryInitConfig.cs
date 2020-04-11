@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using AspNetCore.IdentityServer4.Core.Models;
@@ -57,7 +58,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowOfflineAccess = true,
-                    AccessTokenLifetime = 3600,
+                    AccessTokenLifetime = 3600, // (int)TimeSpan.FromDays(1).TotalSeconds
 
                     RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
                     RefreshTokenExpiration = TokenExpiration.Sliding,

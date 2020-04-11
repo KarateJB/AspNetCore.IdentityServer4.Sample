@@ -9,6 +9,11 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+    <PackageReference Include="XC.RSAUtil" Version="1.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AspNetCore.IdentityServer4.Core\AspNetCore.IdentityServer4.Core.csproj" />
   </ItemGroup>
 
 </Project>
