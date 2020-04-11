@@ -43,7 +43,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
             var rootDir = Path.Combine(AppContext.BaseDirectory, DIR_NAME_KEYS);
             var workingScDir = Path.Combine(rootDir, FILE_NAME_WORKING_SC);
             var deprecatedScDir = Path.Combine(rootDir, FILE_NAME_DEPRECATED_SC);
-            var now = DateTimeOffset.Now;
+            var utcNow = DateTimeOffset.UtcNow;
 
             // RSA key object
             Microsoft.IdentityModel.Tokens.RsaSecurityKey key = null; // The Key for Idsrv
@@ -63,7 +63,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                 key = CryptoHelper.CreateRsaSecurityKey(credential.Parameters, credential.KeyId);
 
                 // Warning if key expires
-                if (credential.ExpireOn < now)
+                if (credential.ExpireOn < utcNow)
                 {
                     logger.Warn($"Auth Server's Signing Credential (ID: {credential.KeyId}) is expired at {credential.ExpireOn.ToLocalTime()}!");
                 }
@@ -78,7 +78,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
                     key.Rsa.ExportParameters(includePrivateParameters: true);
 
                 var expireOn = appSettings.Global?.SigningCredential?.DefaultExpiry == null ?
-                    now.AddYears(DEFAULT_EXPIRY_YEAR) :
+                    utcNow.AddYears(DEFAULT_EXPIRY_YEAR) :
                     appSettings.Global.SigningCredential.DefaultExpiry.GetExpireOn();
 
                 credential = new SigningCredential
@@ -141,7 +141,6 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
             // Signing credetial object from Redis
             SigningCredential credential = null; // The Signing credential stored in Redis
             List<SigningCredential> deprecatedCredentials = null; // The Deprecated Signing credentials stored in Redis
-
 
             using (ICacheService redis = new RedisService(appSettings))
             {
@@ -239,6 +238,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
         public static IIdentityServerBuilder AddSigningCredentialByCert(
             this IIdentityServerBuilder builder, AppSettings appSettings, bool isFromWindowsCertStore = false)
         {
+            X509Certificate2 cert = null;
+
             if (isFromWindowsCertStore)
             {
                 // See https://www.teilin.net/2018/07/05/self-signed-certificate-and-configuring-identityserver-4-with-certificate/
@@ -252,7 +253,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
 
                     if (certCollection.Count > 0)
                     {
-                        X509Certificate2 cert = certCollection[0];
+                        cert = certCollection[0];
                         builder.AddSigningCredential(cert);
                     }
                 }
@@ -260,12 +261,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Extensions
             else
             { 
                 var rootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Certs");
-                var cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
+                cert = new X509Certificate2(Path.Combine(rootPath, "Docker.pfx"), string.Empty);
                 builder.AddSigningCredential(cert);
             }
 
             // Add validation keys if any
-
+            // builder.AddValidationKey(old_cert);
 
             return builder;
         }
