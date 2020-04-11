@@ -63,7 +63,7 @@ namespace AspNetCore.IdentityServer4.Auth
             });
 
             // Signing credential
-            if (!this.env.IsDevelopment())
+            if (this.env.IsDevelopment())
             {
                 builder.AddDeveloperSigningCredential();
             }
