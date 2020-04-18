@@ -9,5 +9,10 @@
         /// Host options
         /// </summary>
         public HostOptions Host { get; set; }
+
+        /// <summary>
+        /// Auth options
+        /// </summary>
+        public AuthOptions AuthOptions { get; set; }
     }
 }

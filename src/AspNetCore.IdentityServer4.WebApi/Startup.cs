@@ -30,11 +30,15 @@ namespace AspNetCore.IdentityServer4.WebApi
     public class Startup
     {
         private readonly IWebHostEnvironment env = null;
+        private readonly AppSettings appSettings = null;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.Configuration = configuration;
             this.env = env;
+
+            this.appSettings = new AppSettings();
+            this.Configuration.Bind(this.appSettings);
         }
 
         public IConfiguration Configuration { get; }
@@ -59,11 +63,11 @@ namespace AspNetCore.IdentityServer4.WebApi
                 //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
                 //options.RequireHttpsMetadata = true;
 
-                string authServerBaseUrl = this.Configuration["Host:AuthServer"];
+                string authServerBaseUrl = this.appSettings?.Host?.AuthServer ?? "https://localhost:6001";
                 bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
                 options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
-                options.Audience = "MyBackendApi2"; // API Resource name
+                options.Audience = this.appSettings?.AuthOptions?.Audience ?? "MyBackendApi2"; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
                 //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";

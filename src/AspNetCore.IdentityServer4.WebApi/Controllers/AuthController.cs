@@ -14,14 +14,14 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ILogger<AuthController> logger = null;
-        private readonly IIdentityClient auth = null;
+        private readonly IIdentityClient idsrvClient = null;
 
         public AuthController(
             ILogger<AuthController> logger,
-            IIdentityClient id4Client)
+            IIdentityClient idsrvClient)
         {
             this.logger = logger;
-            this.auth = id4Client;
+            this.idsrvClient = idsrvClient;
         }
 
         #region GetToken
@@ -35,7 +35,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [AllowAnonymous]
         public async Task<JObject> GetToken(LdapUser user)
         {
-            var response = await this.auth.GetTokenByFormDataAsync(user.Username, user.Password);
+            var response = await this.idsrvClient.GetTokenByFormDataAsync(user.Username, user.Password);
 
             if (response.IsSuccessStatusCode == true)
             {
@@ -59,7 +59,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [AllowAnonymous]
         public async Task<JObject> SignIn(LdapUser user)
         {
-            var tokenResponse = await this.auth.SignInAsync(user.Username, user.Password);
+            var tokenResponse = await this.idsrvClient.SignInAsync(user.Username, user.Password);
             this.HttpContext.Response.StatusCode = tokenResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
             
             return tokenResponse.Json;
@@ -90,7 +90,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             //    accessToken = authHeaderVal.ToString().Replace("Bearer ", "").Replace("bearer ", "");
             // }
 
-            var userInfoResponse = await this.auth.GetUserInfoAsync(accessToken);
+            var userInfoResponse = await this.idsrvClient.GetUserInfoAsync(accessToken);
             this.HttpContext.Response.StatusCode = userInfoResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
 
             return userInfoResponse.Json;
@@ -108,7 +108,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [AllowAnonymous]
         public async Task<JObject> RefreshToken([FromBody] string refreshToken)
         {
-            var tokenResponse = await this.auth.RefreshTokenAsync(refreshToken);
+            var tokenResponse = await this.idsrvClient.RefreshTokenAsync(refreshToken);
             this.HttpContext.Response.StatusCode = tokenResponse.IsError? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
             return tokenResponse.Json;
         }
@@ -125,7 +125,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         [Authorize]
         public async Task<string> RevokeToken([FromBody] string token)
         {
-            var revokeResponse = await this.auth.RevokeTokenAsync(token);
+            var revokeResponse = await this.idsrvClient.RevokeTokenAsync(token);
             this.HttpContext.Response.StatusCode = revokeResponse.IsError ? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
             return revokeResponse.Error;
         }

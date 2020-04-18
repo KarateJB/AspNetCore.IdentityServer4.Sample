@@ -17,26 +17,37 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
     /// </summary>
     public class IdentityClient : IIdentityClient
     {
-        private const string SECRETKEY = "secret";
-        private const string CLIENTID = "PolicyBasedBackend"; // Or "MyBackend"
-        private readonly AppSettings configuration = null;
+        private const string DEFAULT_SECRET = "secret";
+        private const string DEFAULT_CLIENT_ID = "PolicyBasedBackend"; // Or "MyBackend"
+
         private readonly ILogger<IdentityClient> logger;
         private readonly IHttpClientFactory httpClientFactory = null;
-        private readonly string remoteServiceBaseUrl = string.Empty;
+
         private readonly Semaphore semaphore = null;
         private readonly DiscoveryCache discoCacheClient = null;
         private DiscoveryDocumentResponse discoResponse = null;
+
+        private readonly AppSettings appSettings = null;
+        private readonly string remoteServiceBaseUrl = string.Empty;
+        private readonly string clientId = string.Empty;
+        private readonly string secret = string.Empty;
 
         public IdentityClient(
             IOptions<AppSettings> configuration,
             ILogger<IdentityClient> logger,
             IHttpClientFactory httpClientFactory)
         {
-            this.configuration = configuration.Value;
+            this.appSettings = configuration.Value;
             this.logger = logger;
             this.httpClientFactory = httpClientFactory;
-            this.remoteServiceBaseUrl = this.configuration.Host.AuthServer;
+            this.remoteServiceBaseUrl = this.appSettings.Host.AuthServer;
             this.semaphore = new Semaphore(1, 1);
+
+            #region Set variables
+
+            this.secret = DEFAULT_SECRET;
+            this.clientId = this.appSettings?.AuthOptions?.ClientId ?? DEFAULT_CLIENT_ID;
+            #endregion
 
             #region Create Discovery Cache client
 
@@ -78,8 +89,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             var formData = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant_type", grantType),
-                new KeyValuePair<string, string>("client_secret", SECRETKEY),
-                new KeyValuePair<string, string>("client_id", CLIENTID),
+                new KeyValuePair<string, string>("client_secret", this.secret),
+                new KeyValuePair<string, string>("client_id", this.clientId),
                 new KeyValuePair<string, string>("scope", scope),
                 new KeyValuePair<string, string>("username", userName),
                 new KeyValuePair<string, string>("password", password)
@@ -114,8 +125,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             TokenResponse tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = this.discoResponse.TokenEndpoint,
-                ClientId = CLIENTID,
-                ClientSecret = SECRETKEY,
+                ClientId = this.clientId,
+                ClientSecret = this.secret,
                 UserName = userName,
                 Password = password,
                 //Scope = "MyBackendApi1 openid email" // "openid" is must if request for any IdentityResource
@@ -161,8 +172,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             TokenResponse tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
             {
                 Address = this.discoResponse.TokenEndpoint,
-                ClientId = CLIENTID,
-                ClientSecret = SECRETKEY,
+                ClientId = this.clientId,
+                ClientSecret = this.secret,
                 RefreshToken = refreshToken
             });
 
@@ -183,12 +194,37 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             TokenRevocationResponse revokeResposne = await httpClient.RevokeTokenAsync(new TokenRevocationRequest
             {
                 Address = this.discoResponse.RevocationEndpoint,
-                ClientId = CLIENTID,
-                ClientSecret = SECRETKEY,
+                ClientId = this.clientId,
+                ClientSecret = this.secret,
                 Token = token
             });
 
             return revokeResposne;
+        }
+
+        /// <summary>
+        /// Get JWKs
+        /// </summary>
+        /// <returns>JsonWebKeySetResponse</returns>
+        /// <remarks>
+        /// JWKs is available on https://auth_server/.well-known/openid-configuration/jwks
+        /// </remarks>
+        public async Task<JsonWebKeySetResponse> GetJwksAsync()
+        {
+            // Use Cached Discovery Document
+            this.discoResponse = await this.discoverCachedDocumentAsync();
+
+            var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
+
+            JsonWebKeySetResponse jwksResponse = httpClient.GetJsonWebKeySetAsync(
+                    new JsonWebKeySetRequest
+                    {
+                        Address = discoResponse.JwksUri,
+                        ClientId = this.clientId,
+                        ClientSecret = this.secret
+                    }).Result;
+
+            return jwksResponse;
         }
 
         /// <summary>
@@ -230,7 +266,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         private async Task<DiscoveryDocumentResponse> discoverCachedDocumentAsync()
         {
             DiscoveryDocumentResponse discoResponse = null;
-            
+
             discoResponse = await this.discoCacheClient.GetAsync();
 
             if (discoResponse.IsError)
