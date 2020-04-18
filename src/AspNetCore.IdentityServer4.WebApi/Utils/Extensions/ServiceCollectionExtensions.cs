@@ -19,5 +19,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
             services.AddScoped<ICacheService, RedisService>();
             return services;
         }
+
+        /// <summary>
+        /// Add other custom services, utils ...etc
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Self</returns>
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
+        {
+            services.AddSingleton<AccessTokenValidator>();
+            return services;
+        }
     }
 }

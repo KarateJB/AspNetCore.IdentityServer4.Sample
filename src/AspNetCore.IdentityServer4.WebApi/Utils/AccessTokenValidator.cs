@@ -20,7 +20,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
     /// </summary>
     public class AccessTokenValidator
     {
-        private readonly AppSettings configuration = null;
+        private readonly AppSettings appSettings = null;
         private readonly ILogger logger = null;
         private readonly IIdentityClient idsrvClient = null;
 
@@ -29,7 +29,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
             ILogger<AccessTokenValidator> logger,
             IIdentityClient idsrvClient)
         {
-            this.configuration = configuration.Value;
+            this.appSettings = configuration.Value;
             this.logger = logger;
             this.idsrvClient = idsrvClient;
         }
@@ -55,8 +55,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
 
             var validationParameters = new TokenValidationParameters
             {
-                ValidIssuer = this.configuration.Host.AuthServer,
-                ValidAudiences = new[] { "MyBackendApi1" },
+                ValidIssuer = this.appSettings.Host.AuthServer,
+                ValidAudiences = new[] { appSettings.AuthOptions.Audience },
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero, // See https://stackoverflow.com/a/46231102/7045253
                 IssuerSigningKeys = this.getSecurityKeys(jwks.KeySet)
             };
 
@@ -68,7 +70,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils
                 var isAuthenticated = user.Identities != null && user.Identities.Any(x => x.IsAuthenticated);
                 return await Task.FromResult(new Tuple<bool, ClaimsPrincipal>(isAuthenticated, user));
             }
-            catch (SecurityTokenInvalidSignatureException)
+            catch (Exception ex) when (ex is SecurityTokenInvalidSignatureException || ex is SecurityTokenExpiredException)
             {
                 // The JWT is invalid
                 return await Task.FromResult(new Tuple<bool, ClaimsPrincipal>(!validateOk, null));

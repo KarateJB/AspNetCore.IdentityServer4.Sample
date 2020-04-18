@@ -167,6 +167,10 @@ namespace AspNetCore.IdentityServer4.WebApi
             #region Inject Cache service
             services.AddCacheServices();
             #endregion
+
+            #region Inject other custom services/utils...etc
+            services.AddCustomServices();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

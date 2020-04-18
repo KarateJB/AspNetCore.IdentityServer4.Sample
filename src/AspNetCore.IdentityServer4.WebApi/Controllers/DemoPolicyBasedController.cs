@@ -9,11 +9,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
     [ApiController]
     public class DemoPolicyBasedController : ControllerBase
     {
-        private ILogger<DemoRoleBasedController> _logger = null;
+        private ILogger logger = null;
 
-        public DemoPolicyBasedController(ILogger<DemoRoleBasedController> logger)
+        public DemoPolicyBasedController(
+            ILogger<DemoRoleBasedController> logger)
         {
-            this._logger = logger;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -119,7 +120,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         private void logtUserClaims()
         {
-            this.HttpContext.User.Claims.ToList().ForEach(c => this._logger.LogInformation($"Type= {c.Type}, Value= {c.Value}"));
+            this.HttpContext.User.Claims.ToList().ForEach(c => this.logger.LogInformation($"Type= {c.Type}, Value= {c.Value}"));
         }
     }
 }
