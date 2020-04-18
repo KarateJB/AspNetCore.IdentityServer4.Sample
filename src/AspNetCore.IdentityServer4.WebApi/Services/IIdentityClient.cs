@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi.Services
 {
+    /// <summary>
+    /// Interface of Identity Client
+    /// </summary>
     public interface IIdentityClient : IDisposable
     {
         /// <summary>
@@ -43,5 +46,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// <param name="token">Reference|Refresh Token</param>
         /// <returns>TokenRevocationResponse</returns>
         Task<TokenRevocationResponse> RevokeTokenAsync(string token);
+
+        /// <summary>
+        /// Get JWKs
+        /// </summary>
+        /// <returns>JsonWebKeySetResponse</returns>
+        Task<JsonWebKeySetResponse> GetJwksAsync();
     }
 }
