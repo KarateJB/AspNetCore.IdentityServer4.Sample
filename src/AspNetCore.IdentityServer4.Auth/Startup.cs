@@ -83,7 +83,7 @@ namespace AspNetCore.IdentityServer4.Auth
             builder.AddInMemoryApiResources(InMemoryInitConfig.GetApiResources());
             builder.AddInMemoryClients(InMemoryInitConfig.GetClients());
             builder.AddLdapUsers<OpenLdapAppUser>(this.configuration.GetSection("LdapServer"), UserStore.InMemory); // OpenLDAP
-                                                                                                                    // builder.AddLdapUsers<ActiveDirectoryAppUser>(this.Configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
+            //builder.AddLdapUsers<ActiveDirectoryAppUser>(this.configuration.GetSection("LdapServer"), UserStore.InMemory); // ActiveDirectory
 
             builder.AddProfileService<ProfileService>();
 
