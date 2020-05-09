@@ -67,6 +67,8 @@ Update the following config to connect to your own OpenOLAP service.
   }
 ```
 
+> To support authentication by multiple LDAP, use the configuration of `appsettings.MultiLdap.json`
+
 
 # Run The Exist Project
 
