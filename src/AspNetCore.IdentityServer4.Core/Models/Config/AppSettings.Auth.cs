@@ -6,6 +6,11 @@
     public class AppSettings : IAppSettings
     {
         /// <summary>
+        /// LDAP options
+        /// </summary>
+        public LdapServerOptions LdapServer { get; set; }
+
+        /// <summary>
         /// Host options
         /// </summary>
         public HostOptions Host { get; set; }
