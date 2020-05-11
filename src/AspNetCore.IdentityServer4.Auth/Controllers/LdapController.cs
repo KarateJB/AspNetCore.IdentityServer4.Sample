@@ -1,8 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
-using AspNetCore.IdentityServer4.Core.Models;
-using AspNetCore.IdentityServer4.Service.Ldap;
 using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
@@ -81,7 +79,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
 
         private async Task<bool> ExecLdapAuthAsync(string username, string password)
 {
-            var host = "jblin"; // Host
+            var host = "jb.com"; // Host
             var bindDN = "cn=admin,dc=example,dc=org";
             var bindPassword = "admin";
             var baseDC = "dc=example,dc=org";

@@ -144,7 +144,7 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
                     var modifiedAttributes = new ArrayList
                     {
                         new LdapModification(
-                            LdapModification.REPLACE, new LdapAttribute("userPassword", newPwd))
+                            LdapModification.REPLACE, new LdapAttribute("userPassword", this.hashPwdAsync(newPwd).Result))
                     };
     
                     var ldapModification = new LdapModification[modifiedAttributes.Count];
@@ -198,7 +198,7 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
                 new LdapAttribute("uid", entry.Uid),
                 new LdapAttribute("sn", entry.SecondName),
                 new LdapAttribute("mail", entry.Email),
-                new LdapAttribute("userPassword", entry.Pwd)
+                new LdapAttribute("userPassword", this.hashPwdAsync(entry.Pwd).Result)
             };
             #endregion
 
@@ -255,6 +255,16 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         private async Task<string> getUserDefaultDnAsync(string userName)
         {
             return await Task.FromResult($"cn={userName},dc=example,dc=org");
+        }
+
+        private async Task<string> hashPwdAsync(string password)
+        {
+            var sha1 = System.Security.Cryptography.SHA1.Create();
+            var hashedPwd = sha1.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var hashedPwdStr = Convert.ToBase64String(hashedPwd);
+            sha1 = null;
+
+            return await Task.FromResult($"{{SHA}}{hashedPwdStr}");
         }
     }
 }
