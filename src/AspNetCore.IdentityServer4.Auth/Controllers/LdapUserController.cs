@@ -1,20 +1,15 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Service.Ldap;
-using IdentityModel;
-using IdentityServer.LdapExtension.UserModel;
-using IdentityServer.LdapExtension.UserStore;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.IdentityServer4.Auth.Controllers
 {
+    /// <summary>
+    /// LDAP User controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class LdapUserController : ControllerBase
@@ -34,7 +29,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             if (await this.ldapUserMgr.CreateAsync(ldapUser))
                 return this.StatusCode(StatusCodes.Status201Created);
             else
-                return this.BadRequest();
+                return this.StatusCode(StatusCodes.Status409Conflict);
         }
 
         [HttpPut]

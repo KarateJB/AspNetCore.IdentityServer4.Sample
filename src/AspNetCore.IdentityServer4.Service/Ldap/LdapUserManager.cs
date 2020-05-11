@@ -13,6 +13,9 @@ using Novell.Directory.Ldap;
 
 namespace AspNetCore.IdentityServer4.Service.Ldap
 {
+    /// <summary>
+    /// LDAP User manager
+    /// </summary>
     public class LdapUserManager
     {
         private readonly AppSettings appSettings = null;
@@ -29,6 +32,7 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         /// </summary>
         /// <param name="userName">User name</param>
         /// <returns>LdapEntry object</returns>
+        /// <see cref="https://www.novell.com/documentation/developer/ldapcsharp/?page=/documentation/developer/ldapcsharp/cnet/data/bow8dju.html"/>
         public async Task<LdapEntry> FindAsync(string userName)
         {
             Func<LdapConnection, LdapEntry> action = (ldapConn) =>
@@ -40,8 +44,8 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
                 LdapSearchResults searchResults = ldapConn.Search(
                     this.ldapServer.SearchBase,
                     scope: LdapConnection.SCOPE_SUB,
-                    filter: searchFilter,
-                    attrs: new string[] { "cn", "sAMAccountName" },
+                    filter: searchFilter, // Search filter
+                    attrs: new string[] { "cn", "displayName", "mail" }, // The attributes to retrieve
                     typesOnly: false);
 
                 // Note in Novell.Directory.Ldap.NETStandard >=3.0.1, LdapSearchResults implement IEnumerable...
