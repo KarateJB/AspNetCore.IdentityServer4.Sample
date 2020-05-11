@@ -11,13 +11,13 @@ using Novell.Directory.Ldap;
 
 namespace AspNetCore.IdentityServer4.Service.Ldap
 {
-    public class LdapService
+    public class LdapManager
     {
         private readonly AppSettings appSettings = null;
         private readonly LdapServerOptions ldapServer = null;
         private bool isOpenLdap = false;
 
-        public LdapService(IOptions<AppSettings> configuration)
+        public LdapManager(IOptions<AppSettings> configuration)
         {
             this.appSettings = configuration.Value;
             this.ldapServer = this.appSettings?.LdapServer;
@@ -82,6 +82,38 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         }
 
         /// <summary>
+        /// Add a new LDAP user
+        /// </summary>
+        /// <param name="entry">OpenLdapUserEntry object</param>
+        /// <returns>True(Success)/False(Fail)</returns>
+        public async Task<bool> UpdateUserAsync(OpenLdapUserEntry entry)
+        {
+            Func<LdapConnection, bool> action = (ldapConn) =>
+            {
+                var existEntry = this.FindUserAsync(entry.Uid).Result;
+                if (existEntry != null)
+                {
+                    var modifiedAttributes = new ArrayList();
+
+                    if (!string.IsNullOrEmpty(entry.Pwd))
+                        modifiedAttributes.Add(new LdapModification(LdapModification.REPLACE, new LdapAttribute("userPassword", entry.Pwd)));
+
+                    // TODO ...
+
+                    var ldapModification = new LdapModification[modifiedAttributes.Count];
+                    ldapModification = (LdapModification[])modifiedAttributes.ToArray(typeof(LdapModification));
+
+                    ldapConn.Modify(existEntry.DN, ldapModification);
+                    return true;
+                }
+                else
+                    return false;
+            };
+
+            return await this.ldapActionAsync(action);
+        }
+
+        /// <summary>
         /// Reset user's password
         /// </summary>
         /// <param name="userName">User name</param>
@@ -120,16 +152,27 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         /// <returns>LdapAttributeSet</returns>
         private async Task<LdapAttributeSet> getAttrSetForOpenLdapAsync(OpenLdapUserEntry entry)
         {
-            return await Task.FromResult(new LdapAttributeSet()
+            #region Required attributes
+
+            var attrSet = new LdapAttributeSet()
             {
                 new LdapAttribute("objectClass", "inetOrgPerson"),
                 new LdapAttribute("displayName", entry.DisplayName),
                 new LdapAttribute("uid", entry.Uid),
                 new LdapAttribute("sn", entry.SecondName),
                 new LdapAttribute("mail", entry.Email),
-                new LdapAttribute("userPassword", entry.Pwd),
-                new LdapAttribute("givenName", entry.FirstName), // optional
-            });
+                new LdapAttribute("userPassword", entry.Pwd)
+            };
+            #endregion
+
+            #region Optional attributes
+            // Notice that the value cannot be null!
+
+            if(!string.IsNullOrEmpty(entry.FirstName))
+                attrSet.Add(new LdapAttribute("givenName", entry.FirstName));
+            #endregion
+
+            return await Task.FromResult(attrSet);
         }
 
         /// <summary>

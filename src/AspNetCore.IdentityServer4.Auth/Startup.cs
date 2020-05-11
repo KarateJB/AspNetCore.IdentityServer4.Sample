@@ -3,6 +3,7 @@ using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
+using AspNetCore.IdentityServer4.Service.Ldap;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
@@ -38,6 +39,11 @@ namespace AspNetCore.IdentityServer4.Auth
                  .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSession();
+
+            #region Inject AppSetting configuration
+
+            services.Configure<AppSettings>(this.configuration);
+            #endregion
 
             #region IISOptions
             services.Configure<IISOptions>(options =>
@@ -96,6 +102,10 @@ namespace AspNetCore.IdentityServer4.Auth
 
             #region Custom sinks
             services.AddScoped<IEventSink, UserProfileCacheSink>();
+            #endregion
+
+            #region Custom services
+            services.AddSingleton<LdapManager>();
             #endregion
         }
 

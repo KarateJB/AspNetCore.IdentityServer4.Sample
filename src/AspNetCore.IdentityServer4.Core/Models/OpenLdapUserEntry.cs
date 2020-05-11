@@ -24,7 +24,7 @@ namespace AspNetCore.IdentityServer4.Core.Models
         public string SecondName{ get; set; }
 
         public OpenLdapUserEntry(
-            string dn, string uid, string pwd, string email, string displayName="", string firstName = "",  string secondName = "")
+            string uid, string pwd, string email, string displayName="", string firstName = "",  string secondName = "")
         {
             this.Uid = uid.ToLower();
             this.Pwd = pwd;

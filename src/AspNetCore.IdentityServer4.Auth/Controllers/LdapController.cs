@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
+using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Service.Ldap;
 using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
@@ -20,16 +22,18 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
         private readonly ILdapUserStore userStore = null;
         private readonly IEventService events = null;
         private readonly IdentityServerTools tools = null;
+        private readonly LdapManager ldapMgr = null;
 
         public LdapController(
             ILdapUserStore userStore,
             IEventService events,
-            IdentityServerTools tools)
+            IdentityServerTools tools,
+            LdapManager ldapMgr)
         {
             this.userStore = userStore;
             this.events = events;
             this.tools = tools;
-            
+            this.ldapMgr = ldapMgr;
         }
 
         [HttpPost("SignIn")]
@@ -61,6 +65,26 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             {
                 return this.Unauthorized();
             }
+        }
+
+        [HttpPost("CreateUser")]
+        public async Task<IActionResult> CreateUser(LdapUserEntry entry)
+        {
+            var ldapUser = new OpenLdapUserEntry(
+                entry.UserName, entry.Password, entry.Email, entry.DisplayName,entry.FirstName, entry.SecondName);
+            if (await this.ldapMgr.AddUserAsync(ldapUser))
+                return this.StatusCode(StatusCodes.Status201Created);
+            else
+                return this.BadRequest();
+        }
+
+        [HttpPut("ResetPwd")]
+        public async Task<IActionResult> ResetPwd(LdapUserEntry entry)
+        {
+            if (await this.ldapMgr.ResetPwdAsync(entry.UserName, entry.Password))
+                return this.Ok();
+            else
+                return this.BadRequest();
         }
 
         [HttpPost("Validate")]
