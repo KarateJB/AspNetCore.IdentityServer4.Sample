@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AspNetCore.IdentityServer4.Core.Utils.Attributes;
 
 namespace AspNetCore.IdentityServer4.Core.Models
 {
@@ -8,19 +9,22 @@ namespace AspNetCore.IdentityServer4.Core.Models
     public class OpenLdapUserEntry
     {
         [Required]
+        [LdapAttr("uid", true)]
         public string Uid { get; set; }
 
-        [Required]
+        [LdapAttr("userPassword", true)]
         public string Pwd { get; set; }
 
-        [Required]
+        [LdapAttr("mail", true)]
         public string Email { get; set; }
 
+        [LdapAttr("displayName")]
         public string DisplayName { get; set; }
 
+        [LdapAttr("givenName")]
         public string FirstName { get; set; }
 
-        [Required]
+        [LdapAttr("sn", true)]
         public string SecondName{ get; set; }
 
         public OpenLdapUserEntry(

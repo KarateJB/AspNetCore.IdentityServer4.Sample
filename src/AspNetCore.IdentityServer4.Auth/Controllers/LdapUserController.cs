@@ -17,51 +17,44 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LdapController : ControllerBase
+    public class LdapUserController : ControllerBase
     {
-        private readonly ILdapUserStore userStore = null;
-        private readonly IEventService events = null;
-        private readonly IdentityServerTools tools = null;
+        private readonly LdapUserManager ldapUserMgr = null;
 
-        public LdapController(
-            ILdapUserStore userStore,
-            IEventService events,
-            IdentityServerTools tools)
+        public LdapUserController(LdapUserManager ldapUserMgr)
         {
-            this.userStore = userStore;
-            this.events = events;
-            this.tools = tools;
+            this.ldapUserMgr = ldapUserMgr;
         }
 
-        [HttpPost("SignIn")]
-        public async Task<IActionResult> SignIn([FromBody]LdapUser model)
+        [HttpPost]
+        public async Task<IActionResult> Create(LdapUserEntry entry)
         {
-            // validate username/password against Ldap
-            var user = this.userStore.ValidateCredentials(model.Username, model.Password);
-
-            if (user != default(IAppUser))
-            {
-                // Response with authentication cookie
-                await this.HttpContext.SignInAsync(user.SubjectId, user.Username);
-
-                // Get the Access token
-                var accessToken = await this.tools.IssueJwtAsync(lifetime: 3600, claims: new Claim[] { new Claim(JwtClaimTypes.Audience, model.ApiResource) });
-
-                // Save Access token to current session
-                this.HttpContext.Session.SetString("AccessToken", accessToken);
-
-                // Write the Access token to response
-                await this.HttpContext.Response.WriteAsync(accessToken);
-
-                // Raise UserLoginSuccessEvent
-                await this.events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
-
-                return this.Ok();
-            }
+            var ldapUser = new OpenLdapUserEntry(
+                entry.UserName, entry.Password, entry.Email, entry.DisplayName,entry.FirstName, entry.SecondName);
+            if (await this.ldapUserMgr.CreateAsync(ldapUser))
+                return this.StatusCode(StatusCodes.Status201Created);
             else
-            {
-                return this.Unauthorized();
-            }
+                return this.BadRequest();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(LdapUserEntry entry)
+        {
+            var ldapUser = new OpenLdapUserEntry(
+                entry.UserName, entry.Password, entry.Email, entry.DisplayName, entry.FirstName, entry.SecondName);
+            if (await this.ldapUserMgr.UpdateAsync(ldapUser))
+                return this.Ok();
+            else
+                return this.BadRequest();
+        }
+
+        [HttpPut("ResetPwd")]
+        public async Task<IActionResult> ResetPwd(LdapUserEntry entry)
+        {
+            if (await this.ldapUserMgr.ResetPwdAsync(entry.UserName, entry.Password))
+                return this.Ok();
+            else
+                return this.BadRequest();
         }
 
         [HttpPost("Validate")]

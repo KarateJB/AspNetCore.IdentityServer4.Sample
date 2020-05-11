@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Config;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
+using AspNetCore.IdentityServer4.Core.Utils.Attributes;
 using Microsoft.Extensions.Options;
 using Novell.Directory.Ldap;
 
 namespace AspNetCore.IdentityServer4.Service.Ldap
 {
-    public class LdapManager
+    public class LdapUserManager
     {
         private readonly AppSettings appSettings = null;
         private readonly LdapServerOptions ldapServer = null;
-        private bool isOpenLdap = false;
 
-        public LdapManager(IOptions<AppSettings> configuration)
+        public LdapUserManager(IOptions<AppSettings> configuration)
         {
             this.appSettings = configuration.Value;
             this.ldapServer = this.appSettings?.LdapServer;
@@ -28,7 +29,7 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         /// </summary>
         /// <param name="userName">User name</param>
         /// <returns>LdapEntry object</returns>
-        public async Task<LdapEntry> FindUserAsync(string userName)
+        public async Task<LdapEntry> FindAsync(string userName)
         {
             Func<LdapConnection, LdapEntry> action = (ldapConn) =>
             {
@@ -63,11 +64,11 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         /// </summary>
         /// <param name="entry">OpenLdapUserEntry object</param>
         /// <returns>True(Success)/False(Fail)</returns>
-        public async Task<bool> AddUserAsync(OpenLdapUserEntry entry)
+        public async Task<bool> CreateAsync(OpenLdapUserEntry entry)
         {
             Func<LdapConnection, bool> action = (ldapConn) =>
             {
-                if (this.FindUserAsync(entry.Uid).Result == null)
+                if (this.FindAsync(entry.Uid).Result == null)
                 {
                     var attributeSet = this.getAttrSetForOpenLdapAsync(entry).Result;
                     string userDn = this.getUserDefaultDnAsync(entry.Uid).Result;
@@ -86,19 +87,30 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         /// </summary>
         /// <param name="entry">OpenLdapUserEntry object</param>
         /// <returns>True(Success)/False(Fail)</returns>
-        public async Task<bool> UpdateUserAsync(OpenLdapUserEntry entry)
+        public async Task<bool> UpdateAsync(OpenLdapUserEntry entry)
         {
             Func<LdapConnection, bool> action = (ldapConn) =>
             {
-                var existEntry = this.FindUserAsync(entry.Uid).Result;
+                var existEntry = this.FindAsync(entry.Uid).Result;
                 if (existEntry != null)
                 {
                     var modifiedAttributes = new ArrayList();
 
-                    if (!string.IsNullOrEmpty(entry.Pwd))
-                        modifiedAttributes.Add(new LdapModification(LdapModification.REPLACE, new LdapAttribute("userPassword", entry.Pwd)));
+                    // Iterate all properties and add to modifiedAttributes
+                    PropertyInfo[] props = typeof(OpenLdapUserEntry).GetProperties();
+                    foreach (PropertyInfo prop in props)
+                    {
+                        var ldapAttr = Attribute.GetCustomAttributes(prop).FirstOrDefault( a => a.GetType().Equals(typeof(LdapAttrAttribute))) as LdapAttrAttribute;
 
-                    // TODO ...
+                        if (ldapAttr != null)
+                        {
+                            var name = ldapAttr.Name;
+                            var value = prop.GetValue(entry, null)?.ToString();
+
+                            if (!string.IsNullOrEmpty(value))
+                                modifiedAttributes.Add(new LdapModification(LdapModification.REPLACE, new LdapAttribute(name, value)));
+                        }
+                    }
 
                     var ldapModification = new LdapModification[modifiedAttributes.Count];
                     ldapModification = (LdapModification[])modifiedAttributes.ToArray(typeof(LdapModification));
@@ -123,7 +135,7 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
         {
             Func<LdapConnection, bool> action = (ldapConn) =>
             {
-                var entry = this.FindUserAsync(userName).Result;
+                var entry = this.FindAsync(userName).Result;
                 if (entry != null)
                 {
                     var modifiedAttributes = new ArrayList

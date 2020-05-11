@@ -105,7 +105,7 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region Custom services
-            services.AddSingleton<LdapManager>();
+            services.AddSingleton<LdapUserManager>();
             #endregion
         }
 
