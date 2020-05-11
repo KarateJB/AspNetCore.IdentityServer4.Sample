@@ -58,7 +58,6 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
             return await this.ldapActionAsync(action);
         }
 
-
         /// <summary>
         /// Add a new LDAP user
         /// </summary>
@@ -148,6 +147,28 @@ namespace AspNetCore.IdentityServer4.Service.Ldap
                     ldapModification = (LdapModification[])modifiedAttributes.ToArray(typeof(LdapModification));
 
                     ldapConn.Modify(entry.DN, ldapModification);
+                    return true;
+                }
+                else
+                    return false;
+            };
+
+            return await this.ldapActionAsync(action);
+        }
+
+        /// <summary>
+        /// Remove a user
+        /// </summary>
+        /// <param name="userName">User name</param>
+        /// <returns>True(Success)/False(Fail)</returns>
+        public async Task<bool> RemoveAsync(string userName)
+        {
+            Func<LdapConnection, bool> action = (ldapConn) =>
+            {
+                var existEntry = this.FindAsync(userName).Result;
+                if (existEntry != null)
+                {
+                    ldapConn.Delete(existEntry.DN);
                     return true;
                 }
                 else
