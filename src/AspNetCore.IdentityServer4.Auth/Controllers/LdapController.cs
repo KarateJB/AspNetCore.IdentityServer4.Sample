@@ -29,7 +29,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             this.userStore = userStore;
             this.events = events;
             this.tools = tools;
-            
         }
 
         [HttpPost("SignIn")]
@@ -80,7 +79,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
 
         private async Task<bool> ExecLdapAuthAsync(string username, string password)
 {
-            var host = "jblin"; // Host
+            var host = "jb.com"; // Host
             var bindDN = "cn=admin,dc=example,dc=org";
             var bindPassword = "admin";
             var baseDC = "dc=example,dc=org";
