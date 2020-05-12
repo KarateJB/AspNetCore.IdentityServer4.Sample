@@ -16,12 +16,22 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
     {
         private readonly LdapUserManager ldapUserMgr = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="ldapUserMgr">LDAP User manager</param>
         public LdapUserController(LdapUserManager ldapUserMgr)
         {
             this.ldapUserMgr = ldapUserMgr;
         }
 
+        /// <summary>
+        /// Create a LDAP User
+        /// </summary>
+        /// <param name="entry">LdapUserEntry object</param>
+        /// <returns>IActionResult</returns>
         [HttpPost]
+        [ApiVersion("1.0", Deprecated = true)]
         public async Task<IActionResult> Create(LdapUserEntry entry)
         {
             var ldapUser = new OpenLdapUserEntry(
@@ -32,6 +42,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 return this.StatusCode(StatusCodes.Status409Conflict);
         }
 
+        /// <summary>
+        /// Update a LDAP User
+        /// </summary>
+        /// <param name="entry">LdapUserEntry object</param>
+        /// <returns>IActionResult</returns>
         [HttpPut]
         public async Task<IActionResult> Update(LdapUserEntry entry)
         {
@@ -43,6 +58,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 return this.BadRequest();
         }
 
+        /// <summary>
+        /// Reset password
+        /// </summary>
+        /// <param name="entry">LdapUserEntry object</param>
+        /// <returns>IActionResult</returns>
         [HttpPut("ResetPwd")]
         public async Task<IActionResult> ResetPwd(LdapUserEntry entry)
         {
@@ -52,6 +72,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
                 return this.BadRequest();
         }
 
+        /// <summary>
+        /// Remove a LDAP user
+        /// </summary>
+        /// <param name="userName">User name</param>
+        /// <returns>IActionResult</returns>
         [HttpDelete("{userName}")]
         public async Task<IActionResult> Remove([FromRoute] string userName)
         {

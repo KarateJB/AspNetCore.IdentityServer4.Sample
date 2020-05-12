@@ -1,4 +1,5 @@
-﻿using AspNetCore.IdentityServer4.Auth.Events;
+﻿using System.Reflection;
+using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
@@ -10,12 +11,19 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
+    /// <summary>
+    /// Startup
+    /// </summary>
     public class Startup
     {
         private readonly AppSettings appSettings = null;
@@ -23,6 +31,11 @@ namespace AspNetCore.IdentityServer4.Auth
         private IConfiguration configuration { get; }
         private IWebHostEnvironment env { get; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration">IConfiguration</param>
+        /// <param name="env">IWebHostEnvironment</param>
         public Startup(
             IConfiguration configuration,
             IWebHostEnvironment env)
@@ -33,6 +46,10 @@ namespace AspNetCore.IdentityServer4.Auth
             this.configuration.Bind(this.appSettings);
         }
 
+        /// <summary>
+        /// Configure services
+        /// </summary>
+        /// <param name="services">Service collection</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
@@ -43,6 +60,30 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Inject AppSetting configuration
 
             services.Configure<AppSettings>(this.configuration);
+            #endregion
+
+            #region API Versioning
+
+            services.AddApiVersioning(opt =>
+            {
+                opt.ReportApiVersions = true; // List supported versons on Http header
+                opt.DefaultApiVersion = new ApiVersion(1, 0); // Set the default version
+                opt.AssumeDefaultVersionWhenUnspecified = true; // Use the api of default version
+                opt.ApiVersionSelector = new CurrentImplementationApiVersionSelector(opt); // Use the api of latest release number
+            });
+            #endregion
+
+            #region API Document (Swagger)
+
+            services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfig>();
+            services.AddSwaggerGen(c =>
+            {
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = System.IO.Path.Combine(System.AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
             #endregion
 
             #region IISOptions
@@ -109,8 +150,13 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">IApplicationBuilder</param>
+        /// <param name="env">IWebHostEnvironment</param>
+        /// <param name="provider">IApiVersionDescriptionProvider</param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -122,6 +168,17 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseSession();
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint(
+                        $"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
 
             app.UseRouting();
 

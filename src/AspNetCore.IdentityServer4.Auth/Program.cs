@@ -5,13 +5,25 @@ using NLog.Web;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
+    /// <summary>
+    /// Program
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Main
+        /// </summary>
+        /// <param name="args">Arguments</param>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
         }
 
+        /// <summary>
+        /// Create host
+        /// </summary>
+        /// <param name="args">Arguments</param>
+        /// <returns>IHostBuilder instance</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(webBuilder =>

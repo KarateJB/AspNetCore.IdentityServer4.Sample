@@ -26,6 +26,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             this.cache = cache;
         }
 
+        /// <summary>
+        /// Get profile
+        /// </summary>
+        /// <param name="context">ProfileDataRequestContext</param>
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
 
@@ -47,6 +51,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Service
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Is active
+        /// </summary>
+        /// <param name="context">IsActiveContext</param>
         public async Task IsActiveAsync(IsActiveContext context)
         {
             // Find user by context.Subject.GetSubjectId()
