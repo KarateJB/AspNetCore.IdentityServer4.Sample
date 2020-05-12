@@ -18,7 +18,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [ApiVersion("2.0")]
     public class LdapController : ControllerBase
     {
         private readonly ILdapUserStore userStore = null;

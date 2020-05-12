@@ -31,7 +31,6 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
         /// <param name="entry">LdapUserEntry object</param>
         /// <returns>IActionResult</returns>
         [HttpPost]
-        [ApiVersion("1.0", Deprecated = true)]
         public async Task<IActionResult> Create(LdapUserEntry entry)
         {
             var ldapUser = new OpenLdapUserEntry(

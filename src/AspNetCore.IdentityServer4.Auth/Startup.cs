@@ -3,6 +3,7 @@ using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
+using AspNetCore.IdentityServer4.Auth.Utils.Swagger;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
 using AspNetCore.IdentityServer4.Service.Ldap;
 using IdentityServer.LdapExtension.Extensions;
@@ -83,6 +84,9 @@ namespace AspNetCore.IdentityServer4.Auth
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = System.IO.Path.Combine(System.AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+
+                // Set the custom operation filter
+                c.OperationFilter<DeprecatedOperationFilter>();
             });
             #endregion
 
