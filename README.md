@@ -7,7 +7,6 @@
 
 
 
-
 # Tutorials
 
 - [[OpenLDAP] Create an OpenLDAP container](https://karatejb.blogspot.com/2019/07/openldap-create-openldap-container.html)
@@ -23,6 +22,21 @@
 - [[ASP.NET Core] Identity Server 4 – Policy based authorization with custom Authorization handler](https://karatejb.blogspot.com/2020/02/aspnet-core-identity-server-4-policy.html)
 - [[ASP.NET Core] Identity Server 4 – Signing credential](https://karatejb.blogspot.com/2020/04/aspnet-core-identity-server-4-signing.html)
 - [[ASP.NET Core] Identity Server 4 – Authenticate by multiple LDAP](https://karatejb.blogspot.com/2020/05/aspnet-core-identity-server-4.html)
+
+
+# APIs
+
+> API Document (Swagger): https://localhost:6001/swagger
+
+## LDAP User Management
+
+| Route | Http method | Description |
+|:------|:-----------:|:------------|
+| /api/LdapUser            | POST   | Create a LDAP User  |
+| /api/LdapUser            | PUT    | Update a LDAP User |
+| /api/LdapUser/ResetPwd   | PUT    | Reset password |
+| /api/LdapUser/{userName} | DELETE | Remove a LDAP user |
+
 
 
 
