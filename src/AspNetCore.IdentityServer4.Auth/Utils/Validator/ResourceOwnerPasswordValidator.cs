@@ -16,6 +16,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Validator
         //    _userService = userService;
         //}
 
+        /// <summary>
+        /// Validate
+        /// </summary>
+        /// <param name="context">ResourceOwnerPasswordValidationContext</param>
         public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
         {
             throw new NotImplementedException();

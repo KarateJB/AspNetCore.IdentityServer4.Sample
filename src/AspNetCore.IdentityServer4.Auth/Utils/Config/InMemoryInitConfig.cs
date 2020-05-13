@@ -13,6 +13,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
     /// </summary>
     public class InMemoryInitConfig
     {
+        /// <summary>
+        /// Define identity resources
+        /// </summary>
+        /// <returns>Identity resources</returns>
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
             return new IdentityResource[]
@@ -25,6 +29,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             };
         }
 
+        /// <summary>
+        /// Define API resources
+        /// </summary>
+        /// <returns>API resources</returns>
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new ApiResource[]
@@ -34,6 +42,10 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             };
         }
 
+        /// <summary>
+        /// Define clients
+        /// </summary>
+        /// <returns>Clients</returns>
         public static IEnumerable<Client> GetClients()
         {
             return new[]

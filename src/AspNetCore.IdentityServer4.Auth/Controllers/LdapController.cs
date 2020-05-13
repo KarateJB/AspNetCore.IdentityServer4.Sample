@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.IdentityServer4.Auth.Controllers
 {
+    /// <summary>
+    /// LDAP controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class LdapController : ControllerBase
@@ -21,6 +24,12 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
         private readonly IEventService events = null;
         private readonly IdentityServerTools tools = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userStore">LDAP User Store</param>
+        /// <param name="events">IEventService</param>
+        /// <param name="tools">IdentityServerTools</param>
         public LdapController(
             ILdapUserStore userStore,
             IEventService events,
@@ -31,6 +40,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             this.tools = tools;
         }
 
+        /// <summary>
+        /// Sign in
+        /// </summary>
+        /// <param name="model">LdapUser object</param>
+        /// <returns>IActionResult</returns>
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn([FromBody]LdapUser model)
         {
@@ -62,6 +76,11 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
             }
         }
 
+        /// <summary>
+        /// Validate LDAP user
+        /// </summary>
+        /// <param name="user">LdapUser object</param>
+        /// <returns>IActionResult</returns>
         [HttpPost("Validate")]
         public async Task<IActionResult> Validate([FromBody]LdapUser user)
         {
@@ -78,7 +97,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
         }
 
         private async Task<bool> ExecLdapAuthAsync(string username, string password)
-{
+        {
             var host = "jb.com"; // Host
             var bindDN = "cn=admin,dc=example,dc=org";
             var bindPassword = "admin";
@@ -87,50 +106,50 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers
 
             try
             {
-               isAuthorized = await Task.Run(() =>
-               {
-                   using (var connection = new Novell.Directory.Ldap.LdapConnection())
-                   {
-                       connection.Connect(host, Novell.Directory.Ldap.LdapConnection.DEFAULT_PORT);
-                       connection.Bind(bindDN, bindPassword);
+                isAuthorized = await Task.Run(() =>
+                {
+                    using (var connection = new Novell.Directory.Ldap.LdapConnection())
+                    {
+                        connection.Connect(host, Novell.Directory.Ldap.LdapConnection.DEFAULT_PORT);
+                        connection.Bind(bindDN, bindPassword);
 
-                       var searchFilter = $"(&(objectClass=person)(uid={username}))";
-                       var entities = connection.Search(
-                           baseDC,
-                           Novell.Directory.Ldap.LdapConnection.SCOPE_SUB,
-                           searchFilter,
-                           new string[] { "uid", "cn", "mail" },
-                           false);
+                        var searchFilter = $"(&(objectClass=person)(uid={username}))";
+                        var entities = connection.Search(
+                            baseDC,
+                            Novell.Directory.Ldap.LdapConnection.SCOPE_SUB,
+                            searchFilter,
+                            new string[] { "uid", "cn", "mail" },
+                            false);
 
-                       string userDn = null;
+                        string userDn = null;
 
-                       while (entities.hasMore())
-                       {
-                           var entity = entities.next();
-                           var account = entity.getAttribute("uid");
-                           if (account != null && account.StringValue == username)
-                           {
-                               userDn = entity.DN;
-                               break;
-                           }
-                       }
+                        while (entities.hasMore())
+                        {
+                            var entity = entities.next();
+                            var account = entity.getAttribute("uid");
+                            if (account != null && account.StringValue == username)
+                            {
+                                userDn = entity.DN;
+                                break;
+                            }
+                        }
 
-                       if (string.IsNullOrWhiteSpace(userDn))
-                       {
-                           return false;
-                       }
+                        if (string.IsNullOrWhiteSpace(userDn))
+                        {
+                            return false;
+                        }
 
-                       try
-                       {
-                           connection.Bind(userDn, password);
-                           return connection.Bound;
-                       }
-                       catch (System.Exception)
-                       {
-                           return false;
-                       }
-                   }
-               });
+                        try
+                        {
+                            connection.Bind(userDn, password);
+                            return connection.Bound;
+                        }
+                        catch (System.Exception)
+                        {
+                            return false;
+                        }
+                    }
+                });
 
                 return isAuthorized;
             }

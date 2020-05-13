@@ -1,8 +1,12 @@
-﻿using AspNetCore.IdentityServer4.Core.Models;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
-using AspNetCore.IdentityServer4.WebApi.Models;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
@@ -15,15 +19,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {

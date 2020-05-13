@@ -12,12 +12,21 @@ using Newtonsoft.Json.Linq;
 
 namespace AspNetCore.IdentityServer4.Auth.Events
 {
+    /// <summary>
+    /// User profile caching event sink
+    /// </summary>
     public class UserProfileCacheSink : IEventSink
     {
         private IHttpContextAccessor httpContextAccessor = null;
         private readonly IMemoryCache memoryCache = null;
         private readonly ILogger<UserProfileCacheSink> logger = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="httpContextAccessor"></param>
+        /// <param name="memoryCache"></param>
+        /// <param name="logger"></param>
         public UserProfileCacheSink(
             IHttpContextAccessor httpContextAccessor, 
             IMemoryCache memoryCache,
@@ -28,6 +37,10 @@ namespace AspNetCore.IdentityServer4.Auth.Events
             this.logger = logger;
         }
 
+        /// <summary>
+        /// Persist
+        /// </summary>
+        /// <param name="evt">Event</param>
         public async Task PersistAsync(Event evt)
         {
             if (evt.Id.Equals(EventIds.UserLoginSuccess))
