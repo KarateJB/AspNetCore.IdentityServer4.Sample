@@ -1,15 +1,28 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+WORKDIR /app
+
+# Copy source code and restore as distinct layers
+COPY src/ ./src
+
+# Cus the auth project links ..\..\docker\certs\Docker.pfx, so copy the docker directory as well
+COPY docker/ ./docker
+
+WORKDIR "/app/src/AspNetCore.IdentityServer4.Auth"
+RUN dotnet restore
+RUN dotnet publish --configuration release --output "/app/publish"
+
+
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 
 # Arg for current environment, eg. Development, Docker, Production. Use docker-compose file to overwrite.
 ARG env="Docker"
 
 WORKDIR /app
-VOLUME /app/App_Data/Logs
-
+COPY --from=build "/app/publish" ./
 RUN mkdir -p /etc/docker/certs/ 
-COPY ./certs/${env}.pfx /etc/docker/certs/
+COPY docker/certs/${env}.pfx /etc/docker/certs/
 RUN mv /etc/docker/certs/${env}.pfx /etc/docker/certs/docker.pfx
-COPY ./build/auth ./
+VOLUME /app/App_Data/Logs
 
 ENV TZ "Asia/Taipei"
 # ENV LANG "zh_TW.UTF-8"
