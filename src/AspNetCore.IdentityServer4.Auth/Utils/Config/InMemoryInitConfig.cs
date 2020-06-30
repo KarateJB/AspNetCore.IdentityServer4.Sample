@@ -70,12 +70,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowOfflineAccess = true,
-                    AccessTokenLifetime = 3600, // (int)TimeSpan.FromDays(1).TotalSeconds
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600, // (int)TimeSpan.FromDays(1).TotalSeconds
 
                     RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
                     RefreshTokenExpiration = TokenExpiration.Sliding,
-                    AbsoluteRefreshTokenLifetime = 360000,
-                    SlidingRefreshTokenLifetime = 36000,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                 },
@@ -99,12 +99,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowOfflineAccess = true,
-                    AccessTokenLifetime = 3600,
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600,
 
                     RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
                     RefreshTokenExpiration = TokenExpiration.Sliding,
-                    AbsoluteRefreshTokenLifetime = 360000,
-                    SlidingRefreshTokenLifetime = 36000,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
                      
                     ClientClaimsPrefix = string.Empty,
                     //Claims = new Claim[]
@@ -133,7 +133,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     AlwaysIncludeUserClaimsInIdToken = true,
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
-                    AccessTokenLifetime = 36000,
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.ClientCredentialsDefaultAbsoluteExpiry ?? 36000,
                 }
             };
         }

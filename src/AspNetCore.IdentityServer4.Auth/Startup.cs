@@ -61,6 +61,11 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Inject AppSetting configuration
 
             services.Configure<AppSettings>(this.configuration);
+            
+            // Set static AppSettingProvider
+            var globalOptions = new GlobalOptions();
+            configuration.GetSection("Global").Bind(globalOptions);
+            AppSettingProvider.Global = globalOptions;
             #endregion
 
             #region API Versioning

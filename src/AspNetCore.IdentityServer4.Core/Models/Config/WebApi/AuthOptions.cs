@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.IdentityServer4.Core.Models.Config
+﻿namespace AspNetCore.IdentityServer4.Core.Models.Config.WebApi
 {
     /// <summary>
     /// Auth Options
