@@ -44,14 +44,14 @@
 
 ## Create dotnet project
 
-```
+```s
 $ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.Auth
 $ dotnet new sln --name AspNetCore.IdentityServer4
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj
 ```
 
-```
+```s
 $ cd src
 $ dotnet new webapi --name AspNetCore.IdentityServer4.WebApi
 $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj
@@ -59,7 +59,7 @@ $ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebAp
 
 ## Install packages
 
-```
+```s
 $ cd AspNetCore.IdentityServer4.Auth
 $ dotnet add package IdentityServer4 --version 3.0.1
 $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
@@ -69,7 +69,7 @@ $ dotnet add package IdentityServer.LdapExtension --version 2.1.8
 
 Update the following config to connect to your own OpenOLAP service.
 
-```
+```json
 "LdapServer": {
     "Url": "localhost",
     "Port": 389,
@@ -89,7 +89,7 @@ Update the following config to connect to your own OpenOLAP service.
 
 ## Restore packages
 
-```
+```s
 $ cd src
 $ dotnet restore
 ```
@@ -101,65 +101,47 @@ You can use gulp to run Auth Serice and API Service in the same time
 
 1. Install package globally 
 
-```
+```s
 $ npm install -g gulp
 $ npm install -g gulp-exec
 ```
 
 2. Create npm link locally
 
-```
+```s
 $ npm link gulp
 $ npm link gulp-exec
 ```
 
 3. Run applications
 
-```
+```s
 $ gulp run
 ```
 
 or run Auth Service(`auth`) or API Service(`webapi`) individually.
 
-```
+```s
 $ gulp run auth
 $ gulp run webapi
 ```
 
 # Run on docker
 
-## Restore packages
+## Build Docker images and start containers on local Docker host
 
-```
-$ cd src
-$ dotnet restore
-```
-
-
-## Build the projects
-
-1. Auth server
-
-```
-$ cd src/AspNetCore.IdentityServer4.Auth
-$ dotnet publish --output ../../docker/build/auth --configuration release
-```
-
-2. Backend (Web API)
-
-```
-$ cd src/AspNetCore.IdentityServer4.WebApi
-$ dotnet publish --output ../../docker/build/backend --configuration release
-```
-
-
-## Build Docker images and start containers
-
-```
+```s
 $ cd docker
 $ docker-compose build [--no-cache]
 $ docker-compose up -d
 ```
+
+
+## Build Docker images and start containers on ubuntu
+
+Use Ansible playbook to install Docker and deploy, see [the sample playbook here](https://github.com/KarateJB/JB.Ansible/tree/master/Deploy/AspNetCore.IdentityServer4.Sample)
+
+
 
 ## (Optional) Create certificate by OpenSSL
 
