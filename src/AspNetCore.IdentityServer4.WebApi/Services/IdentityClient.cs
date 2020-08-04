@@ -117,7 +117,6 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
             // Use Cached Discovery Document
             this.discoResponse = await this.discoverCachedDocumentAsync();
 
-
             var httpClient = this.httpClientFactory.CreateClient(HttpClientNameFactory.AuthHttpClient);
 
             // Wait until it is safe to enter.
@@ -135,6 +134,9 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
 
             // Release the Mutex.
             this.semaphore.Release(1);
+
+            // (Optional) Force refreshing dicovery document on next request to get the DiscoveryResponse
+            // this.discoCacheClient.Refresh();
 
             return tokenResponse;
         }
@@ -226,6 +228,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                     }).Result;
 
             return jwksResponse;
+        }
+
+        /// <summary>
+        /// Refresh cached discovery document of Idsrv4 on next request for DiscoveryResponse
+        /// </summary>
+        public async Task RefreshDiscoveryDocAsync()
+        {
+            this.discoCacheClient.Refresh();
+            _ = await this.discoverCachedDocumentAsync();
+            await Task.CompletedTask;
         }
 
         /// <summary>
