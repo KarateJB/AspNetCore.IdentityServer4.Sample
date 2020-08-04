@@ -14,5 +14,10 @@
         /// Client id
         /// </summary>
         public string ClientId { get; set; }
+
+        /// <summary>
+        /// Frequency to refresh discovery document (hours)
+        /// </summary>
+        public int? RefreshDiscoveryDocDuration { get; set; }
     }
 }

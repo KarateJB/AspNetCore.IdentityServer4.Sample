@@ -17,6 +17,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
     /// </summary>
     public class IdentityClient : IIdentityClient
     {
+        private const int DEFAULT_REFRESH_DISCOVERY_DOC_DURATION = 24;
         private const string DEFAULT_SECRET = "secret";
         private const string DEFAULT_CLIENT_ID = "PolicyBasedBackend"; // Or "MyBackend"
 
@@ -64,7 +65,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
                 discoPolicy);
 
             // Set cache duration
-            discoCacheClient.CacheDuration = TimeSpan.FromHours(8);
+            discoCacheClient.CacheDuration = TimeSpan.FromHours(this.appSettings.AuthOptions?.RefreshDiscoveryDocDuration ?? DEFAULT_REFRESH_DISCOVERY_DOC_DURATION);
             #endregion
         }
 
