@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AspNetCore.IdentityServer4.WebApi.Utils.Pipelines
 {
     /// <summary>
     /// Token expired middleware
     /// </summary>
+    /// <remarks>Deprecated, use InvalidTokenMiddleware instead.</remarks>
     public class TokenExpiredMiddleware
     {
+        // TODO: Remove this deprecated middleware
+
         private readonly RequestDelegate next;
 
         /// <summary>

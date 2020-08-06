@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

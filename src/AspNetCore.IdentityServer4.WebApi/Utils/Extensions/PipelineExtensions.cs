@@ -13,9 +13,9 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseTokenExpiredResponse(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseInvalidTokenResponse(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<TokenExpiredMiddleware>();
+            return builder.UseMiddleware<InvalidTokenMiddleware>();
         }
     }
 }

@@ -32,7 +32,6 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
 
             #region Validate JWT
 
-
             if (string.IsNullOrEmpty(accessToken))
             {
                 context.Result = new UnauthorizedObjectResult($"Bearer token is required");

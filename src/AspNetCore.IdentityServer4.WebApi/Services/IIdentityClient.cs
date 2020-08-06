@@ -52,5 +52,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         /// </summary>
         /// <returns>JsonWebKeySetResponse</returns>
         Task<JsonWebKeySetResponse> GetJwksAsync();
+
+        /// <summary>
+        /// Refresh cached discovery document of Idsrv4
+        /// </summary>
+        Task RefreshDiscoveryDocAsync();
     }
 }
