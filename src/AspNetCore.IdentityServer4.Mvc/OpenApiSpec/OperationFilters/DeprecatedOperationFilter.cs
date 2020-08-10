@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AspNetCore.IdentityServer4.Auth.Utils.Swagger
+namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
 {
     /// <summary>
     /// Deprecated API operation filter

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AspNetCore.IdentityServer4.Core\AspNetCore.IdentityServer4.Core.csproj" />
+    <ProjectReference Include="..\AspNetCore.IdentityServer4.Mvc\AspNetCore.IdentityServer4.Mvc.csproj" />
     <ProjectReference Include="..\AspNetCore.IdentityServer4.Service\AspNetCore.IdentityServer4.Service.csproj" />
   </ItemGroup>
 
