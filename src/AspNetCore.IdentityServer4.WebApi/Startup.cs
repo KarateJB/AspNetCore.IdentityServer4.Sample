@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
+using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
+using AspNetCore.IdentityServer4.WevApi.Utils.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,6 +51,10 @@ namespace AspNetCore.IdentityServer4.WebApi
             services.AddControllers()
                 .AddNewtonsoftJson()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            #region OpenAPI specification (Swagger)
+            services.AddOpenApiSpec<CustomSwaggerConfig>();
+            #endregion
 
             #region Enable Authentication
             IdentityModelEventSource.ShowPII = true; //Add this line
@@ -170,9 +177,22 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">IApplicationBuilder</param>
+        /// <param name="loggerFactory">Logger factory</param>
+        /// <param name="env">IWebHostEnvironment</param>
+        /// <param name="provider">IApiVersionDescriptionProvider</param>
+        public void Configure(
+            IApplicationBuilder app,
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment env,
+            IApiVersionDescriptionProvider provider)
         {
+            // Enable Swagger and Swagger UI
+            app.UseCustomSwagger(provider);
+
             // Custom Invalid Token response/handling
             app.UseInvalidTokenResponse();
 

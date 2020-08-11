@@ -65,7 +65,7 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region OpenAPI specification (Swagger)
-            services.AddOpenApiSpec<MySwaggerConfig>();
+            services.AddOpenApiSpec<CustomSwaggerConfig>();
             #endregion
 
             #region IISOptions
@@ -145,22 +145,14 @@ namespace AspNetCore.IdentityServer4.Auth
                 app.UseDeveloperExceptionPage();
             }
 
+            // Enable Swagger and Swagger UI
+            app.UseCustomSwagger(provider);
+
             app.UseIdentityServer();
 
             app.UseSession();
 
             app.UseHttpsRedirection();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    options.SwaggerEndpoint(
-                        $"/swagger/{description.GroupName}/swagger.json",
-                        description.GroupName.ToUpperInvariant());
-                }
-            });
 
             app.UseRouting();
 
