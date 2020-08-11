@@ -18,6 +18,7 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
         /// <param name="context">Context</param>
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
+            // Get Authorize attribute
             var attributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
                                     .Union(context.MethodInfo.GetCustomAttributes(true))
                                     .OfType<AuthorizeAttribute>();
@@ -26,14 +27,18 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
             {
                 var attr = attributes.ToList()[0];
 
+                // Add response types on secure APIs
                 operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
                 operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
+                // Add what should be show inside the security section
                 IList<string> securityInfos = new List<string>();
                 securityInfos.Add($"{nameof(AuthorizeAttribute.Policy)}:{attr.Policy}");
                 securityInfos.Add($"{nameof(AuthorizeAttribute.Roles)}:{attr.Roles}");
                 securityInfos.Add($"{nameof(AuthorizeAttribute.AuthenticationSchemes)}:{attr.AuthenticationSchemes}");
 
+                // Set security field for protected routes
+                // See https://swagger.io/docs/specification/authentication/bearer-authentication/
                 operation.Security = new List<OpenApiSecurityRequirement>()
                 {
                     new OpenApiSecurityRequirement()
@@ -46,12 +51,11 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
                                     Type = ReferenceType.SecurityScheme,
                                     Id = "Bearer"
                                 },
-                                Scheme = "oauth2",
-                                Name = "Bearer",
+                                Scheme = "Bearer",
+                                Name = "Authorization",
                                 In = ParameterLocation.Header,
-
                             },
-                            new List<string>()
+                            securityInfos
                         }
                     }
                 };
