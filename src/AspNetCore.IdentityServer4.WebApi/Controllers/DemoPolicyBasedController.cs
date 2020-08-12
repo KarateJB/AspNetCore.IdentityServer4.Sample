@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         [HttpGet]
         [Route("Admin/Get")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "AdminPolicy", AuthenticationSchemes = "basic")]
         public ActionResult<string> AdminGet()
         {
             return "Yes, only an Admin can access this API!";

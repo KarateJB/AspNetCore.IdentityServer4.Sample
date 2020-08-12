@@ -51,11 +51,11 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec
                     Description = "Enter JWT Bearer token **_only_**",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
-                    Scheme = "bearer", // Must be lower case
+                    Scheme = AuthenticationScheme.Bearer,
                     BearerFormat = "JWT",
                     Reference = new OpenApiReference
                     {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Id = AuthenticationScheme.Bearer,
                         Type = ReferenceType.SecurityScheme
                     }
                 };
@@ -66,6 +66,19 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec
                 //{
                 //    {securityScheme, new string[] { }}
                 //},);
+
+                // Add Basic Authentication
+                var basicSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Basic Authentication",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = AuthenticationScheme.Basic,
+                    Reference = new OpenApiReference 
+                    { 
+                        Id = AuthenticationScheme.Basic, 
+                        Type = ReferenceType.SecurityScheme }
+                };
+                c.AddSecurityDefinition(basicSecurityScheme.Reference.Id, basicSecurityScheme);
             });
             #endregion
 
