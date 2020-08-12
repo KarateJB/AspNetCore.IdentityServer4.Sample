@@ -60,6 +60,10 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
                     }
                 };
             }
+            else
+            {
+                operation.Security.Clear();
+            }
         }
     }
 }

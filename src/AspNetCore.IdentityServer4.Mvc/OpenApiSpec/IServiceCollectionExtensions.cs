@@ -60,10 +60,12 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec
                     }
                 };
                 c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {securityScheme, new string[] { }}
-                });
+
+                // Note: The following configuration will make ALL APIs as protected!
+                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {securityScheme, new string[] { }}
+                //},);
             });
             #endregion
 
