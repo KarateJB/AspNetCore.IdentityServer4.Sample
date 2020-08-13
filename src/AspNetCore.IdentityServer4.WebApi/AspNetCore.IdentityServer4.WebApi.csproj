@@ -5,13 +5,17 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>obj\Debug\netcoreapp3.1\AspNetCore.IdentityServer4.WebApi.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\AspNetCore.IdentityServer4.Auth\Models\LdapUser.cs" Link="Models\LdapUser.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
@@ -21,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AspNetCore.IdentityServer4.Core\AspNetCore.IdentityServer4.Core.csproj" />
+    <ProjectReference Include="..\AspNetCore.IdentityServer4.Mvc\AspNetCore.IdentityServer4.Mvc.csproj" />
     <ProjectReference Include="..\AspNetCore.IdentityServer4.Service\AspNetCore.IdentityServer4.Service.csproj" />
   </ItemGroup>
 

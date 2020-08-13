@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AspNetCore.IdentityServer4.Auth.Utils.Config
+namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec
 {
     /// <summary>
     /// Swagger configuration
@@ -11,6 +11,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
     public class SwaggerConfig : IConfigureOptions<SwaggerGenOptions>
     {
         private readonly IApiVersionDescriptionProvider provider;
+        protected virtual string AppName { get; set; } = string.Empty;
 
         /// <summary>
         /// Constructor
@@ -31,7 +32,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
             {
                 var info = new Microsoft.OpenApi.Models.OpenApiInfo()
                 {
-                    Title = $"Auth Server {description.ApiVersion}",
+                    Title = $"{this.AppName} {description.ApiVersion}",
                     Version = description.ApiVersion.ToString(),
                 };
 

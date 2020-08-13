@@ -1,10 +1,9 @@
-﻿using System.Reflection;
-using AspNetCore.IdentityServer4.Auth.Events;
+﻿using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
-using AspNetCore.IdentityServer4.Auth.Utils.Swagger;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
+using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.Service.Ldap;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
@@ -13,12 +12,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
@@ -68,31 +64,8 @@ namespace AspNetCore.IdentityServer4.Auth
             AppSettingProvider.Global = globalOptions;
             #endregion
 
-            #region API Versioning
-
-            services.AddApiVersioning(opt =>
-            {
-                opt.ReportApiVersions = true; // List supported versons on Http header
-                opt.DefaultApiVersion = new ApiVersion(1, 0); // Set the default version
-                opt.AssumeDefaultVersionWhenUnspecified = true; // Use the api of default version
-                opt.ApiVersionSelector = new CurrentImplementationApiVersionSelector(opt); // Use the api of latest release number
-            });
-            #endregion
-
-            #region API Document (Swagger)
-
-            services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfig>();
-            services.AddSwaggerGen(c =>
-            {
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = System.IO.Path.Combine(System.AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-
-                // Set the custom operation filter
-                c.OperationFilter<DeprecatedOperationFilter>();
-            });
+            #region OpenAPI specification (Swagger)
+            services.AddOpenApiSpec<CustomSwaggerConfig>();
             #endregion
 
             #region IISOptions
@@ -172,22 +145,14 @@ namespace AspNetCore.IdentityServer4.Auth
                 app.UseDeveloperExceptionPage();
             }
 
+            // Enable Swagger and Swagger UI
+            app.UseCustomSwagger(provider);
+
             app.UseIdentityServer();
 
             app.UseSession();
 
             app.UseHttpsRedirection();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    options.SwaggerEndpoint(
-                        $"/swagger/{description.GroupName}/swagger.json",
-                        description.GroupName.ToUpperInvariant());
-                }
-            });
 
             app.UseRouting();
 
