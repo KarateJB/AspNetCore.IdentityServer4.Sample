@@ -42,7 +42,7 @@ namespace AspNetCore.IdentityServer4.Mvc.OpenApiSpec.OperationFilters
                 // See https://swagger.io/docs/specification/authentication/bearer-authentication/
                 switch (attr.AuthenticationSchemes)
                 {
-                    case var p when p == AuthenticationScheme.Basic:
+                    case var p when p == AuthenticationScheme.Basic: // For APIs with [Authorize(AuthenticationSchemes = "basic")]
                         operation.Security = new List<OpenApiSecurityRequirement>()
                         {
                             new OpenApiSecurityRequirement()

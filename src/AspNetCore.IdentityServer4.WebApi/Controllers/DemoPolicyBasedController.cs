@@ -21,7 +21,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
 
         [HttpGet]
         [Route("Admin/Get")]
-        [Authorize(Policy = "AdminPolicy", AuthenticationSchemes = "basic")]
+        [Authorize(Policy = "AdminPolicy")]
         public ActionResult<string> AdminGet()
         {
             return "Yes, only an Admin can access this API!";
