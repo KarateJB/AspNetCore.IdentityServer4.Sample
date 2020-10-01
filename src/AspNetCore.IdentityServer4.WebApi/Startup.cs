@@ -57,34 +57,8 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region Enable Authentication
-            IdentityModelEventSource.ShowPII = true; //Add this line
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
-                //options.RequireHttpsMetadata = true;
-
-                string authServerBaseUrl = this.appSettings?.Host?.AuthServer ?? "https://localhost:6001";
-                bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
-                options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
-                options.RequireHttpsMetadata = isRequireHttpsMetadata;
-                options.Audience = this.appSettings?.AuthOptions?.Audience ?? "MyBackendApi2"; // API Resource name
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
-                options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
-                //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
-
-                options.Events = new JwtBearerEvents()
-                {
-                    OnAuthenticationFailed = (e) =>
-                    {
-                        // Some callback here ...
-                        return Task.CompletedTask;
-                    }
-                };
-            });
+            services.AddJwtAuthentication(this.appSettings);
+            services.AddOpenIdAuthentication(this.appSettings);
             #endregion
 
             #region Enable policy-based authorization
