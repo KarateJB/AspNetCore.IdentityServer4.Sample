@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Models.Enum;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -37,8 +38,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new ApiResource[]
             {
-                new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2")
+                new ApiResource(ApiResources.MyBackendApi1, "My Backend API 1"),
+                new ApiResource(ApiResources.MyBackendApi2, "My Backend API 2")
             };
         }
 
@@ -54,8 +55,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "MyBackend",
-                    ClientName = "MyBackend Client",
+                    ClientId = AuthClientEnum.MyBackend.ToString(),
+                    ClientName = "MyBackend Client", // TODO: AuthClientEnum.MyBackend.GetDescription()
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
