@@ -50,6 +50,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new[]
             {
+                #region ClientId: "MyBackend", GrandType: "ResourceOwnerPassword"
                 new Client
                 {
                     Enabled = true,
@@ -79,6 +80,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                 },
+                #endregion
+
+                #region ClientId: "PolicyBasedBackend", GrandType: "ResourceOwnerPassword"
 
                 new Client
                 {
@@ -105,7 +109,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
                     SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
-                     
+
                     ClientClaimsPrefix = string.Empty,
                     //Claims = new Claim[]
                     //{
@@ -116,6 +120,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
                 },
+	            #endregion
+
+                #region ClientId: "Resources", GrandType: "ClientCredentials"
 
                 // Client credentials
                 new Client
@@ -134,7 +141,23 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.ClientCredentialsDefaultAbsoluteExpiry ?? 36000,
+                },
+	            #endregion
+
+                #region ClientId: "pkce_client", GrandType: "code"
+                new Client
+                {
+                    ClientId = "pkce_client",
+                    ClientName = "MVC PKCE Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    ClientSecrets = {new Secret("acf2ec6fb01a4b698ba240c2b10a0243".Sha256())},
+                    RedirectUris = {"https://localhost:5001/signin-oidc"},
+                    AllowedScopes = {"openid", "profile", "minitis-api"},
+                    AllowOfflineAccess = true,
+                    RequirePkce = true,
+                    AllowPlainTextPkce = false
                 }
+	            #endregion
             };
         }
     }
