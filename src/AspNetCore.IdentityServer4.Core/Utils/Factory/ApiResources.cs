@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.IdentityServer4.Auth.Utils.Config
+﻿namespace AspNetCore.IdentityServer4.Core.Utils.Factory
 {
     /// <summary>
     /// API resources

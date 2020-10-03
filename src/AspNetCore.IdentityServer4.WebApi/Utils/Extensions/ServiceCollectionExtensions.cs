@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -42,6 +43,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Add JWT authentication scheme and config
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="appSettings">AppSettings</param>
+        /// <returns>IServiceCollection</returns>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, AppSettings appSettings)
         {
             IdentityModelEventSource.ShowPII = true; //Add this line
@@ -58,7 +65,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
                 options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
-                options.Audience = appSettings?.AuthOptions?.Audience ?? "MyBackendApi2"; // API Resource name
+                options.Audience = appSettings?.AuthOptions?.Audience ?? ApiResources.MyBackendApi2; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
                 //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";

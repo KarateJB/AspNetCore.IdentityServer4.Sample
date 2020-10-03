@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Enum;
-using IdentityModel;
+using AspNetCore.IdentityServer4.Core.Utils.Extensions;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityServer4;
 using IdentityServer4.Models;
 
@@ -56,11 +54,11 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 {
                     Enabled = true,
                     ClientId = AuthClientEnum.MyBackend.ToString(),
-                    ClientName = "MyBackend Client", // TODO: AuthClientEnum.MyBackend.GetDescription()
+                    ClientName = AuthClientEnum.MyBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
-                        "MyBackendApi1",
+                        ApiResources.MyBackendApi1,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Profile,
@@ -88,12 +86,12 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "PolicyBasedBackend",
-                    ClientName = "MyBackend Client",
+                    ClientId = AuthClientEnum.PolicyBasedBackend.ToString(),
+                    ClientName = AuthClientEnum.PolicyBasedBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
-                        "MyBackendApi2",
+                        ApiResources.MyBackendApi2,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email
                     },
@@ -129,11 +127,11 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "Resources",
-                    ClientName = "Resource Owners",
+                    ClientId = AuthClientEnum.Resources.ToString(),
+                    ClientName = AuthClientEnum.Resources.GetDescription(),
                     AllowedScopes =
                     {
-                        "MyBackendApi2",
+                        ApiResources.MyBackendApi2,
                     },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     AccessTokenType = AccessTokenType.Jwt,
@@ -148,12 +146,20 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 #region ClientId: "pkce_client", GrandType: "code"
                 new Client
                 {
-                    ClientId = "pkce_client",
-                    ClientName = "MVC PKCE Client",
+                    ClientId = AuthClientEnum.PkceCodeBackend.ToString(),
+                    ClientName = AuthClientEnum.PkceCodeBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.Code,
-                    ClientSecrets = {new Secret("acf2ec6fb01a4b698ba240c2b10a0243".Sha256())},
-                    RedirectUris = {"https://localhost:5001/signin-oidc"},
-                    AllowedScopes = {"openid", "profile", "minitis-api"},
+                    ClientSecrets = { new Secret("acf2ec6fb01a4b698ba240c2b10a0243".Sha256()) },
+                    RedirectUris = 
+                    {
+                        "https://localhost:5001/signin-oidc"
+                    },
+                    AllowedScopes = 
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        ApiResources.MyBackendApi2
+                    },
                     AllowOfflineAccess = true,
                     RequirePkce = true,
                     AllowPlainTextPkce = false
