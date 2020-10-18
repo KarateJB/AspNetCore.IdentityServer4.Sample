@@ -12,11 +12,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AspNetCore.IdentityServer4.Auth.Controllers.Account
+namespace AspNetCore.IdentityServer4.Auth.Areas.Account.Controllers
 {
     /// <summary>
     /// Account controller
     /// </summary>
+    [Route("[controller]")]
     [AllowAnonymous]
     public class AccountController : Controller
     {
@@ -47,6 +48,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers.Account
         /// Entry point into the login workflow
         /// </summary>
         [HttpGet]
+        [Route("Login")]
         public async Task<IActionResult> Login(string returnUrl)
         {
             // build a model so we know what to show on the login page

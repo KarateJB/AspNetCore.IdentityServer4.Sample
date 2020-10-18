@@ -5,7 +5,7 @@ using AspNetCore.IdentityServer4.Service.Ldap;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.IdentityServer4.Auth.Controllers
+namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
 {
     /// <summary>
     /// LDAP User controller
