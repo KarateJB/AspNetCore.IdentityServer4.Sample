@@ -6,6 +6,7 @@ using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.Auth.Models.ViewModels;
 using IdentityServer4;
 using IdentityServer4.Services;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers.Account
         private readonly ILogger<AccountController> logger = null;
         private readonly IIdentityServerInteractionService interaction = null;
         private readonly IAuthenticationSchemeProvider schemeProvider = null;
+        private readonly IClientStore clientStore;
 
         /// <summary>
         /// Constructor
@@ -29,14 +31,17 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers.Account
         /// <param name="logger">Logger</param>
         /// <param name="interaction">Idsrc interaction service</param>
         /// <param name="schemeProvider">Authentication scheme provider</param>
+        /// <param name="clientStore">Client store</param>
         public AccountController(
             ILogger<AccountController> logger,
             IIdentityServerInteractionService interaction,
-            IAuthenticationSchemeProvider schemeProvider)
+            IAuthenticationSchemeProvider schemeProvider,
+            IClientStore clientStore)
         {
             this.logger = logger;
             this.interaction = interaction;
             this.schemeProvider = schemeProvider;
+            this.clientStore = clientStore;
         }
         /// <summary>
         /// Entry point into the login workflow
@@ -92,7 +97,7 @@ namespace AspNetCore.IdentityServer4.Auth.Controllers.Account
             var allowLocal = true;
             if (context?.ClientId != null)
             {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+                var client = await this.clientStore.FindEnabledClientByIdAsync(context.ClientId);
                 if (client != null)
                 {
                     allowLocal = client.EnableLocalLogin;

@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Account\Views\" />
     <Folder Include="Keys\" />
     <Folder Include="Certs\" />
   </ItemGroup>
