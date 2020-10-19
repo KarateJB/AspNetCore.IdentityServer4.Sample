@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
@@ -40,7 +41,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
                 return;
             }
 
-            var userEmailClaim = userClaim.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email));
+            var userEmailClaim = userClaim.Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Email)); // or ClaimTypes.Email
 
             if (userEmailClaim != null)
             {

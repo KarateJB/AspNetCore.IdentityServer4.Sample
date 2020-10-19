@@ -3,14 +3,22 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AspNetCore.IdentityServer4.WebApi.Controllers
+namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
 {
+    /// <summary>
+    /// Demo APIs for Roles based authorization
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")] // Specify the scheme name if multiple schemes were set
     public class DemoRoleBasedController : ControllerBase
     {
         private ILogger<DemoRoleBasedController> _logger = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger">Logger</param>
         public DemoRoleBasedController(ILogger<DemoRoleBasedController> logger)
         {
             this._logger = logger;

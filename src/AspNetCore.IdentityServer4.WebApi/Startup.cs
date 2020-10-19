@@ -93,7 +93,7 @@ namespace AspNetCore.IdentityServer4.WebApi
 
             services.AddAuthorization(options =>
             {
-                var emailDomainRequirement = new EmailDomainRequirement("fake.com");
+                var emailDomainRequirement = new EmailDomainRequirement("xxx.com");
                 var userNameRequirement = new UserNameRequirement("jblin");
 
                 // options.InvokeHandlersAfterFailure = false; // Default: true

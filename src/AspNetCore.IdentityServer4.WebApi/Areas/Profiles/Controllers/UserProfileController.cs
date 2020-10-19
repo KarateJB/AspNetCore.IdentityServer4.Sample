@@ -6,19 +6,31 @@ using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.IdentityServer4.WebApi.Controllers
+namespace AspNetCore.IdentityServer4.WebApi.Areas.Profiles.Controllers
 {
+    /// <summary>
+    /// User Profile controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UserProfileController : ControllerBase
     {
         private readonly ICacheService cache = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="cache">Cache service</param>
         public UserProfileController(ICacheService cache)
         {
             this.cache = cache;
         }
 
+        /// <summary>
+        /// Get user profile
+        /// </summary>
+        /// <param name="userName">User name</param>
+        /// <returns>User profile</returns>
         [HttpGet("Get/{userName}")]
         public async Task<UserProfile> Get([FromRoute] string userName)
         {
@@ -33,6 +45,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             return isOK ? userRole : null;
         }
 
+        /// <summary>
+        /// Create new user profile
+        /// </summary>
+        /// <param name="user">User profile</param>
         [HttpPost("Create")]
         public async Task<ActionResult> Create([FromBody] UserProfile user)
         {
@@ -41,6 +57,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
             return this.Ok();
         }
 
+        /// <summary>
+        /// Remove a user's user profile
+        /// </summary>
+        /// <param name="userName">User name</param>
         [HttpPost("Remove/{userName}")]
         public async Task<ActionResult> Remove([FromRoute] string userName)
         {

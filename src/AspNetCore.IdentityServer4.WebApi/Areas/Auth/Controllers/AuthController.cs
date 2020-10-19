@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace AspNetCore.IdentityServer4.WebApi.Controllers
+namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -74,6 +74,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Controllers
         /// <param name="accessToken">Access Token</param>
         /// <returns>JSON object</returns>
         [HttpPost("UserInfo")]
+        [AllowAnonymous]
         public async Task<JObject> UserInfo([FromBody] string accessToken)
         {
             /*

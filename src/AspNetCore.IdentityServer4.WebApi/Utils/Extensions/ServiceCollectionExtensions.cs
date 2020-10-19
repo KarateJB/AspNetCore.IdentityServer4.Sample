@@ -54,8 +54,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
             IdentityModelEventSource.ShowPII = true; //Add this line
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
             }).AddJwtBearer(options =>
             {
                 //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
@@ -97,8 +97,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
 
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; // "Cookies"
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // "Cookies"
                 options.DefaultChallengeScheme = "oidc";
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -112,7 +112,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
 
-                options.ClientId = "pkce_client";
+                options.ClientId = "PkceCodeBackend";
                 options.ClientSecret = "acf2ec6fb01a4b698ba240c2b10a0243";
                 options.ResponseType = "code";
                 options.ResponseMode = "form_post";
