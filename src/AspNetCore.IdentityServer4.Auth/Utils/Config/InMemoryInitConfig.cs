@@ -143,7 +143,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                 },
 	            #endregion
 
-                #region ClientId: "pkce_client", GrandType: "code"
+                #region ClientId: "PkceCodeBackend", GrandType: "code"
                 new Client
                 {
                     ClientId = AuthClientEnum.PkceCodeBackend.ToString(),
@@ -154,6 +154,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     {
                         "https://localhost:5001/signin-oidc"
                     },
+                    RequireConsent = false, // If enable, will redirect to consent page after sign-in
                     AllowedScopes = 
                     {
                         IdentityServerConstants.StandardScopes.OpenId,

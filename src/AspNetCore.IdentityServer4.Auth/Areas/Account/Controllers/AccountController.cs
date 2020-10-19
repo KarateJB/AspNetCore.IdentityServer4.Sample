@@ -172,7 +172,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Account.Controllers
                     else
                     {
                         // user might have clicked on a malicious link - should be logged
-                        throw new Exception("invalid return URL");
+                        throw new Exception("Invalid return URL");
                     }
                 }
                 else
