@@ -54,8 +54,7 @@ namespace AspNetCore.IdentityServer4.Auth
                  options => {
                      //{2} is area, {1} is controller,{0} is the action
                      options.ViewLocationFormats.Add("/Areas/{1}/Views/{0}.cshtml");
-                 })
-                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSession();
 

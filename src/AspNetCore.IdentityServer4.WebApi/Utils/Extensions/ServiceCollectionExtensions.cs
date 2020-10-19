@@ -65,6 +65,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
                 options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
+                options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration"; // Optional
                 options.Audience = appSettings?.AuthOptions?.Audience ?? ApiResources.MyBackendApi2; // API Resource name
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
@@ -104,6 +105,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddOpenIdConnect("oidc", options =>
             {
+                const string CODE_VERIFIER_KEY = "code_verifier";
+                const string CODE_CHALLENGE_KEY = "code_challenge";
+                const string CODE_CHALLENGE_METHOD_KEY = "code_challenge_method";
+
                 // Get config values from AppSetting file
                 string authServerBaseUrl = appSettings?.Host.AuthServer;
                 bool isRequireHttpsMetadata = !string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https");
@@ -131,7 +136,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                         var codeVerifier = CryptoRandom.CreateUniqueId(32);
 
                         // store codeVerifier for later use
-                        context.Properties.Items.Add("code_verifier", codeVerifier);
+                        context.Properties.Items.Remove(CODE_VERIFIER_KEY);
+                        context.Properties.Items.Add(CODE_VERIFIER_KEY, codeVerifier);
 
                         // create code_challenge
                         string codeChallenge;
@@ -142,8 +148,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                         }
 
                         // add code_challenge and code_challenge_method to request
-                        context.ProtocolMessage.Parameters.Add("code_challenge", codeChallenge);
-                        context.ProtocolMessage.Parameters.Add("code_challenge_method", "S256");
+                        context.ProtocolMessage.Parameters.Remove(CODE_CHALLENGE_KEY);
+                        context.ProtocolMessage.Parameters.Remove(CODE_CHALLENGE_METHOD_KEY);
+                        context.ProtocolMessage.Parameters.Add(CODE_CHALLENGE_KEY, codeChallenge);
+                        context.ProtocolMessage.Parameters.Add(CODE_CHALLENGE_METHOD_KEY, "S256");
                     }
 
                     return Task.CompletedTask;
@@ -155,10 +163,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                     if (context.TokenEndpointRequest?.GrantType == OpenIdConnectGrantTypes.AuthorizationCode)
                     {
                         // get stored code_verifier
-                        if (context.Properties.Items.TryGetValue("code_verifier", out var codeVerifier))
+                        if (context.Properties.Items.TryGetValue(CODE_VERIFIER_KEY, out var codeVerifier))
                         {
                             // add code_verifier to token request
-                            context.TokenEndpointRequest.Parameters.Add("code_verifier", codeVerifier);
+                            context.TokenEndpointRequest.Parameters.Add(CODE_VERIFIER_KEY, codeVerifier);
                         }
                     }
 
