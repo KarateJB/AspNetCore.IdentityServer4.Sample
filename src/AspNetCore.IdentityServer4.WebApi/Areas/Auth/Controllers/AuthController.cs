@@ -9,6 +9,9 @@ using Newtonsoft.Json.Linq;
 
 namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
 {
+    /// <summary>
+    /// Authenticiation controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -16,6 +19,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         private readonly ILogger<AuthController> logger = null;
         private readonly IIdentityClient idsrvClient = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger">Logger</param>
+        /// <param name="idsrvClient">Idsrc client</param>
         public AuthController(
             ILogger<AuthController> logger,
             IIdentityClient idsrvClient)

@@ -133,6 +133,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Account.Controllers
                     AuthenticationProperties props = null;
                     if (AccountOptions.AllowRememberLogin && model.RememberLogin)
                     {
+                        // See https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-3.1#persistent-cookies
                         props = new AuthenticationProperties
                         {
                             IsPersistent = true,

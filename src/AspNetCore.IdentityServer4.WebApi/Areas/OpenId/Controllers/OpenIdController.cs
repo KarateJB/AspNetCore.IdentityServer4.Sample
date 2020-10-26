@@ -9,8 +9,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
     /// Open ID controller
     /// </summary>
     [Route("[controller]")]
-    ////[Authorize(AuthenticationSchemes = "Cookies")] // Specify the scheme name if multiple schemes were set
-    [Authorize]
+    [Authorize] // DONOT specify the AuthenticationSchemes here
     public class OpenIdController : Controller
     {
         private readonly ILogger logger = null;
@@ -29,8 +28,6 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         /// <summary>
         /// Login by OIDC
         /// </summary>
-        /// <param name="user">LDAP user</param>
-        /// <returns>JSON object</returns>
         [HttpGet("Login")]
         public async Task<IActionResult> Login()
         {
