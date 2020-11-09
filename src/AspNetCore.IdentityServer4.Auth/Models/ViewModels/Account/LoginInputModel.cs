@@ -3,7 +3,7 @@
 namespace AspNetCore.IdentityServer4.Auth.Models.ViewModels
 {
     /// <summary>
-    /// LoginInputModel
+    /// Login input model
     /// </summary>
     public class LoginInputModel
     {

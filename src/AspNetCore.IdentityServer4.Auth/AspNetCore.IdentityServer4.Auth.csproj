@@ -36,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Consent\Views\" />
     <Folder Include="Keys\" />
     <Folder Include="Certs\" />
   </ItemGroup>

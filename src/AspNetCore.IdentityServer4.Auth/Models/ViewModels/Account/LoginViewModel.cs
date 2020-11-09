@@ -5,7 +5,7 @@ using System.Linq;
 namespace AspNetCore.IdentityServer4.Auth.Models.ViewModels
 {
     /// <summary>
-    /// Login ViewModel
+    /// Login view model
     /// </summary>
     public class LoginViewModel : LoginInputModel
     {
