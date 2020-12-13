@@ -20,6 +20,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Consent.Controllers
     /// <summary>
     /// Consent controller
     /// </summary>
+    [Route("[controller]")]
     [SecurityHeaders]
     [Authorize]
     public class ConsentController : Controller

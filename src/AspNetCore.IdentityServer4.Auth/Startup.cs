@@ -160,6 +160,8 @@ namespace AspNetCore.IdentityServer4.Auth
 
             app.UseRouting();
 
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

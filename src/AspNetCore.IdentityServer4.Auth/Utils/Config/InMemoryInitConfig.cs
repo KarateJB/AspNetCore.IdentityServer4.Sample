@@ -155,7 +155,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     {
                         "https://localhost:5001/signin-oidc"
                     },
-                    RequireConsent = false, // If enable, will redirect to consent page after sign-in
+                    RequireConsent = true, // If enable, will redirect to consent page after sign-in
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
