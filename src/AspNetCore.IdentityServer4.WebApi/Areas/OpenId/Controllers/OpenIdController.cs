@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,6 +26,17 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
             this.logger = logger;
         }
 
+        #region Test
+        [HttpGet("Test")]
+        public async Task<IActionResult> Test()
+        {
+            /*
+             * You can use this API(/OpenId/Test) for testing if the user has been authorized. 
+             */
+            return this.Ok();
+        }
+        #endregion
+
         #region Login
 
         /// <summary>
@@ -31,7 +45,18 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         [HttpGet("Login")]
         public async Task<IActionResult> Login()
         {
-            return await Task.FromResult(this.View());
+            if (User.Identity.IsAuthenticated)
+            {
+                string accessToken = await HttpContext.GetTokenAsync("access_token");
+                string idToken = await HttpContext.GetTokenAsync("id_token");
+                string refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+                var expiresAt = DateTimeOffset.Parse(await HttpContext.GetTokenAsync("expires_at"));
+                return await Task.FromResult(this.View());
+            }
+            else
+            {
+                return this.Unauthorized();
+            }
         }
         #endregion
     }

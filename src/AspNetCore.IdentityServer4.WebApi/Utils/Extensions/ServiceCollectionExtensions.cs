@@ -118,7 +118,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
 
                 options.ClientId = "PkceCodeBackend";
-                options.ClientSecret = "acf2ec6fb01a4b698ba240c2b10a0243";
+                options.ClientSecret = "secret";
                 options.ResponseType = "code";
                 options.ResponseMode = "form_post";
                 options.CallbackPath = "/signin-oidc";

@@ -149,13 +149,14 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     ClientId = AuthClientEnum.PkceCodeBackend.ToString(),
                     ClientName = AuthClientEnum.PkceCodeBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.Code,
-                    ClientSecrets = { new Secret("acf2ec6fb01a4b698ba240c2b10a0243".Sha256()) },
-                    RedirectUris = 
+                    AccessTokenType = AccessTokenType.Jwt,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    RedirectUris =
                     {
                         "https://localhost:5001/signin-oidc"
                     },
                     RequireConsent = false, // If enable, will redirect to consent page after sign-in
-                    AllowedScopes = 
+                    AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
@@ -163,7 +164,15 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     },
                     AllowOfflineAccess = true,
                     RequirePkce = true,
-                    AllowPlainTextPkce = false
+                    AllowPlainTextPkce = false,
+
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
+
+                    ClientClaimsPrefix = string.Empty,
                 }
 	            #endregion
             };
