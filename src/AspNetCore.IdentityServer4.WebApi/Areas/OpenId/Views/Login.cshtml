@@ -1,25 +1,34 @@
-﻿<h2>Welcome!</h2>
+﻿@model OidUserInfo
 
-@model OidTokens
-
+<h2>Welcome! @Html.DisplayFor(model => model.UserName).</h2>
 <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th>#</th>
-      <th>Key</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>@Html.DisplayNameFor(model => model.IdToken)</td>
+            <td>@Html.DisplayFor(model => model.IdToken)</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>@Html.DisplayNameFor(model => model.AccessToken)</td>
+            <td>@Html.DisplayFor(model => model.AccessToken)</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>@Html.DisplayNameFor(model => model.RefreshToken)</td>
+            <td>@Html.DisplayFor(model => model.RefreshToken)</td>
+        </tr>
+        <tr>
+            <th scope="row">4</th>
+            <td>@Html.DisplayNameFor(model => model.ExpiresAt)</td>
+            <td>@Html.DisplayFor(model => model.ExpiresAt)</td>
+        </tr>
+    </tbody>
 </table>
