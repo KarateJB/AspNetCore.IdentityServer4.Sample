@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.WebApi.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,11 +48,15 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                string accessToken = await HttpContext.GetTokenAsync("access_token");
-                string idToken = await HttpContext.GetTokenAsync("id_token");
-                string refreshToken = await HttpContext.GetTokenAsync("refresh_token");
-                var expiresAt = DateTimeOffset.Parse(await HttpContext.GetTokenAsync("expires_at"));
-                return await Task.FromResult(this.View());
+                OidTokens tokens = new OidTokens
+                {
+                    IdToken = await HttpContext.GetTokenAsync("id_token"),
+                    AccessToken = await HttpContext.GetTokenAsync("access_token"),
+                    RefreshToken = await HttpContext.GetTokenAsync("refresh_token"),
+                    ExpiresAt = DateTimeOffset.Parse(await HttpContext.GetTokenAsync("expires_at"))
+                };
+
+                return await Task.FromResult(this.View(tokens));
             }
             else
             {

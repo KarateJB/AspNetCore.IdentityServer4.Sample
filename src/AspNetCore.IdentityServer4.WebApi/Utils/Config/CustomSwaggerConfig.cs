@@ -1,7 +1,7 @@
 ﻿using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace AspNetCore.IdentityServer4.WevApi.Utils.Config
+namespace AspNetCore.IdentityServer4.WebApi.Utils.Config
 {
     /// <summary>
     /// Swagger configuration
