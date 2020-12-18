@@ -26,13 +26,13 @@ namespace AspNetCore.IdentityServer4.WebApi
     public class Startup
     {
         private readonly IWebHostEnvironment env = null;
+        private readonly ILogger<Startup> logger = null;
         private readonly AppSettings appSettings = null;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.Configuration = configuration;
             this.env = env;
-
             this.appSettings = new AppSettings();
             this.Configuration.Bind(this.appSettings);
         }
