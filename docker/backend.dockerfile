@@ -3,9 +3,9 @@ WORKDIR /app
 
 # Copy source code and restore as distinct layers
 COPY src/ ./
-RUN dotnet restore
 WORKDIR "/app/AspNetCore.IdentityServer4.WebApi"
-RUN dotnet publish --configuration release --output "/app/publish"
+RUN dotnet restore
+RUN dotnet publish --configuration Release --output "/app/publish"
 
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
