@@ -4,6 +4,7 @@ FROM nginx:1.17.5
 ARG env="Docker"
 
 COPY ./nginx/web-servers.conf /etc/nginx/sites-available/web-servers.conf
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./certs/${env}.crt /etc/docker/certs/
 COPY ./certs/${env}.key /etc/docker/certs/
 RUN mv /etc/docker/certs/${env}.crt /etc/docker/certs/docker.crt
