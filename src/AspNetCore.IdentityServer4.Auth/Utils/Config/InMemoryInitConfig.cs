@@ -153,7 +153,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     RedirectUris =
                     {
-                        "https://localhost:5001/signin-oidc"
+                        //"https://localhost:5001/signin-oidc"
+                        "https://192.168.99.100:5001/signin-oidc"
                     },
                     RequireConsent = true, // If enable, will redirect to consent page after sign-in
                     AllowedScopes =
