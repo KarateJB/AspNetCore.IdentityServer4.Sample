@@ -9,7 +9,7 @@ COPY docker/ ./docker
 
 WORKDIR "/app/src/AspNetCore.IdentityServer4.Auth"
 RUN dotnet restore
-RUN dotnet publish --configuration release --output "/app/publish"
+RUN dotnet publish --configuration Release --output "/app/publish"
 
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime

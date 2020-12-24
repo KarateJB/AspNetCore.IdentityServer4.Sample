@@ -1,0 +1,8 @@
+﻿@if(ViewBag.IsAuthenticated)
+{
+    <h2>You had sucessfully signed as @ViewBag.UserName.</h2>
+}
+else
+{
+    <h2>Hi, @ViewBag.UserName, please sign in first <a asp-controller="OpenId" asp-action="Login">here</a>.</h2>
+}

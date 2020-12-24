@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using AspNetCore.IdentityServer4.Core.Models;
-using IdentityModel;
+using AspNetCore.IdentityServer4.Core.Models.Enum;
+using AspNetCore.IdentityServer4.Core.Utils.Extensions;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityServer4;
 using IdentityServer4.Models;
 
@@ -37,8 +36,8 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new ApiResource[]
             {
-                new ApiResource("MyBackendApi1", "My Backend API 1"),
-                new ApiResource("MyBackendApi2", "My Backend API 2")
+                new ApiResource(ApiResources.MyBackendApi1, "My Backend API 1"),
+                new ApiResource(ApiResources.MyBackendApi2, "My Backend API 2")
             };
         }
 
@@ -50,15 +49,16 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
         {
             return new[]
             {
+                #region ClientId: "MyBackend", GrandType: "ResourceOwnerPassword"
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "MyBackend",
-                    ClientName = "MyBackend Client",
+                    ClientId = AuthClientEnum.MyBackend.ToString(),
+                    ClientName = AuthClientEnum.MyBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
-                        "MyBackendApi1",
+                        ApiResources.MyBackendApi1,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Profile,
@@ -79,16 +79,19 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     // IdentityTokenLifetime = 30,
                     // AuthorizationCodeLifetime = 30,
                 },
+                #endregion
+
+                #region ClientId: "PolicyBasedBackend", GrandType: "ResourceOwnerPassword"
 
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "PolicyBasedBackend",
-                    ClientName = "MyBackend Client",
+                    ClientId = AuthClientEnum.PolicyBasedBackend.ToString(),
+                    ClientName = AuthClientEnum.PolicyBasedBackend.GetDescription(),
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedScopes = {
-                        "MyBackendApi2",
+                        ApiResources.MyBackendApi2,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Email
                     },
@@ -105,7 +108,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
                     SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
-                     
+
                     ClientClaimsPrefix = string.Empty,
                     //Claims = new Claim[]
                     //{
@@ -116,16 +119,19 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //    new Claim(CustomClaimTypes.Department, "Sales")
                     //}
                 },
+	            #endregion
+
+                #region ClientId: "Resources", GrandType: "ClientCredentials"
 
                 // Client credentials
                 new Client
                 {
                     Enabled = true,
-                    ClientId = "Resources",
-                    ClientName = "Resource Owners",
+                    ClientId = AuthClientEnum.Resources.ToString(),
+                    ClientName = AuthClientEnum.Resources.GetDescription(),
                     AllowedScopes =
                     {
-                        "MyBackendApi2",
+                        ApiResources.MyBackendApi2,
                     },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     AccessTokenType = AccessTokenType.Jwt,
@@ -134,7 +140,41 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     IncludeJwtId = true,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.ClientCredentialsDefaultAbsoluteExpiry ?? 36000,
+                },
+	            #endregion
+
+                #region ClientId: "PkceCodeBackend", GrandType: "code"
+                new Client
+                {
+                    ClientId = AuthClientEnum.PkceCodeBackend.ToString(),
+                    ClientName = AuthClientEnum.PkceCodeBackend.GetDescription(),
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AccessTokenType = AccessTokenType.Jwt,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    RedirectUris = AppSettingProvider.Global?.OpenId?.AllowedRedirectUris,
+                    //RedirectUris = {
+                    //    "https://localhost:5001/signin-oidc"
+                    //},
+                    RequireConsent = true, // If enable, will redirect to consent page after sign-in
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        ApiResources.MyBackendApi2
+                    },
+                    AllowOfflineAccess = true,
+                    RequirePkce = true,
+                    AllowPlainTextPkce = false,
+
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
+
+                    ClientClaimsPrefix = string.Empty,
                 }
+	            #endregion
             };
         }
     }

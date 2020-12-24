@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core.Models;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
@@ -10,10 +9,8 @@ using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.WebApi.Handlers;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
-using AspNetCore.IdentityServer4.WebApi.Utils;
+using AspNetCore.IdentityServer4.WebApi.Utils.Config;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
-using AspNetCore.IdentityServer4.WevApi.Utils.Config;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,20 +20,19 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
     public class Startup
     {
         private readonly IWebHostEnvironment env = null;
+        private readonly ILogger<Startup> logger = null;
         private readonly AppSettings appSettings = null;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.Configuration = configuration;
             this.env = env;
-
             this.appSettings = new AppSettings();
             this.Configuration.Bind(this.appSettings);
         }
@@ -48,7 +44,13 @@ namespace AspNetCore.IdentityServer4.WebApi
         {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddControllers()
+            // services.AddControllers()
+            services.AddControllersWithViews()
+                .AddRazorOptions(
+                 options => {
+                     //{2} is area, {1} is controller,{0} is the action
+                     options.ViewLocationFormats.Add("/Areas/{1}/Views/{0}.cshtml");
+                 })
                 .AddNewtonsoftJson()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
@@ -57,34 +59,8 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region Enable Authentication
-            IdentityModelEventSource.ShowPII = true; //Add this line
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
-                //options.RequireHttpsMetadata = true;
-
-                string authServerBaseUrl = this.appSettings?.Host?.AuthServer ?? "https://localhost:6001";
-                bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
-                options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
-                options.RequireHttpsMetadata = isRequireHttpsMetadata;
-                options.Audience = this.appSettings?.AuthOptions?.Audience ?? "MyBackendApi2"; // API Resource name
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
-                options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
-                //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
-
-                options.Events = new JwtBearerEvents()
-                {
-                    OnAuthenticationFailed = (e) =>
-                    {
-                        // Some callback here ...
-                        return Task.CompletedTask;
-                    }
-                };
-            });
+            services.AddJwtAuthentication(this.appSettings);
+            services.AddOpenIdAuthentication(this.appSettings);
             #endregion
 
             #region Enable policy-based authorization
@@ -119,7 +95,7 @@ namespace AspNetCore.IdentityServer4.WebApi
 
             services.AddAuthorization(options =>
             {
-                var emailDomainRequirement = new EmailDomainRequirement("fake.com");
+                var emailDomainRequirement = new EmailDomainRequirement("xxx.com");
                 var userNameRequirement = new UserNameRequirement("jblin");
 
                 // options.InvokeHandlersAfterFailure = false; // Default: true

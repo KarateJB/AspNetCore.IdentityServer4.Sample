@@ -1,18 +1,24 @@
 ﻿using System.Linq;
-using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
-using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AspNetCore.IdentityServer4.WebApi.Controllers
+namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
 {
+    /// <summary>
+    /// Demo APIs for Policy based authorization
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")] // Specify the scheme name if multiple schemes were set
     public class DemoPolicyBasedController : ControllerBase
     {
         private ILogger logger = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger">Logger</param>
         public DemoPolicyBasedController(
             ILogger<DemoRoleBasedController> logger)
         {

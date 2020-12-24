@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
@@ -38,7 +39,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
                 return;
             }
 
-            var nameClaim = userClaim.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier));
+            var nameClaim = userClaim.Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)); // Or ClaimTypes.NameIdentifier
 
             if (nameClaim != null)
             {

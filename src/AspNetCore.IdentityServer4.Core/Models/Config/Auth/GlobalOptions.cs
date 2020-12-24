@@ -19,5 +19,10 @@
         /// Refresh token options
         /// </summary>
         public RefreshTokenOptions RefreshToken { get; set; }
+
+        /// <summary>
+        /// Open ID options
+        /// </summary>
+        public  OpenIdOptions OpenId { get; set; }
     }
 }

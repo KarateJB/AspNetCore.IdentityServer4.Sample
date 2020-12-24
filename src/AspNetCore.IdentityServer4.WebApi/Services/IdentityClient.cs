@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
+using AspNetCore.IdentityServer4.Core.Models.Enum;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
     {
         private const int DEFAULT_REFRESH_DISCOVERY_DOC_DURATION = 24;
         private const string DEFAULT_SECRET = "secret";
-        private const string DEFAULT_CLIENT_ID = "PolicyBasedBackend"; // Or "MyBackend"
+        private string DEFAULT_CLIENT_ID = AuthClientEnum.PolicyBasedBackend.ToString();
 
         private readonly ILogger<IdentityClient> logger;
         private readonly IHttpClientFactory httpClientFactory = null;
@@ -33,6 +34,12 @@ namespace AspNetCore.IdentityServer4.WebApi.Services
         private readonly string clientId = string.Empty;
         private readonly string secret = string.Empty;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration">Configuration</param>
+        /// <param name="logger">Logger</param>
+        /// <param name="httpClientFactory">HttpClientFactory</param>
         public IdentityClient(
             IOptions<AppSettings> configuration,
             ILogger<IdentityClient> logger,

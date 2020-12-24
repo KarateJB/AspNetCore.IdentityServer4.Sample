@@ -49,8 +49,12 @@ namespace AspNetCore.IdentityServer4.Auth
         /// <param name="services">Service collection</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddControllersWithViews()
+                .AddRazorOptions(
+                 options => {
+                     //{2} is area, {1} is controller,{0} is the action
+                     options.ViewLocationFormats.Add("/Areas/{1}/Views/{0}.cshtml");
+                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSession();
 
@@ -155,6 +159,8 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
