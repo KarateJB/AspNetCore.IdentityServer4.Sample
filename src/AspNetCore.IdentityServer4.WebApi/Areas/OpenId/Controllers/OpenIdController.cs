@@ -29,13 +29,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         }
 
         #region Test
-        [HttpGet("Test")]
-        public async Task<IActionResult> Test()
+        [HttpGet("Demo")]
+        public async Task<IActionResult> Demo()
         {
             /*
              * You can use this API(/OpenId/Test) for testing if the user has been authorized. 
              */
-            return this.Ok();
+
+            ViewBag.IsAuthenticated = this.HttpContext.User.Identity.IsAuthenticated;
+            ViewBag.UserName = ViewBag.IsAuthenticated ? this.HttpContext.User.Claims.Where(x => x.Type.Equals("sub")).FirstOrDefault().Value : "Anonoymous";
+            return this.View();
         }
         #endregion
 

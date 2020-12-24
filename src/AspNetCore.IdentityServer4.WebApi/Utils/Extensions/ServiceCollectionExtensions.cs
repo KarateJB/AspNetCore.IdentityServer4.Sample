@@ -110,11 +110,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 const string CODE_CHALLENGE_METHOD_KEY = "code_challenge_method";
 
                 // Get config values from AppSetting file
-                string authServerBaseUrl = appSettings?.Host.OidcServer;
-                bool isRequireHttpsMetadata = !string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https");
-                options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
+                string oidcServerBaseUrl = appSettings?.Host.OidcServer;
+                bool isRequireHttpsMetadata = !string.IsNullOrEmpty(oidcServerBaseUrl) && oidcServerBaseUrl.StartsWith("https");
+                options.Authority = string.IsNullOrEmpty(oidcServerBaseUrl) ? "https://localhost:6001" : oidcServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
-                options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
+                options.MetadataAddress = $"{oidcServerBaseUrl}/.well-known/openid-configuration";
                 options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
 
                 options.ClientId = "PkceCodeBackend";
