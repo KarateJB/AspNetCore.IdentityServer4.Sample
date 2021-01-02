@@ -3,7 +3,7 @@
 
 # Features
 
-![](doc/Features_20200511.jpg)
+![](doc/Features_20210102.jpg)
 
 
 
@@ -23,10 +23,17 @@
 - [[ASP.NET Core] Identity Server 4 – Signing credential](https://karatejb.blogspot.com/2020/04/aspnet-core-identity-server-4-signing.html)
 - [[ASP.NET Core] Identity Server 4 – Authenticate by multiple LDAP](https://karatejb.blogspot.com/2020/05/aspnet-core-identity-server-4.html)
 - [[ASP.NET Core] Identity Server 4 – Cache and refresh Discovery document](https://karatejb.blogspot.com/2020/08/Idsrv-cache-refresh-discovery-doc.html)
+- [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code flow]()
 
-# APIs
 
-> API Document (Swagger): https://localhost:6001/swagger
+
+# Open API document
+
+> After start the Identity Server, you can find the Open API document on
+> 
+> [https://localhost:6001/swagger](https://localhost:6001/swagger)
+
+
 
 ## LDAP User Management
 
@@ -40,32 +47,9 @@
 
 
 
-# Create New Poject
+# Get started
 
-## Create dotnet project
-
-```s
-$ cd src
-$ dotnet new webapi --name AspNetCore.IdentityServer4.Auth
-$ dotnet new sln --name AspNetCore.IdentityServer4
-$ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.Auth/AspNetCore.IdentityServer4.Auth.csproj
-```
-
-```s
-$ cd src
-$ dotnet new webapi --name AspNetCore.IdentityServer4.WebApi
-$ dotnet sln AspNetCore.IdentityServer4.sln add AspNetCore.IdentityServer4.WebApi/AspNetCore.IdentityServer4.WebApi.csproj
-```
-
-## Install packages
-
-```s
-$ cd AspNetCore.IdentityServer4.Auth
-$ dotnet add package IdentityServer4 --version 3.0.1
-$ dotnet add package IdentityServer.LdapExtension --version 2.1.8
-```
-
-## Update appsettings.json file
+## (Optional) Update appsettings.json file
 
 Update the following config to connect to your own OpenOLAP service.
 
@@ -82,9 +66,6 @@ Update the following config to connect to your own OpenOLAP service.
 ```
 
 > To support authentication by multiple LDAP, use the configuration of `appsettings.MultiLdap.json`
-
-
-# Run The Exist Project
 
 
 ## Restore packages
@@ -128,7 +109,7 @@ $ gulp run webapi
 
 # Run on docker
 
-## Build Docker images and start containers on local Docker host
+## Method 1. Build Docker images and start containers on local Docker host
 
 ```s
 $ cd docker
@@ -137,20 +118,37 @@ $ docker-compose up -d
 ```
 
 
-## Build Docker images and start containers on ubuntu
+## Method 2. Build Docker images and start containers on ubuntu
 
 Use Ansible playbook to install Docker and deploy, see [the sample playbook here](https://github.com/KarateJB/JB.Ansible/tree/master/Deploy/AspNetCore.IdentityServer4.Sample)
 
 
 
-## (Optional) Create certificate by OpenSSL
+# Demo/Test
+
+## Grant type: Resource Owner Password
+
+
+## Grant type: Client Credential
+
+
+## Authorization Code
+
+
+
+
+
+
+# Appedix
+
+## Create certificate by OpenSSL
 
 ```s
 $ openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/Docker.key -x509 -days 3650 -out certs/Docker.crt
 $ openssl pkcs12 -export -out certs/Docker.pfx -inkey certs/Docker.key -in certs/Docker.crt
 ```
 
-## (Optional) How to trust Self-signed certificate in Linux container
+## How to trust Self-signed certificate in Linux container
 
 ```s
 $ apt-get install ca-certificates
