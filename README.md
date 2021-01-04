@@ -5,6 +5,12 @@
 
 ![](doc/Features_20210102.jpg)
 
+## Supported Grant types
+
+- Resource Owner Password
+- Client Credential
+- Authorization Code (PKCE)
+
 
 
 # Tutorials
@@ -23,7 +29,7 @@
 - [[ASP.NET Core] Identity Server 4 – Signing credential](https://karatejb.blogspot.com/2020/04/aspnet-core-identity-server-4-signing.html)
 - [[ASP.NET Core] Identity Server 4 – Authenticate by multiple LDAP](https://karatejb.blogspot.com/2020/05/aspnet-core-identity-server-4.html)
 - [[ASP.NET Core] Identity Server 4 – Cache and refresh Discovery document](https://karatejb.blogspot.com/2020/08/Idsrv-cache-refresh-discovery-doc.html)
-- [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code flow]()
+- [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code flow](https://karatejb.blogspot.com/2021/01/aspnet-core-identity-server-4-pkce.html)
 
 
 
@@ -121,19 +127,6 @@ $ docker-compose up -d
 ## Method 2. Build Docker images and start containers on ubuntu
 
 Use Ansible playbook to install Docker and deploy, see [the sample playbook here](https://github.com/KarateJB/JB.Ansible/tree/master/Deploy/AspNetCore.IdentityServer4.Sample)
-
-
-
-# Demo/Test
-
-## Grant type: Resource Owner Password
-
-
-## Grant type: Client Credential
-
-
-## Authorization Code
-
 
 
 
