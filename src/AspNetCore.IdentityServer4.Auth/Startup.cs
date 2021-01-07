@@ -149,6 +149,8 @@ namespace AspNetCore.IdentityServer4.Auth
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);
 
@@ -161,6 +163,7 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

@@ -26,7 +26,6 @@ namespace AspNetCore.IdentityServer4.WebApi
     public class Startup
     {
         private readonly IWebHostEnvironment env = null;
-        private readonly ILogger<Startup> logger = null;
         private readonly AppSettings appSettings = null;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -166,6 +165,9 @@ namespace AspNetCore.IdentityServer4.WebApi
             IWebHostEnvironment env,
             IApiVersionDescriptionProvider provider)
         {
+            // Use static files
+            app.UseStaticFiles();
+
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);
 
