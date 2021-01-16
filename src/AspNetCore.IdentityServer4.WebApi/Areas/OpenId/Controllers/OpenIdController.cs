@@ -87,5 +87,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
             return this.RedirectToAction(actionName: "Demo");
         }
         #endregion
+
+        [HttpGet("Login/JS")]
+        public async Task<IActionResult> LoginByJs()
+        {
+            return await Task.FromResult(this.View(new OidUserInfo()));
+        }
     }
 }
