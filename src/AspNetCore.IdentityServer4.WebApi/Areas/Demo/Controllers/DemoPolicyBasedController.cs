@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
+using AspNetCore.IdentityServer4.WebApi.Models;
+using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,7 +33,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public ActionResult<string> AdminGet()
         {
-            return "Yes, only an Admin can access this API!";
+            return "Yes, only an admin can access this API!";
         }
 
         [HttpGet]

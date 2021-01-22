@@ -1,7 +1,9 @@
-﻿using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
+﻿using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
 {
@@ -26,8 +28,20 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
 
         [HttpGet]
         [CustomAuthorize]
-        public ActionResult Get()
+        public async Task<IActionResult> Get()
         {
+            return this.Ok();
+        }
+
+        [HttpGet("UserProfile")]
+        [Authorize(AuthenticationSchemes = "Bearer")] // Specify the scheme name if multiple schemes were set
+        [TypeFilter(typeof(UserProfileFilter))]
+        public async Task<IActionResult> UserProfile()
+        {
+            if (this.HttpContext.Items.TryGetValue("UserProfile", out object userProfile))
+            {
+                this.logger.LogInformation(JsonConvert.SerializeObject(userProfile));
+            }
             return this.Ok();
         }
     }
