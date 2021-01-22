@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.WebApi.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
@@ -27,7 +24,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
             string email = string.Empty;
             StringValues authHeaderVal = default(StringValues);
 
-            // Method 1. Get claims from JWT
+            // Method 1. Use System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler to decode the JWT.
             if (context.HttpContext.Request.Headers.TryGetValue("Authorization", out authHeaderVal))
             {
                 string bearerTokenPrefix = "Bearer";
@@ -38,13 +35,13 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
                     accessToken = authHeaderStr.Replace(bearerTokenPrefix, string.Empty, StringComparison.OrdinalIgnoreCase).Trim();
                 }
 
-                var handler = new JwtSecurityTokenHandler();
+                var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
                 var token = handler.ReadJwtToken(accessToken);
                 uid = token.Claims.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
                 email = token.Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Email))?.Value;
             }
 
-            // Or Get claims from ActionExecutingContext
+            // 2. Use the System.Security.ClaimsPrinciple from HttpContext.
             var user = context.HttpContext.User;
             if (user.Identity.IsAuthenticated)
             {
@@ -59,7 +56,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
             // payload.Uid = uid;
             #endregion
 
-            #region (Optional) Save items to HttpContext
+            #region (Optional) Save custom items to HttpContext
 
             string itemName = "UserProfile";
             context.HttpContext.Items.Add(itemName, new { Id = uid, Email = email });

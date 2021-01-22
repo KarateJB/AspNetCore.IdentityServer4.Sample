@@ -30,6 +30,8 @@
 - [[ASP.NET Core] Identity Server 4 – Authenticate by multiple LDAP](https://karatejb.blogspot.com/2020/05/aspnet-core-identity-server-4.html)
 - [[ASP.NET Core] Identity Server 4 – Cache and refresh Discovery document](https://karatejb.blogspot.com/2020/08/Idsrv-cache-refresh-discovery-doc.html)
 - [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code flow](https://karatejb.blogspot.com/2021/01/aspnet-core-identity-server-4-pkce.html)
+- [[ASP.NET Core] Identity Server 4 – Get authorized user claims](https://karatejb.blogspot.com/2021/01/aspnet-core-identity-server-4-get.html)
+
 
 
 
