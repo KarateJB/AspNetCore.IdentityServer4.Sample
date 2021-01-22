@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
+using AspNetCore.IdentityServer4.WebApi.Models;
+using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,12 +28,14 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
             this.logger = logger;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Admin/Get")]
         [Authorize(Policy = "AdminPolicy")]
-        public ActionResult<string> AdminGet()
+        [TypeFilter(typeof(UserProfileFilter))]
+        public ActionResult<IActionResult> AdminGet(RequestDto request)
         {
-            return "Yes, only an Admin can access this API!";
+            Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(request));
+            return this.Ok();
         }
 
         [HttpGet]
