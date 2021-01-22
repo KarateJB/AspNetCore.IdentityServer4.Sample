@@ -24,7 +24,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
             string uid = string.Empty;
             StringValues authHeaderVal = default(StringValues);
 
-            // Get UID from JWT
+            // Method 1. Get UID from JWT
             if (context.HttpContext.Request.Headers.TryGetValue("Authorization", out authHeaderVal))
             {
                 string bearerTokenPrefix = "Bearer";
@@ -40,16 +40,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Filters
                 uid = token.Claims.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
             }
 
-            // Or Get UID from ActionExecutingContext
+            // Method 2. Or Get UID from ActionExecutingContext
             var user = context.HttpContext.User;
             if (user.Identity.IsAuthenticated)
             {
                 uid = user.Claims.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
             }
 
-            // Get payload
-            RequestDto payload = (RequestDto)context.ActionArguments?.Values.FirstOrDefault(v => v is RequestDto);
-            payload.Uid = uid;
+            // (Optional) Get payload and modify it
+            // MyPayload payload = (MyPayload)context.ActionArguments?.Values.FirstOrDefault(v => v is RequestDto);
+            // payload.Uid = uid;
 
             await next();
         }

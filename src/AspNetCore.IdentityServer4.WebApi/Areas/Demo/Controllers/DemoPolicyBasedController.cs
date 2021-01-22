@@ -28,14 +28,13 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
             this.logger = logger;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("Admin/Get")]
         [Authorize(Policy = "AdminPolicy")]
         [TypeFilter(typeof(UserProfileFilter))]
-        public ActionResult<IActionResult> AdminGet(RequestDto request)
+        public ActionResult<string> AdminGet()
         {
-            Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(request));
-            return this.Ok();
+            return "Yes, only an admin can access this API!";
         }
 
         [HttpGet]
