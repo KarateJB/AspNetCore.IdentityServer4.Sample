@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.WebApi.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -28,14 +30,14 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
             this.logger = logger;
         }
 
-        #region Test
+        /// <summary>
+        /// Demo page
+        /// </summary>
+        /// <remarks>A Demo page for authencated user.</remarks>
+        #region Demo
         [HttpGet("Demo")]
         public async Task<IActionResult> Demo()
         {
-            /*
-             * You can use this API(/OpenId/Test) for testing if the user has been authorized. 
-             */
-
             ViewBag.IsAuthenticated = this.HttpContext.User.Identity.IsAuthenticated;
             ViewBag.UserName = ViewBag.IsAuthenticated ? this.HttpContext.User.Claims.Where(x => x.Type.Equals("sub")).FirstOrDefault().Value : "Anonoymous";
             return this.View();
@@ -43,7 +45,6 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         #endregion
 
         #region Login
-
         /// <summary>
         /// Login by OIDC
         /// </summary>
@@ -67,6 +68,23 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
             {
                 return this.Unauthorized();
             }
+        }
+        #endregion
+
+        #region Logout
+        [HttpGet("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            this.Response.Cookies.Delete("idsrv");
+            this.Response.Cookies.Delete("idsrv.session");
+            // Delete local authentication cookie
+            await HttpContext.SignOutAsync();
+            // Clear the existing external cookie to ensure a clean login process
+            ////return this.SignOut("Cookies", "oidc");
+            // Clear the existing external cookie to ensure a clean login process
+            ////await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            return this.RedirectToAction(actionName: "Demo");
         }
         #endregion
     }
