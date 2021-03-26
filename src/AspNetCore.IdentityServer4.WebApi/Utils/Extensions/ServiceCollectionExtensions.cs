@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Core;
 using AspNetCore.IdentityServer4.Core.Models.Config.WebApi;
 using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Cache;
