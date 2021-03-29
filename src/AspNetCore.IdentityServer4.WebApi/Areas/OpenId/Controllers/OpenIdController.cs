@@ -16,7 +16,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
     /// Open ID controller
     /// </summary>
     [Route("[controller]")]
-    [Authorize] // DONOT specify the AuthenticationSchemes here
+    // [Authorize] // DONOT specify the AuthenticationSchemes here
     public class OpenIdController : Controller
     {
         private readonly ILogger logger = null;
@@ -30,11 +30,13 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
             this.logger = logger;
         }
 
+        #region Demo
+
         /// <summary>
         /// Demo page
         /// </summary>
         /// <remarks>A Demo page for authencated user.</remarks>
-        #region Demo
+        [Authorize] // DONOT specify the AuthenticationSchemes here
         [HttpGet("Demo")]
         public async Task<IActionResult> Demo()
         {
@@ -45,9 +47,11 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         #endregion
 
         #region Login
+
         /// <summary>
         /// Login by OIDC
         /// </summary>
+        [Authorize] // DONOT specify the AuthenticationSchemes here
         [HttpGet("Login")]
         public async Task<IActionResult> Login()
         {
@@ -72,6 +76,8 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
         #endregion
 
         #region Logout
+
+        [Authorize] // DONOT specify the AuthenticationSchemes here
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
