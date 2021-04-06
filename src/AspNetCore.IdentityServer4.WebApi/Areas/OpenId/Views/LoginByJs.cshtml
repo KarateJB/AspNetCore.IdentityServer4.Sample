@@ -1,13 +1,11 @@
 ﻿@model OidUserInfo
 
 <h2 id="welcome_msg">
-    Welcome!
-    <label id="uid"></label>.
+    Welcome!  <label id="uid"></label>. <button class="btn btn-warning" id="logout">Sign Out</button>
 </h2>
 <h2 id="signin_msg">
-    Welcome! Please <button class="btn btn-primary" id="login">sign in</button> first.
+    Welcome! Please <button class="btn btn-primary" id="login">Sign In</button> first.
 </h2>
-<pre id="results"></pre>
 <table class="table">
     <thead class="thead-dark">
         <tr>
@@ -40,7 +38,8 @@
     </tbody>
 </table>
 <hr />
-<h3>Now you can go to the Demo page</h3>
+<h3>Result:</h3>
+<pre id="results"></pre>
 
 @section Scripts {
     <script src="~/js/oidc-client.js"></script>
