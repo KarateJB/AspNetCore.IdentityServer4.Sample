@@ -1,6 +1,13 @@
 ﻿@model OidUserInfo
 
-<h2>Welcome! @Html.DisplayFor(model => model.UserName).</h2>
+<h2 id="welcome_msg">
+    Welcome!
+    <label id="uid"></label>.
+</h2>
+<h2 id="signin_msg">
+    Welcome! Please <button class="btn btn-primary" id="login">sign in</button> first.
+</h2>
+<pre id="results"></pre>
 <table class="table">
     <thead class="thead-dark">
         <tr>

@@ -16,8 +16,14 @@
         public HostOptions Host { get; set; }
 
         /// <summary>
+        /// Allowed Cross domains
+        /// </summary>
+        public string[] AllowedCrossDomains { get; set; }
+
+        /// <summary>
         /// Global options
         /// </summary>
         public GlobalOptions Global { get; set; }
+
     }
 }

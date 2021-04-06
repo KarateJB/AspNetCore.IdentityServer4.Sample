@@ -173,8 +173,39 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
 
                     ClientClaimsPrefix = string.Empty,
+                },
+                #endregion
+
+                #region JavaScript Client, ClientId: "PkceJS", GrandType: "code"
+
+                new Client
+                {
+                    ClientId = "PkceJS",
+                    ClientName = "JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    RedirectUris =           { "https://localhost:5001/OpenId/Login/JS" },
+                    PostLogoutRedirectUris = { "https://localhost:5001/OpenId/Login/JS" },
+                    AllowedCorsOrigins =     { "https://localhost:5001" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        ApiResources.MyBackendApi2
+                    },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
+
+                    ClientClaimsPrefix = string.Empty,
                 }
-	            #endregion
+                #endregion
             };
         }
     }

@@ -14,21 +14,25 @@ function log() {
     });
 }
 
+document.getElementById("welcome_msg").hidden = true;
 document.getElementById("login").addEventListener("click", login, false);
-document.getElementById("api").addEventListener("click", api, false);
-document.getElementById("logout").addEventListener("click", logout, false);
+//document.getElementById("api").addEventListener("click", api, false);
+//document.getElementById("logout").addEventListener("click", logout, false);
 
 var config = {
-    authority: "http://localhost:5000",
-    client_id: "js",
-    redirect_uri: "http://localhost:5003/callback.html",
+    authority: "https://localhost:6001",
+    client_id: "PkceJS",
+    redirect_uri: "https://localhost:5001/OpenId/Login/JS",
     response_type: "code",
-    scope:"openid profile api1",
-    post_logout_redirect_uri : "http://localhost:5003/index.html",
+    scope: "openid profile offline_access MyBackendApi2",
+    post_logout_redirect_uri: "https://localhost:5001/OpenId/Login/JS",
+    //filterProtocolClaims: true,
+    //loadUserInfo: true
 };
 var mgr = new Oidc.UserManager(config);
 
-mgr.getUser().then(function (user) {
+//mgr.getUser().then(function (user) {});
+mgr.signinRedirectCallback().then(function (user) {
     if (user) {
         log("User logged in", user.profile);
     }
@@ -38,6 +42,7 @@ mgr.getUser().then(function (user) {
 });
 
 function login() {
+    console.log(mgr);
     mgr.signinRedirect();
 }
 

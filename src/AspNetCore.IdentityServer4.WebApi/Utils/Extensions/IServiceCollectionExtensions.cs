@@ -18,7 +18,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
     /// <summary>
     /// ServiceCollections extensions
     /// </summary>
-    public static class ServiceCollectionExtensions
+    public static class IServiceCollectionExtensions
     {
         /// <summary>
         /// Add Cache service
@@ -35,7 +35,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
         /// Add other custom services, utils ...etc
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        /// <returns>Self</returns>
+        /// <returns>IServiceCollection</returns>
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddSingleton<AccessTokenValidator>();
@@ -57,25 +57,25 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
             }).AddJwtBearer(options =>
             {
-                //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
-                //options.RequireHttpsMetadata = true;
+            //options.Authority = "https://localhost:6001"; // Base-address of your identityserver
+            //options.RequireHttpsMetadata = true;
 
-                string authServerBaseUrl = appSettings.Host?.AuthServer ?? "https://localhost:6001";
+            string authServerBaseUrl = appSettings.Host?.AuthServer ?? "https://localhost:6001";
                 bool isRequireHttpsMetadata = (!string.IsNullOrEmpty(authServerBaseUrl) && authServerBaseUrl.StartsWith("https")) ? true : false;
                 options.Authority = string.IsNullOrEmpty(authServerBaseUrl) ? "https://localhost:6001" : authServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
                 options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration"; // Optional
-                options.Audience = appSettings?.AuthOptions?.Audience ?? ApiResources.MyBackendApi2; // API Resource name
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
-                options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
-                //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
+            options.Audience = appSettings?.AuthOptions?.Audience ?? ApiResources.MyBackendApi2; // API Resource name
+            options.TokenValidationParameters.ClockSkew = TimeSpan.Zero; // The JWT security token handler allows for 5 min clock skew in default
+            options.BackchannelHttpHandler = AuthMetadataUtils.GetHttpHandler();
+            //options.MetadataAddress = $"{authServerBaseUrl}/.well-known/openid-configuration";
 
-                options.Events = new JwtBearerEvents()
+            options.Events = new JwtBearerEvents()
                 {
                     OnAuthenticationFailed = (e) =>
                     {
-                        // Some callback here ...
-                        return Task.CompletedTask;
+                    // Some callback here ...
+                    return Task.CompletedTask;
                     }
                 };
             });
@@ -128,26 +128,26 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
 
                 options.Events.OnRedirectToIdentityProvider = context =>
                 {
-                    // only modify requests to the authorization endpoint
-                    if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
+                // only modify requests to the authorization endpoint
+                if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
                     {
-                        // generate code_verifier
-                        var codeVerifier = CryptoRandom.CreateUniqueId(32);
+                    // generate code_verifier
+                    var codeVerifier = CryptoRandom.CreateUniqueId(32);
 
-                        // store codeVerifier for later use
-                        context.Properties.Items.Remove(CODE_VERIFIER_KEY);
+                    // store codeVerifier for later use
+                    context.Properties.Items.Remove(CODE_VERIFIER_KEY);
                         context.Properties.Items.Add(CODE_VERIFIER_KEY, codeVerifier);
 
-                        // create code_challenge
-                        string codeChallenge;
+                    // create code_challenge
+                    string codeChallenge;
                         using (var sha256 = SHA256.Create())
                         {
                             var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
                             codeChallenge = Base64Url.Encode(challengeBytes);
                         }
 
-                        // add code_challenge and code_challenge_method to request
-                        context.ProtocolMessage.Parameters.Remove(CODE_CHALLENGE_KEY);
+                    // add code_challenge and code_challenge_method to request
+                    context.ProtocolMessage.Parameters.Remove(CODE_CHALLENGE_KEY);
                         context.ProtocolMessage.Parameters.Remove(CODE_CHALLENGE_METHOD_KEY);
                         context.ProtocolMessage.Parameters.Add(CODE_CHALLENGE_KEY, codeChallenge);
                         context.ProtocolMessage.Parameters.Add(CODE_CHALLENGE_METHOD_KEY, "S256");
