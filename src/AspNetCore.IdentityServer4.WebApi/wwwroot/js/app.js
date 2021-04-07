@@ -1,4 +1,5 @@
 ﻿/// <reference path="oidc-client.js" />
+import * as constants from './app-config.js';
 
 function log() {
     document.getElementById('results').innerText = '';
@@ -20,17 +21,17 @@ document.getElementById("api").addEventListener("click", api, false);
 document.getElementById("logout").addEventListener("click", logout, false);
 
 var config = {
-    authority: "https://localhost:6001",
+    authority: constants.AUTH_HOST_URL,
     client_id: "PkceJS",
-    redirect_uri: "https://localhost:5001/OpenId/Login/JS",
+    redirect_uri: `${constants.CLIENT_HOST_URL}/OpenId/Login/JS`,
     response_type: "code",
     scope: "openid profile offline_access MyBackendApi2",
-    post_logout_redirect_uri: "https://localhost:5001/OpenId/Login/JS",
+    post_logout_redirect_uri: `${constants.CLIENT_HOST_URL}/OpenId/Login/JS`,
     //filterProtocolClaims: true,
     //loadUserInfo: true
 };
 var mgr = new Oidc.UserManager(config);
-
+console.info(config);
 //mgr.getUser().then(function (user) {}); // Not work, use the following callback.
 mgr.signinRedirectCallback().then(function (user) {
     if (user) {
@@ -54,7 +55,7 @@ function login() {
 
 function api() {
     mgr.getUser().then(function (user) {
-        var url = "https://localhost:5001/api/DemoPolicyBased/Admin/Get";
+        var url = `${constants.CLIENT_HOST_URL}/api/DemoPolicyBased/Admin/Get`;
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
