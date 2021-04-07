@@ -67,10 +67,11 @@ function api() {
 }
 
 function logout() {
-    // Delete cookies n local storage
-    document.cookie = "idsrv=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";  
-    document.cookie = "idsrv.session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    location.reload();
     // Signout
-    // mgr.signoutRedirect();
+    mgr.signoutRedirect();
+
+    // Delete cookies (not necessary)
+    //document.cookie = "idsrv=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";  
+    //document.cookie = "idsrv.session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    //location.reload();
 }
