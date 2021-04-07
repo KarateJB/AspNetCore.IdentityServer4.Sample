@@ -16,7 +16,7 @@ function log() {
 
 document.getElementById("welcome_msg").hidden = true;
 document.getElementById("login").addEventListener("click", login, false);
-//document.getElementById("api").addEventListener("click", api, false);
+document.getElementById("api").addEventListener("click", api, false);
 document.getElementById("logout").addEventListener("click", logout, false);
 
 var config = {
@@ -54,13 +54,14 @@ function login() {
 
 function api() {
     mgr.getUser().then(function (user) {
-        var url = "http://localhost:5001/identity";
+        var url = "https://localhost:5001/api/DemoPolicyBased/Admin/Get";
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onload = function () {
-            log(xhr.status, JSON.parse(xhr.responseText));
+            log(xhr.status, xhr.responseText);
         }
+
         xhr.setRequestHeader("Authorization", "Bearer " + user.access_token);
         xhr.send();
     });
