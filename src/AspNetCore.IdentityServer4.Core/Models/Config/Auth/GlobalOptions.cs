@@ -24,5 +24,10 @@
         /// Open ID options
         /// </summary>
         public  OpenIdOptions OpenId { get; set; }
+
+        /// <summary>
+        /// Open ID options for JS client
+        /// </summary>
+        public  OpenIdOptions OpenIdJs { get; set; }
     }
 }

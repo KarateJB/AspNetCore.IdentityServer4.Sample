@@ -187,9 +187,9 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     RequirePkce = true,
                     RequireClientSecret = false,
 
-                    RedirectUris =           { "https://localhost:5001/OpenId/Login/JS" },
-                    PostLogoutRedirectUris = { "https://localhost:5001/OpenId/Login/JS" },
-                    AllowedCorsOrigins =     { "https://localhost:5001" },
+                    RedirectUris = AppSettingProvider.Global?.OpenIdJs.AllowedRedirectUris,
+                    PostLogoutRedirectUris = AppSettingProvider.Global?.OpenIdJs?.AllowedPostLogoutRedirectUris,
+                    AllowedCorsOrigins = AppSettingProvider.AllowedCrossDomains,
 
                     AllowedScopes =
                     {

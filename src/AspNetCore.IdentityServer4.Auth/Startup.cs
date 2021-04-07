@@ -65,9 +65,12 @@ namespace AspNetCore.IdentityServer4.Auth
             services.Configure<AppSettings>(this.configuration);
 
             // Set static AppSettingProvider
+            string[] allowedCrossDomains = null;
             var globalOptions = new GlobalOptions();
+            configuration.GetSection("AllowedCrossDomains").Bind(allowedCrossDomains);
             configuration.GetSection("Global").Bind(globalOptions);
             AppSettingProvider.Global = globalOptions;
+            AppSettingProvider.AllowedCrossDomains = allowedCrossDomains;
             #endregion
 
             #region OpenAPI specification (Swagger)
