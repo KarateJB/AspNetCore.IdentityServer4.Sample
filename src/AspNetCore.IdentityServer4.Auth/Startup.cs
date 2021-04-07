@@ -138,10 +138,7 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region Add CORS rules
-            services.AddCustomCors(
-                CORS_POLICY,
-                this.appSettings.AllowedCrossDomains
-                );
+            //services.AddCustomCors(CORS_POLICY, "https://localhost:5001" );
             #endregion
         }
 
@@ -162,7 +159,7 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseStaticFiles();
 
             // Use CORS
-            app.UseCors(CORS_POLICY);
+            //app.UseCors(CORS_POLICY);
 
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);
