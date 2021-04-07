@@ -155,6 +155,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //RedirectUris = {
                     //    "https://localhost:5001/signin-oidc"
                     //},
+                    PostLogoutRedirectUris = AppSettingProvider.Global?.OpenId?.AllowedPostLogoutRedirectUris,
                     RequireConsent = true, // If enable, will redirect to consent page after sign-in
                     AllowedScopes =
                     {

@@ -121,6 +121,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 options.ResponseType = "code";
                 options.ResponseMode = "form_post";
                 options.CallbackPath = "/signin-oidc";
+                options.SignedOutCallbackPath = "/signout-callback-oidc";
 
                 options.SaveTokens = true;
                 options.Scope.Add(appSettings?.AuthOptions?.Audience);
