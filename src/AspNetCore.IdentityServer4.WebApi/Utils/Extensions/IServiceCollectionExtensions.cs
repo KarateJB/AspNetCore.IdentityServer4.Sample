@@ -109,7 +109,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                 const string CODE_CHALLENGE_METHOD_KEY = "code_challenge_method";
 
                 // Get config values from AppSetting file
-                string oidcServerBaseUrl = appSettings?.Host.OidcServer;
+                string oidcServerBaseUrl = appSettings?.Host.AuthServer;
                 bool isRequireHttpsMetadata = !string.IsNullOrEmpty(oidcServerBaseUrl) && oidcServerBaseUrl.StartsWith("https");
                 options.Authority = string.IsNullOrEmpty(oidcServerBaseUrl) ? "https://localhost:6001" : oidcServerBaseUrl;
                 options.RequireHttpsMetadata = isRequireHttpsMetadata;
