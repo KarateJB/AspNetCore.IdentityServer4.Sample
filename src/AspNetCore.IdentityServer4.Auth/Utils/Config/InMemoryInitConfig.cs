@@ -155,6 +155,7 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     //RedirectUris = {
                     //    "https://localhost:5001/signin-oidc"
                     //},
+                    PostLogoutRedirectUris = AppSettingProvider.Global?.OpenId?.AllowedPostLogoutRedirectUris,
                     RequireConsent = true, // If enable, will redirect to consent page after sign-in
                     AllowedScopes =
                     {
@@ -173,8 +174,39 @@ namespace AspNetCore.IdentityServer4.Auth.Utils.Config
                     SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
 
                     ClientClaimsPrefix = string.Empty,
+                },
+                #endregion
+
+                #region JavaScript Client, ClientId: "PkceJS", GrandType: "code"
+
+                new Client
+                {
+                    ClientId = "PkceJS",
+                    ClientName = "JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    RedirectUris = AppSettingProvider.Global?.OpenIdJs.AllowedRedirectUris,
+                    PostLogoutRedirectUris = AppSettingProvider.Global?.OpenIdJs?.AllowedPostLogoutRedirectUris,
+                    AllowedCorsOrigins = AppSettingProvider.AllowedCrossDomains,
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        ApiResources.MyBackendApi2
+                    },
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = AppSettingProvider.Global?.AccessToken?.DefaultAbsoluteExpiry ?? 3600,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly, // Or ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultAbsoluteExpiry ?? 360000,
+                    SlidingRefreshTokenLifetime = AppSettingProvider.Global?.RefreshToken?.DefaultSlidingExpiry ?? 36000,
+
+                    ClientClaimsPrefix = string.Empty,
                 }
-	            #endregion
+                #endregion
             };
         }
     }

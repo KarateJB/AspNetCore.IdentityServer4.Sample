@@ -1,0 +1,48 @@
+﻿<h2 id="welcome_msg">
+    Welcome!  <label id="uid"></label>. <button class="btn btn-warning" id="logout">Sign Out</button>
+    <button class="btn btn-success" id="api">Test secured API</button>
+</h2>
+<h2 id="signin_msg">
+    Welcome! Please <button class="btn btn-primary" id="login">Sign In</button> first.
+</h2>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>id_token</td>
+            <td><label id="id_token"></label></td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>access_token</td>
+            <td><label id="access_token"></label></td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>refresh_token</td>
+            <td><label id="refresh_token"></label></td>
+        </tr>
+        <tr>
+            <th scope="row">4</th>
+            <td>expires_at</td>
+            <td><label id="expires_at"></label></td>
+        </tr>
+    </tbody>
+</table>
+<hr />
+<h3>Result:</h3>
+<pre id="results"></pre>
+
+@section Scripts {
+    <script src="~/js/oidc-client.js"></script>
+    <script type="module" src="~/js/app-config.js"></script>
+    <script type="module" src="~/js/app.js"></script>
+}
+

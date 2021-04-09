@@ -23,6 +23,7 @@ namespace AspNetCore.IdentityServer4.Auth
     /// </summary>
     public class Startup
     {
+        private const string CORS_POLICY = "AllowSpecificOrigin";
         private readonly AppSettings appSettings = null;
 
         private IConfiguration configuration { get; }
@@ -51,7 +52,8 @@ namespace AspNetCore.IdentityServer4.Auth
         {
             services.AddControllersWithViews()
                 .AddRazorOptions(
-                 options => {
+                 options =>
+                 {
                      //{2} is area, {1} is controller,{0} is the action
                      options.ViewLocationFormats.Add("/Areas/{1}/Views/{0}.cshtml");
                  }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -61,11 +63,12 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Inject AppSetting configuration
 
             services.Configure<AppSettings>(this.configuration);
-            
+
             // Set static AppSettingProvider
-            var globalOptions = new GlobalOptions();
-            configuration.GetSection("Global").Bind(globalOptions);
-            AppSettingProvider.Global = globalOptions;
+            //var globalOptions = new GlobalOptions();
+            //configuration.GetSection("Global").Bind(globalOptions);
+            AppSettingProvider.Global = this.appSettings.Global;
+            AppSettingProvider.AllowedCrossDomains = this.appSettings.AllowedCrossDomains;
             #endregion
 
             #region OpenAPI specification (Swagger)
@@ -134,6 +137,10 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Custom services
             services.AddSingleton<LdapUserManager>();
             #endregion
+
+            #region Add CORS rules
+            //services.AddCustomCors(CORS_POLICY, "https://localhost:5001" );
+            #endregion
         }
 
         /// <summary>
@@ -149,7 +156,11 @@ namespace AspNetCore.IdentityServer4.Auth
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            // Use CORS
+            //app.UseCors(CORS_POLICY);
 
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);

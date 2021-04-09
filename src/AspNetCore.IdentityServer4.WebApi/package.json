@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "name": "aspnetcore-id4-client",
+  "devDependencies": {
+    "oidc-client": "1.11.5"
+  }
+}
