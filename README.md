@@ -3,7 +3,7 @@
 
 # Features
 
-![](doc/Features_20210102.jpg)
+![](doc/Features_20210409.jpg)
 
 ## Supported Grant types
 
@@ -31,6 +31,7 @@
 - [[ASP.NET Core] Identity Server 4 – Cache and refresh Discovery document](https://karatejb.blogspot.com/2020/08/Idsrv-cache-refresh-discovery-doc.html)
 - [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code flow](https://karatejb.blogspot.com/2021/01/aspnet-core-identity-server-4-pkce.html)
 - [[ASP.NET Core] Identity Server 4 – Get authorized user claims](https://karatejb.blogspot.com/2021/01/idsrv-get-user-claims.html)
+- [[ASP.NET Core] Identity Server 4 – PKCE Authorization Code Flow (Javascript client)](https://karatejb.blogspot.com/2021/04/code-flow-js-client.html)
 
 
 
@@ -176,5 +177,3 @@ $ update-ca-certificates
 
 - [OpenLDAP – How To Add a User](https://tylersguides.com/guides/openldap-how-to-add-a-user/)
 - [OpenLdap: How to create users in command line?](https://github.com/osixia/docker-openldap/issues/227#issuecomment-431375243)
-
-
