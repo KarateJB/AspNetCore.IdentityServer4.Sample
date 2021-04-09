@@ -53,9 +53,19 @@ function login() {
     mgr.signinRedirect();
 }
 
+function logout() {
+    // Signout
+    mgr.signoutRedirect();
+
+    // Delete cookies (not necessary)
+    //document.cookie = "idsrv=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";  
+    //document.cookie = "idsrv.session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    //location.reload();
+}
+
 function api() {
     mgr.getUser().then(function (user) {
-        var url = `${constants.CLIENT_HOST_URL}/api/DemoPolicyBased/Admin/Get`;
+        var url = `${constants.CLIENT_HOST_URL}/api/DemoPolicyBased/Admin/Get`; // You can change the test API 
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
@@ -68,12 +78,3 @@ function api() {
     });
 }
 
-function logout() {
-    // Signout
-    mgr.signoutRedirect();
-
-    // Delete cookies (not necessary)
-    //document.cookie = "idsrv=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";  
-    //document.cookie = "idsrv.session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    //location.reload();
-}
