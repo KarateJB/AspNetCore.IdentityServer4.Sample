@@ -27,7 +27,13 @@ Under the root path of the repository, run the following commands,
 ```s
 $ docker build -t karatejb/idsrv4-auth -f docker\auth.dockerfile .
 $ docker build -t karatejb/idsrv4-backend -f docker\backend.dockerfile .
+$ docker build -t karatejb/idsrv4-nginx -f docker\nginx.dockerfile .
 $ docker push karatejb/idsrv4-auth:latest
 $ docker push karatejb/idsrv4-backend:latest
+$ docker push karatejb/idsrv4-nginx:latest
 ```
+
+Or use [Github Action]().
+
+
 

@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-idsrv-service
+spec:
+  selector:
+    app: idsrv-demo
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5001 # The port for pod
+      targetPort: 5001 # The port mapped to service
+      nodePort: 30501 # The port mapped to node
