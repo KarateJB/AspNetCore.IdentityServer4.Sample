@@ -1,0 +1,25 @@
+---
+name: Publish Docker images
+on:
+  push:
+      branches: [ master, k8s-support ]
+jobs:
+  push_auth_to_repository:
+    name: Push Auth image to Docker Hub
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: karatejb/idsrv4-auth
+          # context: ./
+          file: ./docker/auth.dockerfile
+          push: true
+          tags: karetejb/idsrv4-auth:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
