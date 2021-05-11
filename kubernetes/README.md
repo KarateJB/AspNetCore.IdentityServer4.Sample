@@ -37,3 +37,10 @@ Or use [Github Action]().
 
 
 
+```s
+kubectl logs idsrv-backend-5c6494dfb4-jqxwg -c idsrv-backend
+kubectl exec -it idsrv-auth-7588488bd7-7b5mw -- bash
+kubectl create -f kubernetes-idsrv-deployments.yml
+kubectl port-forward --address 192.168.107.137 idsrv-auth-7588488bd7-9dfbf 6001:6001
+kubectl port-forward --address 192.168.107.137 idsrv-backend-5c6494dfb4-bnpr9 5001:5001
+```
