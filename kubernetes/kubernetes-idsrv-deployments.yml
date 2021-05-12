@@ -13,9 +13,11 @@ spec:
       hostname: idsrv-redis
       containers:
         - name: idsrv-redis
-          image: redis:6.2
+          image: karatejbacr.azurecr.io/redis:6.2
           ports:
             - containerPort: 6379
+      imagePullSecrets:
+        - name: acrcred
   selector:
     matchLabels:
       app: idsrv-demo-redis
@@ -46,9 +48,11 @@ spec:
     spec:
       containers:
         - name: idsrv-openldap
-          image: osixia/openldap:stable
+          image: karatejbacr.azurecr.io/osixia/openldap:stable
           ports:
             - containerPort: 389
+      imagePullSecrets:
+        - name: acrcred
   selector:
     matchLabels:
       app: idsrv-demo-openldap
@@ -79,7 +83,7 @@ spec:
     spec:
       containers:
         - name: idsrv-backend
-          image: karatejb/idsrv4-backend
+          image: karatejbacr.azurecr.io/idsrv4-backend
           ports:
             - containerPort: 5001
           env:
@@ -89,6 +93,8 @@ spec:
             - name: idsrv-backend-appsettings
               mountPath: /app
               readOnly: false
+      imagePullSecrets:
+        - name: acrcred
       volumes:
         - name: idsrv-backend-appsettings
           secret:
@@ -127,7 +133,7 @@ spec:
     spec:
       containers:
         - name: idsrv-auth
-          image: karatejb/idsrv4-auth
+          image: karatejbacr.azurecr.io/idsrv4-auth
           ports:
             - containerPort: 6001
           env:
@@ -137,6 +143,8 @@ spec:
             - name: idsrv-auth-appsettings
               mountPath: /app
               readOnly: false
+      imagePullSecrets:
+        - name: acrcred
       volumes:
         - name: idsrv-auth-appsettings
           secret:

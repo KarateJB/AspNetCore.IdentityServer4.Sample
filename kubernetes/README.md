@@ -36,6 +36,17 @@ $ docker push karatejb/idsrv4-nginx:latest
 Or use [Github Action]().
 
 
+### Creating Docker registry's credential to Secret
+
+> See [Creating a secret with a Docker config](https://kubernetes.io/docs/concepts/containers/images/#creating-a-secret-with-a-docker-config)
+
+```s
+$ kubectl create secret docker-registry <secret_name> --docker-server=<docker_registry_host> --docker-username=<user_name> --docker-password=<password> --docker-email=<email_addr>
+```
+
+
+
+
 
 ```s
 kubectl logs idsrv-backend-5c6494dfb4-jqxwg -c idsrv-backend
