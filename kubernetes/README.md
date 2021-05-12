@@ -45,6 +45,34 @@ $ kubectl create secret docker-registry <secret_name> --docker-server=<docker_re
 ```
 
 
+### Use appsettings.Kubernetes.json file
+
+```s
+$ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json
+$ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json
+$ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js
+```
+
+To edit the secret (base64 encoded string):
+
+```s
+$ kubectl edit secrets <secret_name>
+```
+
+
+To delete the secret:
+
+```s
+$ kubectl get secrets
+NAME                           TYPE                                  DATA   AGE
+secret-appsettings-auth        Opaque                                1      7h58m
+secret-appsettings-backend     Opaque                                1      7h57m
+secret-js-appconfig-backend    Opaque                                1      7h57m
+
+$ kubectl delete secrets secret-appsettings-auth
+$ kubectl delete secrets secret-appsettings-backend
+$ kubectl delete secrets secret-js-appconfig-backend
+```
 
 
 

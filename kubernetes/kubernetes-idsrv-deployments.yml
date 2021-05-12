@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-redis-service
+  name: idsrv-redis
 spec:
   selector:
     app: idsrv-demo-redis
@@ -61,7 +61,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-openldap-service
+  name: idsrv-openldap
 spec:
   selector:
     app: idsrv-demo-openldap
@@ -91,15 +91,24 @@ spec:
               value: "Kubernetes"
           volumeMounts:
             - name: idsrv-backend-appsettings
-              mountPath: /app
-              readOnly: false
+              mountPath: /app/appsettings.Kubernetes.json
+              subPath: appsettings.Kubernetes.json
+              readOnly: true
+            - name: idsrv-js-appconfig
+              mountPath: /app/wwwroot/js/app-config.js
+              subPath: app-config.js
+              readOnly: true
       imagePullSecrets:
         - name: acrcred
       volumes:
         - name: idsrv-backend-appsettings
           secret:
             secretName: secret-appsettings-backend
-            defaultMode: 0755
+            # defaultMode: 0666
+        - name: idsrv-js-appconfig
+          secret:
+            secretName: secret-js-appconfig-backend
+            # defaultMode: 0666
   selector:
     matchLabels:
       app: idsrv-demo-backend
@@ -108,9 +117,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-backend-service
+  name: idsrv-backend
 spec:
-  type: NodePort
+  # type: NodePort
   selector:
     app: idsrv-demo-backend
   ports:
@@ -118,6 +127,7 @@ spec:
       port: 5001
       targetPort: 5001
       # nodePort: 30501
+  type: LoadBalancer
 
 ---
 apiVersion: apps/v1
@@ -141,15 +151,16 @@ spec:
               value: "Kubernetes"
           volumeMounts:
             - name: idsrv-auth-appsettings
-              mountPath: /app
-              readOnly: false
+              mountPath: /app/appsettings.Kubernetes.json
+              subPath: appsettings.Kubernetes.json
+              readOnly: true
       imagePullSecrets:
         - name: acrcred
       volumes:
         - name: idsrv-auth-appsettings
           secret:
             secretName: secret-appsettings-auth
-            defaultMode: 0755
+            # defaultMode: 0666
   selector:
     matchLabels:
       app: idsrv-demo-auth
@@ -158,9 +169,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-auth-service
+  name: idsrv-auth
 spec:
-  type: NodePort
+  # type: NodePort
   selector:
     app: idsrv-demo-auth
   ports:
@@ -168,6 +179,7 @@ spec:
       port: 6001
       targetPort: 6001
       # nodePort: 30601
+  type: LoadBalancer
 
 # ---
 # apiVersion: networking.k8s.io/v1beta1
@@ -182,11 +194,11 @@ spec:
 #       http:
 #         paths:
 #           - backend:
-#               serviceName: idsrv-backend-service
+#               serviceName: idsrv-backend
 #               servicePort: 5001 
 #     - host: jb.com
 #       http:
 #         paths:
 #           - backend:
-#               serviceName: idsrv-auth-service
+#               serviceName: idsrv-auth
 #               servicePort: 6001
