@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-redis
+  name: idsrv-redis-service
 spec:
   selector:
     app: idsrv-demo-redis
@@ -57,7 +57,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: idsrv-openldap
+  name: idsrv-openldap-service
 spec:
   selector:
     app: idsrv-demo-openldap
@@ -82,24 +82,36 @@ spec:
           image: karatejb/idsrv4-backend
           ports:
             - containerPort: 5001
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Kubernetes"
+          volumeMounts:
+            - name: idsrv-backend-appsettings
+              mountPath: /app
+              readOnly: false
+      volumes:
+        - name: idsrv-backend-appsettings
+          secret:
+            secretName: secret-appsettings-backend
+            defaultMode: 0755
   selector:
     matchLabels:
       app: idsrv-demo-backend
 
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: idsrv-backend
-# spec:
-#   type: NodePort
-#   selector:
-#     app: idsrv-demo-backend
-#   ports:
-#     - protocol: TCP
-#       port: 5001
-#       targetPort: 5001
-#       nodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-backend-service
+spec:
+  type: NodePort
+  selector:
+    app: idsrv-demo-backend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+      # nodePort: 30501
 
 ---
 apiVersion: apps/v1
@@ -118,6 +130,55 @@ spec:
           image: karatejb/idsrv4-auth
           ports:
             - containerPort: 6001
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Kubernetes"
+          volumeMounts:
+            - name: idsrv-auth-appsettings
+              mountPath: /app
+              readOnly: false
+      volumes:
+        - name: idsrv-auth-appsettings
+          secret:
+            secretName: secret-appsettings-auth
+            defaultMode: 0755
   selector:
     matchLabels:
       app: idsrv-demo-auth
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-auth-service
+spec:
+  type: NodePort
+  selector:
+    app: idsrv-demo-auth
+  ports:
+    - protocol: TCP
+      port: 6001
+      targetPort: 6001
+      # nodePort: 30601
+
+# ---
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: idsrv-ingress
+#   labels:
+#       name: idsrv-demo-ingress
+# spec:
+#   rules:
+#     - host: jb.com
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: idsrv-backend-service
+#               servicePort: 5001 
+#     - host: jb.com
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: idsrv-auth-service
+#               servicePort: 6001
