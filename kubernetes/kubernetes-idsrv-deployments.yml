@@ -1,4 +1,34 @@
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-redis-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-redis-pvc
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 200Mi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,8 +46,15 @@ spec:
           image: karatejbacr.azurecr.io/redis:6.2
           ports:
             - containerPort: 6379
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
       imagePullSecrets:
         - name: acrcred
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: idsrv-redis-pvc
   selector:
     matchLabels:
       app: idsrv-demo-redis
