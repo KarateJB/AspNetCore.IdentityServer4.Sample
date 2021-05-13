@@ -5,14 +5,14 @@ metadata:
   name: idsrv-redis-pv
 spec:
   volumeMode: Filesystem
-  storageClassName: ""
+  storageClassName: ""aa
   capacity:
     storage: 200Mi
   accessModes:
     - "ReadWriteOnce" # Mounted by a single node
   persistentVolumeReclaimPolicy: Recycle
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data/redis"
 
 ---
 apiVersion: v1
@@ -72,6 +72,66 @@ spec:
       port: 6379
 
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-openldap-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data/openldap/db"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-openldap-slapd-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 50Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data/openldap/slapd"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-openldap-db-pvc
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 200Mi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-openldap-slapd-pvc
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 50Mi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -88,8 +148,20 @@ spec:
           image: karatejbacr.azurecr.io/osixia/openldap:stable
           ports:
             - containerPort: 389
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/ldap
+            - name: slapd-storage
+              mountPath: /etc/ldap/slapd.d
       imagePullSecrets:
         - name: acrcred
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: idsrv-openldap-db-pvc
+        - name: slapd-storage
+          persistentVolumeClaim:
+            claimName: idsrv-openldap-slapd-pvc
   selector:
     matchLabels:
       app: idsrv-demo-openldap
