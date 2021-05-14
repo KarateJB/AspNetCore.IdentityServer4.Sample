@@ -5,7 +5,7 @@ metadata:
   name: idsrv-redis-pv
 spec:
   volumeMode: Filesystem
-  storageClassName: ""aa
+  storageClassName: ""
   capacity:
     storage: 200Mi
   accessModes:
@@ -21,6 +21,7 @@ metadata:
   name: idsrv-redis-pvc
 spec:
   volumeMode: Filesystem
+  volumeName: idsrv-redis-pv
   storageClassName: ""
   accessModes:
     - "ReadWriteOnce" # Mounted by a single node
@@ -75,7 +76,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: idsrv-openldap-pv
+  name: idsrv-openldap-db-pv
 spec:
   volumeMode: Filesystem
   storageClassName: ""
@@ -110,11 +111,14 @@ metadata:
   name: idsrv-openldap-db-pvc
 spec:
   volumeMode: Filesystem
+  volumeName: idsrv-openldap-db-pv
   storageClassName: ""
   accessModes:
     - "ReadWriteOnce" # Mounted by a single node
   resources:
     requests:
+      storage: 100Mi
+    limits:
       storage: 200Mi
 
 ---
@@ -124,11 +128,14 @@ metadata:
   name: idsrv-openldap-slapd-pvc
 spec:
   volumeMode: Filesystem
+  volumeName: idsrv-openldap-slapd-pv
   storageClassName: ""
   accessModes:
     - "ReadWriteOnce" # Mounted by a single node
   resources:
     requests:
+      storage: 20Mi
+    limits:
       storage: 50Mi
 
 ---
@@ -145,7 +152,7 @@ spec:
     spec:
       containers:
         - name: idsrv-openldap
-          image: karatejbacr.azurecr.io/osixia/openldap:stable
+          image: karatejbacr.azurecr.io/openldap:stable
           ports:
             - containerPort: 389
           volumeMounts:

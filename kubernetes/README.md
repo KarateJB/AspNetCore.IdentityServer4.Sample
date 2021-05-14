@@ -16,6 +16,15 @@ $ apt-get install -y conntrack
 $ minikub start --driver=none
 ```
 
+and install [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
+
+```s
+$ snap install kubectl --classic
+$ kubectl version --client
+```
+
+
+
 
 ## Publish Docker images
 
@@ -36,21 +45,39 @@ $ docker push karatejb/idsrv4-nginx:latest
 Or use [Github Action]().
 
 
+
+## Create namespace
+
+```s
+$ kubectl create namespace idsrv-demo
+```
+
+Or use the yaml file:
+
+```s
+$ kubectl apply -f kubernetes-namespace.yaml
+namespace/idsrv-demo created
+```
+
+
+## Secrets
+
 ### Creating Docker registry's credential to Secret
 
 > See [Creating a secret with a Docker config](https://kubernetes.io/docs/concepts/containers/images/#creating-a-secret-with-a-docker-config)
 
 ```s
-$ kubectl create secret docker-registry <secret_name> --docker-server=<docker_registry_host> --docker-username=<user_name> --docker-password=<password> --docker-email=<email_addr>
+$ kubectl create secret docker-registry <secret_name> --docker-server=<docker_registry_host> --docker-username=<user_name> --docker-password=<password> --docker-email=<email_addr> --namespace idsrv-demo
 ```
 
 
 ### Use appsettings.Kubernetes.json file
 
 ```s
-$ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json
-$ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json
-$ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js
+$ cd kubernetes
+$ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json --namespace idsrv-demo
+$ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json --namespace idsrv-demo
+$ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js --namespace idsrv-demo
 ```
 
 To edit the secret (base64 encoded string):
@@ -72,6 +99,52 @@ secret-js-appconfig-backend    Opaque                                1      7h57
 $ kubectl delete secrets secret-appsettings-auth
 $ kubectl delete secrets secret-appsettings-backend
 $ kubectl delete secrets secret-js-appconfig-backend
+```
+
+
+
+
+## Create/Apply Services
+
+```s
+$ cd kubernetes
+$ kubectl apply -f kubernetets-idsrv-deployments.yml --namespace idsrv-demo
+```
+
+## Remove Resources
+
+### Delete all resources in namespace
+
+```s
+$ kubectl delete all --all --namespace idsrv-demo
+```
+
+or delete certain resources by type,
+```s
+$ kubectl delete deploy,service,pod,pvc,pv --all --namespace idsrv-demo
+```
+
+## Remove Namespace
+
+```s
+$ kubectl delete namespace idsrv-demo
+```
+
+
+## Trouble Shooting
+
+### Debug command
+
+```s
+$ kubectl get events --all-namespaces  --sort-by='.metadata.creationTimestamp'
+$ kubectl get events --namespace idsrv-demo  --sort-by='.metadata.creationTimestamp'
+```
+
+or
+
+```s
+$ kubectl logs <pod_name> --namespace idsrv-demo
+$ kubectl describe pods <pod_name> --namespace idsrv-demo
 ```
 
 
