@@ -10,6 +10,13 @@
 - Resource Owner Password
 - Client Credential
 - Authorization Code (PKCE)
+  - MVC Cookie based
+  - JS client
+
+## Supported Deploy methodology 
+
+- Docker Compose
+- Kubernetes
 
 
 
@@ -131,6 +138,9 @@ $ docker-compose up -d
 
 Use Ansible playbook to install Docker and deploy, see [the sample playbook here](https://github.com/KarateJB/JB.Ansible/tree/master/Deploy/AspNetCore.IdentityServer4.Sample)
 
+
+
+# Run on Kubernetes
 
 
 
