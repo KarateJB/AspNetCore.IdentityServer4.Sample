@@ -11,14 +11,6 @@ spec:
       image: karatejb/idsrv4-backend
       ports:
         - containerPort: 5001
-    # - name: kubernetes-idsrv-auth
-    #   image: karatejb/idsrv4-auth
-    #   ports:
-    #     - containerPort: 6001
-    # - name: kubernetes-idsrv-nginx
-    #   image: karatejb/idsrv4-nginx
-    #   ports:
-    #     - containerPort: 5001
-    #       name: auth
-    #     - containerPort: 6001
-    #       name: backend
+
+# Port forwarding for the Pods 
+# kubectl port-forward [--address <ip>] <pod_name> 5001:5001

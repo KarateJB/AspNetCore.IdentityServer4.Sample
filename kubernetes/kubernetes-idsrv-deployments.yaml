@@ -44,14 +44,14 @@ spec:
       hostname: idsrv-redis
       containers:
         - name: idsrv-redis
-          image: karatejbacr.azurecr.io/redis:6.2
+          image: redis:6.2
           ports:
             - containerPort: 6379
           volumeMounts:
             - name: redis-storage
               mountPath: /data
-      imagePullSecrets:
-        - name: acrcred
+      # imagePullSecrets:
+      #   - name: acrcred
       volumes:
         - name: redis-storage
           persistentVolumeClaim:
@@ -152,7 +152,7 @@ spec:
     spec:
       containers:
         - name: idsrv-openldap
-          image: karatejbacr.azurecr.io/openldap:stable
+          image: osixia/openldap:stable
           ports:
             - containerPort: 389
           volumeMounts:
@@ -160,8 +160,8 @@ spec:
               mountPath: /var/lib/ldap
             - name: slapd-storage
               mountPath: /etc/ldap/slapd.d
-      imagePullSecrets:
-        - name: acrcred
+      # imagePullSecrets:
+      #   - name: acrcred
       volumes:
         - name: db-storage
           persistentVolumeClaim:
@@ -199,7 +199,7 @@ spec:
     spec:
       containers:
         - name: idsrv-backend
-          image: karatejbacr.azurecr.io/idsrv4-backend
+          image: karatejb/idsrv4-backend:latest
           ports:
             - containerPort: 5001
           env:
@@ -214,8 +214,8 @@ spec:
               mountPath: /app/wwwroot/js/app-config.js
               subPath: app-config.js
               readOnly: true
-      imagePullSecrets:
-        - name: acrcred
+      # imagePullSecrets:
+      #   - name: acrcred
       volumes:
         - name: idsrv-backend-appsettings
           secret:
@@ -259,7 +259,7 @@ spec:
     spec:
       containers:
         - name: idsrv-auth
-          image: karatejbacr.azurecr.io/idsrv4-auth
+          image: karatejb/idsrv4-auth:latest
           ports:
             - containerPort: 6001
           env:
@@ -270,8 +270,8 @@ spec:
               mountPath: /app/appsettings.Kubernetes.json
               subPath: appsettings.Kubernetes.json
               readOnly: true
-      imagePullSecrets:
-        - name: acrcred
+      # imagePullSecrets:
+      #   - name: acrcred
       volumes:
         - name: idsrv-auth-appsettings
           secret:

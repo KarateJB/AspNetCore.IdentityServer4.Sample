@@ -31,18 +31,16 @@ $ kubectl version --client
 
 ### Build Docker images and push
 
-Under the root path of the repository, run the following commands,
+Under the root path of the repository, run the following commands:
 
 ```s
-$ docker build -t karatejb/idsrv4-auth -f docker\auth.dockerfile .
-$ docker build -t karatejb/idsrv4-backend -f docker\backend.dockerfile .
-$ docker build -t karatejb/idsrv4-nginx -f docker\nginx.dockerfile .
-$ docker push karatejb/idsrv4-auth:latest
-$ docker push karatejb/idsrv4-backend:latest
-$ docker push karatejb/idsrv4-nginx:latest
+$ docker build -t <Docker_ID>/idsrv4-auth -f docker\auth.dockerfile .
+$ docker build -t <Docker_ID>/idsrv4-backend -f docker\backend.dockerfile .
+$ docker push <Docker_ID>/idsrv4-auth:latest
+$ docker push <Docker_ID>/idsrv4-backend:latest
 ```
 
-Or use [Github Action]().
+Or use [Github Action](https://karatejb.blogspot.com/2021/05/github-action-docker-image.html).
 
 
 
@@ -143,16 +141,15 @@ $ kubectl get events --namespace idsrv-demo  --sort-by='.metadata.creationTimest
 or
 
 ```s
-$ kubectl logs <pod_name> --namespace idsrv-demo
+$ kubectl logs <pod_name> [-c <container_name>] --namespace idsrv-demo
 $ kubectl describe pods <pod_name> --namespace idsrv-demo
 ```
 
 
+Use the following command to enter the container,
 
 ```s
-kubectl logs idsrv-backend-5c6494dfb4-jqxwg -c idsrv-backend
-kubectl exec -it idsrv-auth-7588488bd7-7b5mw -- bash
-kubectl create -f kubernetes-idsrv-deployments.yml
-kubectl port-forward --address 192.168.107.137 idsrv-auth-7588488bd7-9dfbf 6001:6001
-kubectl port-forward --address 192.168.107.137 idsrv-backend-5c6494dfb4-bnpr9 5001:5001
+$ kubectl exec -it <pod_name> -- bash
 ```
+
+
