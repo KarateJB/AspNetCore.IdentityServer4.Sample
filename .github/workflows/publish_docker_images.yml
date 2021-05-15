@@ -22,7 +22,7 @@ jobs:
           # context: .
           file: ./docker/auth.dockerfile
           push: true
-          tags: karatejb/idsrv4-auth:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/idsrv4-auth:latest
       # - name: Image digest
       #   run: echo ${{ steps.build_publish_auth.outputs.digest }}
       - name: Build and push backend
@@ -32,7 +32,7 @@ jobs:
           # context: .
           file: ./docker/backend.dockerfile
           push: true
-          tags: karatejb/idsrv4-backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/idsrv4-backend:latest
       - name: Build and push nginx
         id: build_publish_nginx
         uses: docker/build-push-action@v2
@@ -40,7 +40,7 @@ jobs:
           context: ./docker
           file: ./docker/nginx.dockerfile
           push: true
-          tags: karatejb/idsrv4-nginx:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/idsrv4-nginx:latest
   push_images_to_acr:
     name: Push images to ACR
     runs-on: ubuntu-18.04
@@ -83,4 +83,3 @@ jobs:
           docker pull osixia/openldap:stable
           docker tag osixia/openldap:stable ${{ secrets.ACR_REGISTRY }}/openldap:stable
           docker push ${{ secrets.ACR_REGISTRY}}/openldap:stable
-
