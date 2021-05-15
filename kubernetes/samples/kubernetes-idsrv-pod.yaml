@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubernetes-idsrv-pod
+  labels:
+    app: idsrv-demo
+spec:
+  containers:
+    - name: kubernetes-idsrv-backend
+      image: karatejb/idsrv4-backend
+      ports:
+        - containerPort: 5001
+
+# Port forwarding for the Pods 
+# kubectl port-forward [--address <ip>] <pod_name> 5001:5001

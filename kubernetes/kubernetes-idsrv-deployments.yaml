@@ -1,0 +1,320 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-redis-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data/redis"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-redis-pvc
+spec:
+  volumeMode: Filesystem
+  volumeName: idsrv-redis-pv
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 200Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idsrv-redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo-redis
+    spec:
+      hostname: idsrv-redis
+      containers:
+        - name: idsrv-redis
+          image: redis:6.2
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+      # imagePullSecrets:
+      #   - name: acrcred
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: idsrv-redis-pvc
+  selector:
+    matchLabels:
+      app: idsrv-demo-redis
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-redis
+spec:
+  selector:
+    app: idsrv-demo-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-openldap-db-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data/openldap/db"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idsrv-openldap-slapd-pv
+spec:
+  volumeMode: Filesystem
+  storageClassName: ""
+  capacity:
+    storage: 50Mi
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: "/mnt/data/openldap/slapd"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-openldap-db-pvc
+spec:
+  volumeMode: Filesystem
+  volumeName: idsrv-openldap-db-pv
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 100Mi
+    limits:
+      storage: 200Mi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: idsrv-openldap-slapd-pvc
+spec:
+  volumeMode: Filesystem
+  volumeName: idsrv-openldap-slapd-pv
+  storageClassName: ""
+  accessModes:
+    - "ReadWriteOnce" # Mounted by a single node
+  resources:
+    requests:
+      storage: 20Mi
+    limits:
+      storage: 50Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idsrv-openldap
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo-openldap
+    spec:
+      containers:
+        - name: idsrv-openldap
+          image: osixia/openldap:stable
+          ports:
+            - containerPort: 389
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/ldap
+            - name: slapd-storage
+              mountPath: /etc/ldap/slapd.d
+      # imagePullSecrets:
+      #   - name: acrcred
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: idsrv-openldap-db-pvc
+        - name: slapd-storage
+          persistentVolumeClaim:
+            claimName: idsrv-openldap-slapd-pvc
+  selector:
+    matchLabels:
+      app: idsrv-demo-openldap
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-openldap
+spec:
+  selector:
+    app: idsrv-demo-openldap
+  ports:
+    - protocol: TCP
+      port: 389
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idsrv-backend
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo-backend
+    spec:
+      containers:
+        - name: idsrv-backend
+          image: karatejb/idsrv4-backend:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Kubernetes"
+          volumeMounts:
+            - name: idsrv-backend-appsettings
+              mountPath: /app/appsettings.Kubernetes.json
+              subPath: appsettings.Kubernetes.json
+              readOnly: true
+            - name: idsrv-js-appconfig
+              mountPath: /app/wwwroot/js/app-config.js
+              subPath: app-config.js
+              readOnly: true
+      # imagePullSecrets:
+      #   - name: acrcred
+      volumes:
+        - name: idsrv-backend-appsettings
+          secret:
+            secretName: secret-appsettings-backend
+            # defaultMode: 0666
+        - name: idsrv-js-appconfig
+          secret:
+            secretName: secret-js-appconfig-backend
+            # defaultMode: 0666
+  selector:
+    matchLabels:
+      app: idsrv-demo-backend
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-backend
+spec:
+  # type: NodePort
+  selector:
+    app: idsrv-demo-backend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+      # nodePort: 30501
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idsrv-auth
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo-auth
+    spec:
+      containers:
+        - name: idsrv-auth
+          image: karatejb/idsrv4-auth:latest
+          ports:
+            - containerPort: 6001
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Kubernetes"
+          volumeMounts:
+            - name: idsrv-auth-appsettings
+              mountPath: /app/appsettings.Kubernetes.json
+              subPath: appsettings.Kubernetes.json
+              readOnly: true
+      # imagePullSecrets:
+      #   - name: acrcred
+      volumes:
+        - name: idsrv-auth-appsettings
+          secret:
+            secretName: secret-appsettings-auth
+            # defaultMode: 0666
+  selector:
+    matchLabels:
+      app: idsrv-demo-auth
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-auth
+spec:
+  # type: NodePort
+  selector:
+    app: idsrv-demo-auth
+  ports:
+    - protocol: TCP
+      port: 6001
+      targetPort: 6001
+      # nodePort: 30601
+  type: LoadBalancer
+
+# ---
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: idsrv-ingress
+#   labels:
+#       name: idsrv-demo-ingress
+# spec:
+#   rules:
+#     - host: jb.com
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: idsrv-backend
+#               servicePort: 5001 
+#     - host: jb.com
+#       http:
+#         paths:
+#           - backend:
+#               serviceName: idsrv-auth
+#               servicePort: 6001

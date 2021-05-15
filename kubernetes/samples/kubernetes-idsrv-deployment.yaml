@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-idsrv-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo
+    spec:
+      containers:
+        - name: kubernetes-idsrv-backend
+          image: karatejb/idsrv4-backend
+          ports:
+            - containerPort: 5001
+  selector:
+    matchLabels:
+      app: idsrv-demo

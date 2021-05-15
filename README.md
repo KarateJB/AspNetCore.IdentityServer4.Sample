@@ -10,6 +10,13 @@
 - Resource Owner Password
 - Client Credential
 - Authorization Code (PKCE)
+  - MVC Cookie based
+  - JS client
+
+## Supported Deploy methodology 
+
+- Docker Compose
+- Kubernetes
 
 
 
@@ -131,6 +138,27 @@ $ docker-compose up -d
 
 Use Ansible playbook to install Docker and deploy, see [the sample playbook here](https://github.com/KarateJB/JB.Ansible/tree/master/Deploy/AspNetCore.IdentityServer4.Sample)
 
+
+
+# Run on Kubernetes 
+
+> It's under construction and not stable.
+
+
+
+## 1. Refine the internal IP of files in kubernets/artifects/
+
+
+## 2. Execute commands
+
+```s
+$ cd kubernetes
+$ kubectl apply -f kubernetes-namespace.yaml
+$ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json --namespace idsrv-demo
+$ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json --namespace idsrv-demo
+$ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js --namespace idsrv-demo
+$ kubectl apply -f kubernetets-idsrv-deployments.yml --namespace idsrv-demo
+```
 
 
 
