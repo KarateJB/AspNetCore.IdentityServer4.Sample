@@ -106,7 +106,7 @@ $ kubectl delete secrets secret-js-appconfig-backend
 
 ```s
 $ cd kubernetes
-$ kubectl apply -f kubernetets-idsrv-deployments.yml --namespace idsrv-demo
+$ kubectl apply -f kubernetes-idsrv-deployments.yaml --namespace idsrv-demo
 ```
 
 ## Remove Resources
