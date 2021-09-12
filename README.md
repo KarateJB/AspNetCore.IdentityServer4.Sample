@@ -119,8 +119,8 @@ $ gulp run
 or run Auth Service(`auth`) or API Service(`webapi`) individually.
 
 ```s
-$ gulp run auth
-$ gulp run webapi
+$ gulp auth
+$ gulp webapi
 ```
 
 # Run on docker
