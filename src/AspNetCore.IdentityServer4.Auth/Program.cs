@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using System;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
@@ -16,6 +17,8 @@ namespace AspNetCore.IdentityServer4.Auth
         /// <param name="args">Arguments</param>
         public static void Main(string[] args)
         {
+            var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+            logger.Debug($"Auth started at {DateTime.Now.ToString()}...");
             CreateHostBuilder(args).Build().Run();
         }
 

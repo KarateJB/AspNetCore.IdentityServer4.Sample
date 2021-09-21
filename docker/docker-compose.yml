@@ -41,7 +41,7 @@ services:
     #   - ${AUTH_HTTPS_PORT}:6001
     volumes:
       # - logs:/App_Data/Logs
-      - ../Logs/Auth:/App_Data/Logs
+      - ../Logs/Auth:/app/App_Data/Logs
     depends_on:
       - openldap
       - redis
@@ -65,7 +65,7 @@ services:
     #   - ${BACKEND_HTTPS_PORT}:5001
     volumes:
       # - logs:/App_Data/Logs
-      - ../Logs/Backend:/App_Data/Logs
+      - ../Logs/Backend:/app/App_Data/Logs
     depends_on:
       - openldap
       - redis

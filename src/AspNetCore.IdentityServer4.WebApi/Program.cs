@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using System;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
@@ -9,6 +10,8 @@ namespace AspNetCore.IdentityServer4.WebApi
     {
         public static void Main(string[] args)
         {
+            var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+            logger.Debug($"Backend started at {DateTime.Now.ToString()}...");
             CreateHostBuilder(args).Build().Run();
         }
 
