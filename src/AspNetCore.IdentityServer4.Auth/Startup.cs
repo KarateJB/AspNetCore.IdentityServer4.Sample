@@ -141,6 +141,10 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Add CORS rules
             //services.AddCustomCors(CORS_POLICY, "https://localhost:5001" );
             #endregion
+
+            #region Healthy check
+            services.AddHealthChecks();
+            #endregion
         }
 
         /// <summary>
@@ -158,6 +162,8 @@ namespace AspNetCore.IdentityServer4.Auth
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseHealthChecks("/health");
 
             // Use CORS
             //app.UseCors(CORS_POLICY);
