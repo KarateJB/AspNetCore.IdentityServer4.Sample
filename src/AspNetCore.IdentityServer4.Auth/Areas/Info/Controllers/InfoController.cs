@@ -1,14 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using AspNetCore.IdentityServer4.Auth.Models;
-using IdentityModel;
-using IdentityServer.LdapExtension.UserModel;
-using IdentityServer.LdapExtension.UserStore;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.IdentityServer4.Auth.Areas.Info.Controllers
@@ -16,7 +6,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Info.Controllers
     /// <summary>
     /// Information controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     public class InfoController : ControllerBase
     {

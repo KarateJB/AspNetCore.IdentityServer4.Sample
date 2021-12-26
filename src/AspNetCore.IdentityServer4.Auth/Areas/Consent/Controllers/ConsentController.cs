@@ -5,6 +5,7 @@ using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.Auth.Models.ViewModels;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Filters;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityServer4;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
@@ -20,7 +21,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Consent.Controllers
     /// <summary>
     /// Consent controller
     /// </summary>
-    [Route("[controller]")]
+    [Route(RouteFactory.Controller)]
     [SecurityHeaders]
     [Authorize]
     public class ConsentController : Controller

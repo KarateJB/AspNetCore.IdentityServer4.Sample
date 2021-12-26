@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using AspNetCore.IdentityServer4.WebApi.Models;
-using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
+﻿using System.Linq;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +9,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
     /// <summary>
     /// Demo APIs for Policy based authorization
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     [Authorize(AuthenticationSchemes = "Bearer")] // Specify the scheme name if multiple schemes were set
     public class DemoPolicyBasedController : ControllerBase
