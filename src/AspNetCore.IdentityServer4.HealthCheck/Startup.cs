@@ -18,8 +18,12 @@ namespace AspNetCore.IdentityServer4.HealthCheck
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+
+            #region Health Check UI
+            //services.AddHealthChecks();
+            services.AddHealthChecksUI().AddInMemoryStorage();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,9 +40,17 @@ namespace AspNetCore.IdentityServer4.HealthCheck
 
             app.UseAuthorization();
 
+            app.UseHealthChecksUI(options =>
+            {
+                options.ApiPath = "/healthchecks-ui-api";
+                options.UIPath = "/healthchecks-ui";
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                //endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecksUI();
             });
         }
     }
