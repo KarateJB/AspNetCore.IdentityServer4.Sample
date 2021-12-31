@@ -5,10 +5,12 @@ using AspNetCore.IdentityServer4.Auth.Utils.Service;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
 using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.Service.Ldap;
+using HealthChecks.UI.Client;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -163,7 +165,7 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            app.UseHealthChecks("/health");
+            //app.UseHealthChecks("/health"); // Disable this line when set route on app.UseEndpoints
 
             // Use CORS
             //app.UseCors(CORS_POLICY);
@@ -185,6 +187,11 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
     }

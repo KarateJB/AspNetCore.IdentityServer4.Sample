@@ -15,6 +15,10 @@ namespace AspNetCore.IdentityServer4.WebApi.Handlers
     {
         private readonly ILogger logger = null;
 
+        /// <summary>
+        /// Contructor
+        /// </summary>
+        /// <param name="logger">Logger</param>
         public UserNameAuthHandler(ILogger<UserNameAuthHandler> logger)
         {
             this.logger = logger;

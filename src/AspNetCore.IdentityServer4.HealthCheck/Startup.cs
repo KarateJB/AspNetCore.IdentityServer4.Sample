@@ -22,7 +22,14 @@ namespace AspNetCore.IdentityServer4.HealthCheck
 
             #region Health Check UI
             //services.AddHealthChecks();
-            services.AddHealthChecksUI().AddInMemoryStorage();
+            services.AddHealthChecksUI(setup => {
+                setup.SetEvaluationTimeInSeconds(10);
+                setup.MaximumHistoryEntriesPerEndpoint(10);
+                setup.SetMinimumSecondsBetweenFailureNotifications(60);
+
+                setup.AddHealthCheckEndpoint("Backend", "https://localhost:5001/health");
+                setup.AddHealthCheckEndpoint("Auth", "https://localhost:6001/health");
+            }).AddInMemoryStorage();
             #endregion
         }
 

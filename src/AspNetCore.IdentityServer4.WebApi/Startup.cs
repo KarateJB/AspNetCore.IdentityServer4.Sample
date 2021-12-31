@@ -11,8 +11,10 @@ using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils.Config;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -173,7 +175,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.UseStaticFiles();
 
             // Health check
-            app.UseHealthChecks("/health");
+            //app.UseHealthChecks("/health"); // Disable this line when set route on app.UseEndpoints
 
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);
@@ -193,6 +195,12 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+
             });
         }
     }
