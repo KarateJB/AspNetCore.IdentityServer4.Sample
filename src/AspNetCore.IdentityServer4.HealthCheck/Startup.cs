@@ -21,7 +21,8 @@ namespace AspNetCore.IdentityServer4.HealthCheck
             services.AddControllers();
 
             #region Health Check UI
-            //services.AddHealthChecks();
+            //services.AddHealthChecks()
+            //    .AddRedis(Configuration["Host:Redis"], name: "Redis HealthCheck");
             services.AddHealthChecksUI(setup => {
                 setup.SetEvaluationTimeInSeconds(10);
                 setup.MaximumHistoryEntriesPerEndpoint(10);

@@ -145,7 +145,9 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region Healthy check
-            services.AddHealthChecks();
+             services.AddHealthChecks()
+                .AddRedis(configuration["Host:Redis"], name: "Redis HealthCheck");
+
             #endregion
         }
 
