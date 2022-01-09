@@ -1,4 +1,5 @@
-﻿using AspNetCore.IdentityServer4.Auth.Events;
+﻿using System;
+using AspNetCore.IdentityServer4.Auth.Events;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
@@ -145,8 +146,9 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region Healthy check
-             services.AddHealthChecks()
-                .AddRedis(configuration["Host:Redis"], name: "Redis HealthCheck");
+            services.AddHealthChecks()
+               .AddRedis(configuration["Host:Redis"], name: "Redis HealthCheck")
+               .AddIdentityServer(new Uri("https://localhost:6001/"));
 
             #endregion
         }
