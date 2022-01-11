@@ -40,9 +40,13 @@ namespace AspNetCore.IdentityServer4.HealthCheck
                 setup.MaximumHistoryEntriesPerEndpoint(10);
                 setup.SetMinimumSecondsBetweenFailureNotifications(60);
 
+                // Health check endpoints
                 setup.AddHealthCheckEndpoint("Backend", "https://localhost:5001/health");
                 setup.AddHealthCheckEndpoint("Auth", "https://localhost:6001/health");
                 setup.AddHealthCheckEndpoint("Services", "https://localhost:7001/health");
+
+                // Healthe check webhooks
+                //setup.AddWebhookNotification()
             }).AddInMemoryStorage();
             #endregion
         }
