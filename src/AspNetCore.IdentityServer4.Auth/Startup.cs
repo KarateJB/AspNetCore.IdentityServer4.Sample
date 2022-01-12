@@ -1,5 +1,6 @@
 ﻿using System;
 using AspNetCore.IdentityServer4.Auth.Events;
+using AspNetCore.IdentityServer4.Auth.HealthChecks;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace AspNetCore.IdentityServer4.Auth
@@ -146,7 +148,8 @@ namespace AspNetCore.IdentityServer4.Auth
             #endregion
 
             #region Healthy check
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddCheck("OpenLDAP", new OpenLdapHealthCheck(this.appSettings), HealthStatus.Unhealthy, new string[] { "openldap" });
 
             #endregion
         }

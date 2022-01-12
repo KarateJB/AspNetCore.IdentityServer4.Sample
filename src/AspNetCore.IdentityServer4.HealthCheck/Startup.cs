@@ -26,8 +26,8 @@ namespace AspNetCore.IdentityServer4.HealthCheck
 
             #region Health Check
             services.AddHealthChecks()
-               .AddRedis(configuration["Host:Redis"], name: "Redis HealthCheck")
-               .AddIdentityServer(new Uri("https://localhost:6001/"));
+               .AddRedis(configuration["Host:Redis"], name: "Redis HealthCheck", tags: new string[] { "redis" })
+               .AddIdentityServer(new Uri("https://localhost:6001/"), tags: new string[] { "identity server", "auth"});
 
             #endregion
             #region Health Check UI

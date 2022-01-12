@@ -18,10 +18,10 @@ namespace AspNetCore.IdentityServer4.Auth.HealthChecks
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="configuration">Configuration</param>
-        public OpenLdapHealthCheck(IOptions<AppSettings> configuration)
+        /// <param name="appSettings">AppSettings</param>
+        public OpenLdapHealthCheck(AppSettings appSettings)
         {
-            this.appSettings = configuration.Value;
+            this.appSettings = appSettings;
             this.ldapServer = this.appSettings?.LdapServer;
         }
 
