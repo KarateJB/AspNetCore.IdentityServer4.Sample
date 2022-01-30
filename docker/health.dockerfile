@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Copy source code and restore as distinct layers
 COPY src/ ./
-WORKDIR "/app/AspNetCore.IdentityServer4.WebApi"
+WORKDIR "/app/AspNetCore.IdentityServer4.HealthCheck"
 RUN dotnet restore
 RUN dotnet publish --configuration Release --output "/app/publish"
 
@@ -26,10 +26,10 @@ ENV TZ "Asia/Taipei"
 # ENV LANG "zh_TW.UTF-8"
 # ENV LANGUAGE "zh_TW.UTF-8"
 # ENV LC_ALL "zh_TW.UTF-8"
-ENV ASPNETCORE_URLS "http://+:5000;https://+:5001"
+ENV ASPNETCORE_URLS "http://+:7000;https://+:7001"
 ENV ASPNETCORE_ENVIRONMENT ${env}
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password ""
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path "/etc/docker/certs/docker.pfx"
-EXPOSE 5000 5001
+EXPOSE 7000 7001
 
-ENTRYPOINT ["dotnet", "AspNetCore.IdentityServer4.WebApi.dll"]
+ENTRYPOINT ["dotnet", "AspNetCore.IdentityServer4.HealthCheck.dll"]
