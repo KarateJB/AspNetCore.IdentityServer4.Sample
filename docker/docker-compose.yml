@@ -78,6 +78,8 @@ services:
       args:
         env: ${DOCKER_ENV}
     container_name: idsrv-health
+    # environment:
+    #   host.docker.internal: 172.28.128.1
     networks: 
       - default
 
