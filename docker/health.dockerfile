@@ -20,7 +20,7 @@ COPY ./docker/certs/${env}.crt /etc/docker/certs/
 COPY ./docker/certs/${env}.key /etc/docker/certs/
 COPY ./docker/certs/${env}.pfx /etc/docker/certs/
 RUN mv /etc/docker/certs/${env}.pfx /etc/docker/certs/docker.pfx
-VOLUME /app/App_Data/Logs
+# VOLUME /app/App_Data/Logs
 
 ENV TZ "Asia/Taipei"
 # ENV LANG "zh_TW.UTF-8"

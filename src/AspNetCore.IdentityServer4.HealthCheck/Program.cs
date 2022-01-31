@@ -20,7 +20,10 @@ namespace AspNetCore.IdentityServer4.HealthCheck
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureKestrel(serverOptions =>
+                    {
+                    })
+                    .UseStartup<Startup>();
                 });
     }
 }

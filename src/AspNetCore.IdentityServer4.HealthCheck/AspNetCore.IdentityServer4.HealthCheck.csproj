@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AspNetCore.IdentityServer4.Core\AspNetCore.IdentityServer4.Core.csproj" />
   </ItemGroup>
 

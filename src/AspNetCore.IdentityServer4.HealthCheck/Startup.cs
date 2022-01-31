@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using AspNetCore.IdentityServer4.Core.Models.Config.HealthCheck;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -32,11 +33,11 @@ namespace AspNetCore.IdentityServer4.HealthCheck
             var healthCheckService = this.appSettings
                 .HealthChecks.Service;
             string redisConnectionStr = $"{healthCheckService.Redis.Host}:{healthCheckService.Redis.Port}";
-            string idsrvUrl = $"https://{healthCheckService.IdentityServer.Host}:{healthCheckService.IdentityServer.Port}";
+            string idsrvUrl = $"https://{healthCheckService.IdentityServer.Host}:{healthCheckService.IdentityServer.Port}/"; // Must ends with "/"
 
             services.AddHealthChecks()
-               .AddRedis(redisConnectionStr, name: "Redis HealthCheck", tags: new string[] { "redis" })
-               .AddIdentityServer(new Uri(idsrvUrl), tags: new string[] { "identity server", "auth" });
+               .AddRedis(redisConnectionStr, name: "Redis", tags: new string[] { "redis" })
+               .AddIdentityServer(new Uri(idsrvUrl), name: "Idsrv: Discovery Document", tags: new string[] { "identity server", "auth" });
             #endregion
 
             #region Health Check UI
@@ -45,6 +46,18 @@ namespace AspNetCore.IdentityServer4.HealthCheck
                 setup.SetEvaluationTimeInSeconds(10);
                 setup.MaximumHistoryEntriesPerEndpoint(10);
                 setup.SetMinimumSecondsBetweenFailureNotifications(60);
+
+                // Ignore certificate check
+                setup.UseApiEndpointHttpMessageHandler(sp =>
+                {
+                    return new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
+                        {
+                            return true;
+                        }
+                    };
+                });
 
                 // Health check endpoints
                 this.appSettings.HealthChecks.Endpoints.ForEach(e =>
@@ -87,7 +100,6 @@ namespace AspNetCore.IdentityServer4.HealthCheck
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
-
             });
         }
     }
