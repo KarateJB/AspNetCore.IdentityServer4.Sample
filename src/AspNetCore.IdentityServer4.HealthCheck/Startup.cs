@@ -1,12 +1,14 @@
 using System;
 using System.Net.Http;
 using AspNetCore.IdentityServer4.Core.Models.Config.HealthCheck;
+using AspNetCore.IdentityServer4.HealthCheck.HealthChecks;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace AspNetCore.IdentityServer4.HealthCheck
@@ -37,33 +39,35 @@ namespace AspNetCore.IdentityServer4.HealthCheck
 
             services.AddHealthChecks()
                .AddRedis(redisConnectionStr, name: "Redis", tags: new string[] { "redis" })
-               .AddIdentityServer(new Uri(idsrvUrl), name: "Idsrv: Discovery Document", tags: new string[] { "identity server", "auth" });
+               //.AddIdentityServer(new Uri(idsrvUrl), name: "Idsrv: Discovery Document", tags: new string[] { "identity server", "auth" }) // Not work on docker env, so I write the custom HealthCheck: IdsrvHealthCheck 
+               .AddCheck("Idsrv", new IdsrvHealthCheck(this.appSettings), HealthStatus.Unhealthy, new string[] { "idsrv" });
+
             #endregion
 
             #region Health Check UI
             services.AddHealthChecksUI(setup =>
-            {
-                setup.SetEvaluationTimeInSeconds(10);
-                setup.MaximumHistoryEntriesPerEndpoint(10);
-                setup.SetMinimumSecondsBetweenFailureNotifications(60);
+                {
+                    setup.SetEvaluationTimeInSeconds(10);
+                    setup.MaximumHistoryEntriesPerEndpoint(10);
+                    setup.SetMinimumSecondsBetweenFailureNotifications(60);
 
                 // Ignore certificate check
                 setup.UseApiEndpointHttpMessageHandler(sp =>
-                {
-                    return new HttpClientHandler
                     {
-                        ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
+                        return new HttpClientHandler
                         {
-                            return true;
-                        }
-                    };
-                });
+                            ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
+                            {
+                                return true;
+                            }
+                        };
+                    });
 
                 // Health check endpoints
                 this.appSettings.HealthChecks.Endpoints.ForEach(e =>
-                   {
-                       setup.AddHealthCheckEndpoint(e.Name, e.Url);
-                   });
+                       {
+                           setup.AddHealthCheckEndpoint(e.Name, e.Url);
+                       });
 
                 // Healthe check webhooks
                 //setup.AddWebhookNotification()
