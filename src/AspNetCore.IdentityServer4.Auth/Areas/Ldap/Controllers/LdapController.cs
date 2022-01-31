@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
@@ -16,7 +17,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
     /// <summary>
     /// LDAP controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     public class LdapController : ControllerBase
     {
@@ -46,7 +47,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
         /// <param name="model">LdapUser object</param>
         /// <returns>IActionResult</returns>
         [HttpPost("SignIn")]
-        public async Task<IActionResult> SignIn([FromBody]LdapUser model)
+        public async Task<IActionResult> SignIn([FromBody] LdapUser model)
         {
             // validate username/password against Ldap
             var user = this.userStore.ValidateCredentials(model.Username, model.Password);
@@ -82,7 +83,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
         /// <param name="user">LdapUser object</param>
         /// <returns>IActionResult</returns>
         [HttpPost("Validate")]
-        public async Task<IActionResult> Validate([FromBody]LdapUser user)
+        public async Task<IActionResult> Validate([FromBody] LdapUser user)
         {
             var isAuthorized = await this.ExecLdapAuthAsync(user.Username, user.Password);
 

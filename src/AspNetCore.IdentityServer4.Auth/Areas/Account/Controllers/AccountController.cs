@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.Auth.Models.ViewModels;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using IdentityModel;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer.LdapExtension.UserStore;
@@ -24,7 +25,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Account.Controllers
     /// <summary>
     /// Account controller
     /// </summary>
-    [Route("[controller]")]
+    [Route(RouteFactory.Controller)]
     [AllowAnonymous]
     public class AccountController : Controller
     {

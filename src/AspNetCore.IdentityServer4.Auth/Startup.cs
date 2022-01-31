@@ -1,19 +1,24 @@
-﻿using AspNetCore.IdentityServer4.Auth.Events;
+﻿using System;
+using AspNetCore.IdentityServer4.Auth.Events;
+using AspNetCore.IdentityServer4.Auth.HealthChecks;
 using AspNetCore.IdentityServer4.Auth.Utils.Config;
 using AspNetCore.IdentityServer4.Auth.Utils.Extensions;
 using AspNetCore.IdentityServer4.Auth.Utils.Service;
 using AspNetCore.IdentityServer4.Core.Models.Config.Auth;
 using AspNetCore.IdentityServer4.Mvc.OpenApiSpec;
 using AspNetCore.IdentityServer4.Service.Ldap;
+using HealthChecks.UI.Client;
 using IdentityServer.LdapExtension.Extensions;
 using IdentityServer.LdapExtension.UserModel;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace AspNetCore.IdentityServer4.Auth
@@ -141,6 +146,12 @@ namespace AspNetCore.IdentityServer4.Auth
             #region Add CORS rules
             //services.AddCustomCors(CORS_POLICY, "https://localhost:5001" );
             #endregion
+
+            #region Healthy check
+            services.AddHealthChecks()
+                .AddCheck("OpenLDAP", new OpenLdapHealthCheck(this.appSettings), HealthStatus.Unhealthy, new string[] { "openldap" });
+
+            #endregion
         }
 
         /// <summary>
@@ -158,6 +169,8 @@ namespace AspNetCore.IdentityServer4.Auth
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            //app.UseHealthChecks("/health"); // Disable this line when set route on app.UseEndpoints
 
             // Use CORS
             //app.UseCors(CORS_POLICY);
@@ -179,6 +192,11 @@ namespace AspNetCore.IdentityServer4.Auth
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
     }

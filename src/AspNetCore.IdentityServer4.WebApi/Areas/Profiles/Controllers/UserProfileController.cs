@@ -11,7 +11,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Profiles.Controllers
     /// <summary>
     /// User Profile controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     public class UserProfileController : ControllerBase
     {

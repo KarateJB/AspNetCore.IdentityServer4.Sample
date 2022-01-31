@@ -70,6 +70,19 @@ services:
       - openldap
       - redis
 
+  health:
+    image: idsrv4-health:latest
+    build:
+      context: ../
+      dockerfile: docker/health.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv-health
+    # environment:
+    #   host.docker.internal: 172.28.128.1
+    networks: 
+      - default
+
   nginx:
     image: idsrv4-nginx:latest
     container_name: idsrv-nginx
@@ -86,9 +99,13 @@ services:
       - ${AUTH_HTTPS_PORT}:6001
       - ${BACKEND_PORT}:5000
       - ${BACKEND_HTTPS_PORT}:5001
+      - ${HEALTH_PORT}:7000
+      - ${HEALTH_HTTPS_PORT}:7001
+
     depends_on:
       - auth
       - backend
+      - health
 
 networks:
   default:

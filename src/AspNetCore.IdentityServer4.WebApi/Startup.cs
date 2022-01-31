@@ -11,8 +11,10 @@ using AspNetCore.IdentityServer4.WebApi.Models.AuthorizationRequirement;
 using AspNetCore.IdentityServer4.WebApi.Services;
 using AspNetCore.IdentityServer4.WebApi.Utils.Config;
 using AspNetCore.IdentityServer4.WebApi.Utils.Extensions;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +40,6 @@ namespace AspNetCore.IdentityServer4.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
@@ -46,7 +47,8 @@ namespace AspNetCore.IdentityServer4.WebApi
             // services.AddControllers()
             services.AddControllersWithViews()
                 .AddRazorOptions(
-                 options => {
+                 options =>
+                 {
                      //{2} is area, {1} is controller,{0} is the action
                      options.ViewLocationFormats.Add("/Areas/{1}/Views/{0}.cshtml");
                  })
@@ -77,7 +79,7 @@ namespace AspNetCore.IdentityServer4.WebApi
             // Required: Department "CRM"
             services.AddAuthorization(options => options.AddPolicy("CrmDepartmentPolicy", policy => policy.RequireClaim(CustomClaimTypes.Department, "CRM")));
             // Required: Department "Sales" AND Role "admin"
-            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminPolicy", 
+            services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminPolicy",
                 policy => policy.RequireClaim(CustomClaimTypes.Department, "Sales").RequireRole("admin")));
             // Required: Department "Sales" AND Role "admin" or "user"
             services.AddAuthorization(options => options.AddPolicy("SalesDepartmentAndAdminOrUserPolicy",
@@ -109,8 +111,8 @@ namespace AspNetCore.IdentityServer4.WebApi
             #endregion
 
             #region HttpClient Factory
-            services.AddHttpClient(HttpClientNameFactory.AuthHttpClient, 
-                config => 
+            services.AddHttpClient(HttpClientNameFactory.AuthHttpClient,
+                config =>
                 {
                     config.Timeout = TimeSpan.FromMinutes(5);
                     // config.BaseAddress = new Uri("https://localhost:6001/");
@@ -150,6 +152,10 @@ namespace AspNetCore.IdentityServer4.WebApi
             #region Inject other custom services/utils...etc
             services.AddCustomServices();
             #endregion
+
+            #region Health check
+            services.AddHealthChecks();
+            #endregion
         }
 
         /// <summary>
@@ -167,6 +173,9 @@ namespace AspNetCore.IdentityServer4.WebApi
         {
             // Use static files
             app.UseStaticFiles();
+
+            // Health check
+            //app.UseHealthChecks("/health"); // Disable this line when set route on app.UseEndpoints
 
             // Enable Swagger and Swagger UI
             app.UseCustomSwagger(provider);
@@ -186,6 +195,12 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+
             });
         }
     }

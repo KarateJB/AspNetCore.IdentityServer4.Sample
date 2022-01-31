@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,7 +16,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Auth.Controllers
     /// <summary>
     /// Open ID controller
     /// </summary>
-    [Route("[controller]")]
+    [Route(RouteFactory.Controller)]
     // [Authorize] // DONOT specify the AuthenticationSchemes here
     public class OpenIdController : Controller
     {

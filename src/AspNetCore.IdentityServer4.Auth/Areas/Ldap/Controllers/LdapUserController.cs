@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AspNetCore.IdentityServer4.Auth.Models;
 using AspNetCore.IdentityServer4.Core.Models;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.Service.Ldap;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
     /// <summary>
     /// LDAP User controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     public class LdapUserController : ControllerBase
     {
@@ -34,7 +35,7 @@ namespace AspNetCore.IdentityServer4.Auth.Areas.Ldap.Controllers
         public async Task<IActionResult> Create(LdapUserEntry entry)
         {
             var ldapUser = new OpenLdapUserEntry(
-                entry.UserName, entry.Password, entry.Email, entry.DisplayName,entry.FirstName, entry.SecondName);
+                entry.UserName, entry.Password, entry.Email, entry.DisplayName, entry.FirstName, entry.SecondName);
             if (await this.ldapUserMgr.CreateAsync(ldapUser))
                 return this.StatusCode(StatusCodes.Status201Created);
             else

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AspNetCore.IdentityServer4.Core.Utils.Factory;
 using AspNetCore.IdentityServer4.WebApi.Utils.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Areas.Demo.Controllers
     /// <summary>
     /// Demo APIs for custom authorization
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(RouteFactory.ApiController)]
     [ApiController]
     public class DemoCustomAuthorizeController : ControllerBase
     {
