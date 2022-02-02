@@ -8,5 +8,7 @@
     <PackageReference Include="prometheus-net.AspNetCore" Version="5.0.2" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="Middl" /></VisualStudio></ProjectExtensions>
+
 
 </Project>
