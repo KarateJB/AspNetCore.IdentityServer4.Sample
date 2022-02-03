@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Prometheus;
 
-namespace AspNetCore.Prometheus.Middlewares
+namespace AspNetCore.IdentityServer4.WebApi.Utils.Pipelines
 {
+    /// <summary>
+    /// Request Counter middleware
+    /// </summary>
     public class RequestCounterMw
     {
         private readonly RequestDelegate next;
@@ -11,6 +14,7 @@ namespace AspNetCore.Prometheus.Middlewares
         {
             this.next = next;
         }
+
         public async Task Invoke(HttpContext context)
         {
             // Http Context
