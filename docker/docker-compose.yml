@@ -1,4 +1,8 @@
 version: "3"
+configs:
+  prometheus_config:
+    file: prometheus/prometheus.yml
+
 services:
   
   openldap:
@@ -21,7 +25,20 @@ services:
        - ${REDIS_PORT}:6379
     expose: 
        - 6379
-
+       
+  prometheus:
+    image: prom/prometheus:v2.33.1
+    container_name: idsrv-prom
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    ports:
+      - ${PROM_PORT}:9090
+    expose:
+      - 9090
+    networks: 
+      - default
+  
   auth:
     image: idsrv4-auth:latest
     build:
@@ -78,8 +95,6 @@ services:
       args:
         env: ${DOCKER_ENV}
     container_name: idsrv-health
-    # environment:
-    #   host.docker.internal: 172.28.128.1
     networks: 
       - default
 

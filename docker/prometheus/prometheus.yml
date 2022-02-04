@@ -1,0 +1,18 @@
+scrape_configs:
+  - job_name: "netcore-prometheus"
+    scheme: https
+    metrics_path: /metrics
+    scrape_interval: 10s
+    dns_sd_configs:
+      - names:
+        - "idsrv-backend"
+        type: "A"
+        port: 5001
+    tls_config:
+      insecure_skip_verify: true
+    # honor_labels: false
+    # honor_timestamps: true
+    # sample_limit: 0
+    # static_configs:
+    #   - targets:
+    #       - "www.sample.com"
