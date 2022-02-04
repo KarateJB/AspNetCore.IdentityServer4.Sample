@@ -47,7 +47,22 @@ services:
       --config.file=/etc/prometheus/prometheus.yml  
     networks: 
       - default
-  
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: idsrv-grafana
+    env_file:
+      - ./grafana/grafana.env
+    ports:
+      - ${GRAFANA_PORT}:3000
+    networks:
+      - default
+    volumes:
+      - grafana_data:/var/lib/grafana/
+      - grafana_provisioning:/etc/grafana/provisioning/
+    depends_on:
+      - prometheus
+
   auth:
     image: idsrv4-auth:latest
     build:
@@ -139,4 +154,6 @@ volumes:
   openldap_database:
   openldap_slapd:
   redis_data:
+  grafana_data:
+  grafana_provisioning:
   # logs:
