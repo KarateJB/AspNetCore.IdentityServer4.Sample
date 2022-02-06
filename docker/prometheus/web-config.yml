@@ -1,0 +1,3 @@
+tls_server_config:
+  cert_file: /home/prometheus/certs/docker.crt
+  key_file: /home/prometheus/certs/docker.key

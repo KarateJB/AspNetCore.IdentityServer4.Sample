@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 
 namespace AspNetCore.IdentityServer4.WebApi
 {
@@ -191,6 +192,12 @@ namespace AspNetCore.IdentityServer4.WebApi
             app.UseRouting();
             app.UseAuthentication(); // Must after app.UseRouting()
             app.UseAuthorization(); // Must after app.UseRouting()
+
+            // Enable Prometheus metrics
+            app.UseMetricServer();
+
+            // Custom Middleware
+            app.UseRequestCounter();
 
             app.UseEndpoints(endpoints =>
             {

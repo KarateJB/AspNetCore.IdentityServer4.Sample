@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.IdentityServer4.Auth", "AspNetCore.IdentityServer4.Auth\AspNetCore.IdentityServer4.Auth.csproj", "{7646B6D4-D3C8-476E-9377-11FB39BE9D40}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.IdentityServer4.Mvc", "AspNetCore.IdentityServer4.Mvc\AspNetCore.IdentityServer4.Mvc.csproj", "{7DF3141A-0C96-4DE5-96FF-7CBBD9688F68}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.IdentityServer4.HealthCheck", "AspNetCore.IdentityServer4.HealthCheck\AspNetCore.IdentityServer4.HealthCheck.csproj", "{617EA86D-B24F-418F-9032-908E46917685}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Monitor", "05 Monitor", "{B96631E7-3DC6-45EE-BD8B-FBC726BB547E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,7 +132,7 @@ Global
 		{17E7B629-A608-4FFA-925F-B2C2DDBB00B7} = {F110A61B-EFE1-4330-977B-11E1B9EFBCED}
 		{42FD54EE-976D-4692-BC7E-90031BABF78D} = {29BDA3A3-2644-463C-9929-589CDB7F932B}
 		{7DF3141A-0C96-4DE5-96FF-7CBBD9688F68} = {360F4263-E246-41E5-8FBC-EAEEF46E1555}
-		{617EA86D-B24F-418F-9032-908E46917685} = {C6AA0361-359D-41D0-918F-83BCA7AF346A}
+		{617EA86D-B24F-418F-9032-908E46917685} = {B96631E7-3DC6-45EE-BD8B-FBC726BB547E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51A8DB13-AD5E-42FF-B127-1EA1B8A97F01}

@@ -1,4 +1,8 @@
 version: "3"
+# configs:
+#   prometheus_config:
+#     file: prometheus/prometheus.yml
+
 services:
   
   openldap:
@@ -21,6 +25,48 @@ services:
        - ${REDIS_PORT}:6379
     expose: 
        - 6379
+       
+  prometheus:
+    image: idsrv4-prom:latest
+    build:
+      context: .
+      dockerfile: prometheus.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv-prom
+    # configs:
+    #   - source: prometheus_config
+    #     target: /etc/prometheus/prometheus.yml
+    ports:
+      - ${PROM_HTTPS_PORT}:9090
+    expose:
+      - 9090
+    command: |
+      --web.enable-lifecycle 
+      --web.config.file=/etc/prometheus/web-config.yml
+      --config.file=/etc/prometheus/prometheus.yml  
+    networks: 
+      - default
+
+  grafana:
+    image: idsrv4-grafana:latest
+    build:
+      context: .
+      dockerfile: grafana.dockerfile
+      args:
+        env: ${DOCKER_ENV}
+    container_name: idsrv-grafana
+    env_file:
+      - ./grafana/grafana.env
+    ports:
+      - ${GRAFANA_PORT}:3000
+    networks:
+      - default
+    volumes:
+      - grafana_data:/var/lib/grafana/
+      - grafana_provisioning:/etc/grafana/provisioning/
+    depends_on:
+      - prometheus
 
   auth:
     image: idsrv4-auth:latest
@@ -78,8 +124,6 @@ services:
       args:
         env: ${DOCKER_ENV}
     container_name: idsrv-health
-    # environment:
-    #   host.docker.internal: 172.28.128.1
     networks: 
       - default
 
@@ -115,4 +159,6 @@ volumes:
   openldap_database:
   openldap_slapd:
   redis_data:
+  grafana_data:
+  grafana_provisioning:
   # logs:

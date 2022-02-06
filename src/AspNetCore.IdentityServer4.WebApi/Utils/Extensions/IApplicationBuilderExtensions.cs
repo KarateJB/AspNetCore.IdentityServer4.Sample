@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetCore.IdentityServer4.WebApi.Utils.Pipelines;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -7,14 +8,19 @@ using Microsoft.Extensions.Logging;
 namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
 {
     /// <summary>
-    /// ApplicationBuilder Extensions
+    /// IApplicationBuilder Extensions
     /// </summary>
-    public static class ApplicationBuilderExtensions
+    public static class IApplicationBuilderExtensions
     {
-        public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILoggerFactory loggerFactory)
+        /// <summary>
+        /// Configure and use Exception Handler
+        /// </summary>
+        /// <param name="builder">IApplicationBuilder instance</param>
+        /// <param name="loggerFactory">Logger factory</param>
+        public static void ConfigureExceptionHandler(this IApplicationBuilder builder, ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger("Global Exception Handler");
-            app.UseExceptionHandler(configure =>
+            builder.UseExceptionHandler(configure =>
             {
                 configure.Run(async context =>
                 {
@@ -32,6 +38,16 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
                     return;
                 });
             });
+        }
+
+        /// <summary>
+        /// Use RequestCounterMw
+        /// </summary>
+        /// <param name="builder">IApplication instance</param>
+        /// <returns>IApplication instance</returns>
+        public static IApplicationBuilder UseRequestCounter(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<RequestCounterMw>();
         }
     }
 }
