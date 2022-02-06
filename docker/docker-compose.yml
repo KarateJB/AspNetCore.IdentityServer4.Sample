@@ -49,7 +49,12 @@ services:
       - default
 
   grafana:
-    image: grafana/grafana:latest
+    image: idsrv4-grafana:latest
+    build:
+      context: .
+      dockerfile: grafana.dockerfile
+      args:
+        env: ${DOCKER_ENV}
     container_name: idsrv-grafana
     env_file:
       - ./grafana/grafana.env
