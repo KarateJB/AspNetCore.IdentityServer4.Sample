@@ -153,11 +153,11 @@ Use Ansible playbook to install Docker and deploy, see [the sample playbook here
 
 ```s
 $ cd kubernetes
-$ kubectl apply -f kubernetes-namespace.yaml
+$ kubectl apply -f kubernetes-namespace.yml
 $ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js --namespace idsrv-demo
-$ kubectl apply -f kubernetets-idsrv-deployments.yml --namespace idsrv-demo
+$ kubectl apply -f kubernetes-idsrv-deployments.yml --namespace idsrv-demo
 ```
 
 
