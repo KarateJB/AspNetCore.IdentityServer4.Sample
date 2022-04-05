@@ -205,6 +205,14 @@ spec:
           env:
             - name: "ASPNETCORE_ENVIRONMENT"
               value: "Kubernetes"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDeplaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 20
+            failureThreshold: 3
           volumeMounts:
             - name: idsrv-backend-appsettings
               mountPath: /app/appsettings.Kubernetes.json
@@ -265,6 +273,14 @@ spec:
           env:
             - name: "ASPNETCORE_ENVIRONMENT"
               value: "Kubernetes"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 6001
+            initialDeplaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 20
+            failureThreshold: 3
           volumeMounts:
             - name: idsrv-auth-appsettings
               mountPath: /app/appsettings.Kubernetes.json
