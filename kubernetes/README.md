@@ -68,9 +68,9 @@ secret-appsettings-auth        Opaque                                1      7h58
 secret-appsettings-backend     Opaque                                1      7h57m
 secret-js-appconfig-backend    Opaque                                1      7h57m
 
-$ kubectl delete secrets secret-appsettings-auth
-$ kubectl delete secrets secret-appsettings-backend
-$ kubectl delete secrets secret-js-appconfig-backend
+$ kubectl delete secrets secret-appsettings-auth -n idsrv-demo
+$ kubectl delete secrets secret-appsettings-backend -n idsrv-demo
+$ kubectl delete secrets secret-js-appconfig-backend -n idsrv-demo
 ```
 
 
