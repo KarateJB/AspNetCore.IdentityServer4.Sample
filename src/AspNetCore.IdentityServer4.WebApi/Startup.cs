@@ -172,6 +172,17 @@ namespace AspNetCore.IdentityServer4.WebApi
             IWebHostEnvironment env,
             IApiVersionDescriptionProvider provider)
         {
+            // HACK: For testing
+            app.Use(async (context, next) =>
+            {
+                // Logging
+                var logger = loggerFactory.CreateLogger("Intercepter Logging");
+                logger.LogDebug($"Requesting {context.Request.Path}...");
+                // Do work that doesn't write to the Response.
+                await next.Invoke();
+                // Do logging or other work that doesn't write to the Response.
+            });
+
             // Use static files
             app.UseStaticFiles();
 

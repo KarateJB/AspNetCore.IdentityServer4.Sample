@@ -20,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AspNetCore.IdentityServer4.Auth
 {
@@ -158,10 +159,26 @@ namespace AspNetCore.IdentityServer4.Auth
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app">IApplicationBuilder</param>
+        /// <param name="loggerFactory">Logger factory</param>
         /// <param name="env">IWebHostEnvironment</param>
         /// <param name="provider">IApiVersionDescriptionProvider</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(
+            IApplicationBuilder app,
+            ILoggerFactory loggerFactory,
+            IWebHostEnvironment env,
+            IApiVersionDescriptionProvider provider)
         {
+            // HACK: For testing
+            app.Use(async (context, next) =>
+            {
+                // Logging
+                var logger = loggerFactory.CreateLogger("Intercepter Logging");
+                logger.LogDebug($"Requesting {context.Request.Path}...");
+                // Do work that doesn't write to the Response.
+                await next.Invoke();
+                // Do logging or other work that doesn't write to the Response.
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
