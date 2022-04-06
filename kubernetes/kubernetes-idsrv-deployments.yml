@@ -315,6 +315,57 @@ spec:
       # nodePort: 30601
   type: LoadBalancer
 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idsrv-health
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idsrv-demo-health
+    spec:
+      containers:
+        - name: idsrv-health
+          image: karatejb/idsrv4-health:latest
+          ports:
+            - containerPort: 7001
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Kubernetes"
+          volumeMounts:
+            - name: idsrv-health-appsettings
+              mountPath: /app/appsettings.Kubernetes.json
+              subPath: appsettings.Kubernetes.json
+              readOnly: true
+      # imagePullSecrets:
+      #   - name: acrcred
+      volumes:
+        - name: idsrv-health-appsettings
+          secret:
+            secretName: secret-appsettings-health
+            # defaultMode: 0666
+  selector:
+    matchLabels:
+      app: idsrv-demo-health
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idsrv-health
+spec:
+  # type: NodePort
+  selector:
+    app: idsrv-demo-health
+  ports:
+    - protocol: TCP
+      port: 7001
+      targetPort: 7001
+      # nodePort: 30701
+  type: LoadBalancer
+
 # ---
 # apiVersion: networking.k8s.io/v1beta1
 # kind: Ingress

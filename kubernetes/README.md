@@ -50,6 +50,7 @@ $ cd kubernetes
 $ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js --namespace idsrv-demo
+$ kubectl create secret generic secret-appsettings-health --from-file=./artifects/health/appsettings.Kubernetes.json --namespace idsrv-demo
 ```
 
 To edit the secret (base64 encoded string):
