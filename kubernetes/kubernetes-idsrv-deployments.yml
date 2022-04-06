@@ -207,9 +207,10 @@ spec:
               value: "Kubernetes"
           livenessProbe:
             httpGet:
+              scheme: HTTPS
               path: /health
               port: 5001
-            initialDeplaySeconds: 10
+            initialDelaySeconds: 10
             timeoutSeconds: 1
             periodSeconds: 20
             failureThreshold: 3
@@ -275,9 +276,10 @@ spec:
               value: "Kubernetes"
           livenessProbe:
             httpGet:
+              scheme: HTTPS
               path: /health
               port: 6001
-            initialDeplaySeconds: 10
+            initialDelaySeconds: 10
             timeoutSeconds: 1
             periodSeconds: 20
             failureThreshold: 3

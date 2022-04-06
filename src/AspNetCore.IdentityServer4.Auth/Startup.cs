@@ -172,7 +172,7 @@ namespace AspNetCore.IdentityServer4.Auth
             app.Use(async (context, next) =>
             {
                 // Logging
-                var logger = loggerFactory.CreateLogger("Intercepter Logging");
+                var logger = loggerFactory.CreateLogger("Intercepter");
                 logger.LogDebug($"Requesting {context.Request.Path}...");
                 // Do work that doesn't write to the Response.
                 await next.Invoke();
