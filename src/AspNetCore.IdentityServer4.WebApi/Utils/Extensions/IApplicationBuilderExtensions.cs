@@ -19,7 +19,7 @@ namespace AspNetCore.IdentityServer4.WebApi.Utils.Extensions
         /// <param name="loggerFactory">Logger factory</param>
         public static void ConfigureExceptionHandler(this IApplicationBuilder builder, ILoggerFactory loggerFactory)
         {
-            var logger = loggerFactory.CreateLogger("Global Exception Handler");
+            var logger = loggerFactory.CreateLogger("GlobalExceptionHandler");
             builder.UseExceptionHandler(configure =>
             {
                 configure.Run(async context =>

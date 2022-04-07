@@ -172,6 +172,15 @@ namespace AspNetCore.IdentityServer4.WebApi
             IWebHostEnvironment env,
             IApiVersionDescriptionProvider provider)
         {
+            #region Logging for every request
+            //app.Use(async (context, next) =>
+            //{
+            //    var logger = loggerFactory.CreateLogger("Intercepter");
+            //    logger.LogDebug($"Requesting {context.Request.Path}...");
+            //    await next.Invoke();
+            //});
+            #endregion
+
             // Use static files
             app.UseStaticFiles();
 

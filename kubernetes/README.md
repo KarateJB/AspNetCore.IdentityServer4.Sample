@@ -50,6 +50,7 @@ $ cd kubernetes
 $ kubectl create secret generic secret-appsettings-auth --from-file=./artifects/auth/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-appsettings-backend --from-file=./artifects/backend/appsettings.Kubernetes.json --namespace idsrv-demo
 $ kubectl create secret generic secret-js-appconfig-backend --from-file=./artifects/backend/app-config.js --namespace idsrv-demo
+$ kubectl create secret generic secret-appsettings-health --from-file=./artifects/health/appsettings.Kubernetes.json --namespace idsrv-demo
 ```
 
 To edit the secret (base64 encoded string):
@@ -68,9 +69,9 @@ secret-appsettings-auth        Opaque                                1      7h58
 secret-appsettings-backend     Opaque                                1      7h57m
 secret-js-appconfig-backend    Opaque                                1      7h57m
 
-$ kubectl delete secrets secret-appsettings-auth
-$ kubectl delete secrets secret-appsettings-backend
-$ kubectl delete secrets secret-js-appconfig-backend
+$ kubectl delete secrets secret-appsettings-auth -n idsrv-demo
+$ kubectl delete secrets secret-appsettings-backend -n idsrv-demo
+$ kubectl delete secrets secret-js-appconfig-backend -n idsrv-demo
 ```
 
 
@@ -80,7 +81,7 @@ $ kubectl delete secrets secret-js-appconfig-backend
 
 ```s
 $ cd kubernetes
-$ kubectl apply -f kubernetes-idsrv-deployments.yaml --namespace idsrv-demo
+$ kubectl apply -f kubernetes-idsrv-deployments.yml --namespace idsrv-demo
 ```
 
 ## Remove Resources
