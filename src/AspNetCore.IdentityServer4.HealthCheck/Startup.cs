@@ -99,11 +99,11 @@ namespace AspNetCore.IdentityServer4.HealthCheck
             {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecksUI();
-                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                //endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                //{
+                //    Predicate = _ => true,
+                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                //});
             });
         }
     }

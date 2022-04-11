@@ -33,13 +33,20 @@ namespace AspNetCore.IdentityServer4.Auth.HealthChecks
         /// <returns>HealthCheckResult</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            using (var ldapConn = new LdapConnection())
+            try
             {
-                // Set LDAP connection
-                ldapConn.SecureSocketLayer = this.ldapServer.Ssl;
-                ldapConn.Connect(this.ldapServer.Url, this.ldapServer.Port);
-                ldapConn.Bind(dn: this.ldapServer.BindDn, passwd: this.ldapServer.BindCredentials);
-                return ldapConn.Connected ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+                using (var ldapConn = new LdapConnection())
+                {
+                    // Set LDAP connection
+                    ldapConn.SecureSocketLayer = this.ldapServer.Ssl;
+                    ldapConn.Connect(this.ldapServer.Url, this.ldapServer.Port);
+                    ldapConn.Bind(dn: this.ldapServer.BindDn, passwd: this.ldapServer.BindCredentials);
+                    return ldapConn.Connected ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return new HealthCheckResult(status: context.Registration.FailureStatus, exception: ex);
             }
         }
     }
