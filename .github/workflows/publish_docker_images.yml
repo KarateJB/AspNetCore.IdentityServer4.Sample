@@ -93,8 +93,8 @@ jobs:
           docker push ${{ secrets.ACR_REGISTRY}}/${{ env.IMG_OPENLDAP }}:stable
   push_images_to_ghcr:
     name: Push images to GitHub Container Registry
-    env:
-      REPO: karatejb/aspnetcore.identitiyserver4.sample # The value should be lowercase for image name. Use ${{ github.repository }} instead if it's already lowercase.
+    # env:
+    #   REPO: karatejb/aspnetcore.identitiyserver4.sample # The value should be lowercase for image name.
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout repo
@@ -105,6 +105,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
+      - name: Set environment variables
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
       - name: Build and push auth
         id: build_publish_auth
         uses: docker/build-push-action@v2
