@@ -2,7 +2,9 @@
 name: Publish Docker images
 on:
   push:
-      branches: [ master, feature-ghcr ]
+      branches: 
+        - master
+        - feature-ghcr
 env:
   IMG_AUTH: idsrv4-auth
   IMG_BACKEND: idsrv4-backend
@@ -100,7 +102,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ GH_TOKEN }}
+          password: ${{ secrets.GH_TOKEN }}
       - name: Build and push auth
         id: build_publish_auth
         uses: docker/build-push-action@v2
