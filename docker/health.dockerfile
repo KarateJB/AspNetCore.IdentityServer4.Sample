@@ -33,3 +33,5 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Path "/etc/docker/certs/docker.pf
 EXPOSE 7000 7001
 
 ENTRYPOINT ["dotnet", "AspNetCore.IdentityServer4.HealthCheck.dll"]
+
+LABEL org.opencontainers.image.source=https://github.com/karatejb/AspNetCore.IdentityServer4.Sample

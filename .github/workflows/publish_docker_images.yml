@@ -4,7 +4,7 @@ on:
   push:
       branches: 
         - master
-        - feature-ghcr
+        - dev
 env:
   IMG_AUTH: idsrv4-auth
   IMG_BACKEND: idsrv4-backend
@@ -94,7 +94,7 @@ jobs:
   push_images_to_ghcr:
     name: Push images to GitHub Container Registry
     # env:
-    #   REPO: karatejb/aspnetcore.identitiyserver4.sample # The value should be lowercase for image name.
+    #   REPO: karatejb/aspnetcore.identityserver4.sample # The value should be lowercase for image name. Or just use ${{ github.repository }}.
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout repo
