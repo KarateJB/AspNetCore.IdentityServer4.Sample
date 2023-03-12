@@ -93,6 +93,8 @@ jobs:
           docker push ${{ secrets.ACR_REGISTRY}}/${{ env.IMG_OPENLDAP }}:stable
   push_images_to_ghcr:
     name: Push images to GitHub Container Registry
+    env:
+      REPO: karatejb/aspnetcore.identitiyserver4.sample # The value should be lowercase for image name. Use ${{ github.repository }} instead if it's already lowercase.
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout repo
@@ -110,7 +112,7 @@ jobs:
           # context: .
           file: ./docker/auth.dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ env.IMG_AUTH }}:${{ env.IMG_TAG_DEFAULT }}
+          tags: ghcr.io/${{ env.REPO }}/${{ env.IMG_AUTH }}:${{ env.IMG_TAG_DEFAULT }}
       - name: Build and push backend
         id: build_publish_backend
         uses: docker/build-push-action@v2
@@ -118,7 +120,7 @@ jobs:
           # context: .
           file: ./docker/backend.dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ env.IMG_BACKEND }}:${{ env.IMG_TAG_DEFAULT }}
+          tags: ghcr.io/${{ env.REPO }}/${{ env.IMG_BACKEND }}:${{ env.IMG_TAG_DEFAULT }}
       - name: Build and push nginx
         id: build_publish_nginx
         uses: docker/build-push-action@v2
@@ -126,10 +128,10 @@ jobs:
           context: ./docker
           file: ./docker/nginx.dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ env.IMG_NGINX }}:${{ env.IMG_TAG_DEFAULT }}
+          tags: ghcr.io/${{ env.REPO }}/${{ env.IMG_NGINX }}:${{ env.IMG_TAG_DEFAULT }}
       - name: Pull and push openldap
         id: publish_openldap
         run: |
           docker pull osixia/openldap:stable
-          docker tag osixia/openldap:stable ghcr.io/${{ github.repository }}/${{ env.IMG_OPENLDAP }}:stable
-          docker push ghcr.io/${{ github.repository }}/${{ env.IMG_OPENLDAP }}:stable
+          docker tag osixia/openldap:stable ghcr.io/${{ env.REPO }}/${{ env.IMG_OPENLDAP }}:stable
+          docker push ghcr.io/${{ env.REPO }}/${{ env.IMG_OPENLDAP }}:stable
