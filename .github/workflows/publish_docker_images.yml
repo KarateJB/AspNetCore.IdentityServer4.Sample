@@ -9,8 +9,8 @@ env:
   IMG_AUTH: idsrv4-auth
   IMG_BACKEND: idsrv4-backend
   IMG_NGINX: idsrv4-nginx
-  img_openldap: openldap
-  IMG_TAG_DEFAUTL: latest
+  IMG_OPENLDAP: openldap
+  IMG_TAG_DEFAULT: latest
 jobs:
   push_images_to_dockerhub:
     name: Push images to Docker Hub
@@ -89,8 +89,8 @@ jobs:
         id: publish_openldap
         run: |
           docker pull osixia/openldap:stable
-          docker tag osixia/openldap:stable ${{ secrets.ACR_REGISTRY }}/${{ env.OPENLDAP }}:stable
-          docker push ${{ secrets.ACR_REGISTRY}}/${{ env.OPENLDAP }}:stable
+          docker tag osixia/openldap:stable ${{ secrets.ACR_REGISTRY }}/${{ env.IMG_OPENLDAP }}:stable
+          docker push ${{ secrets.ACR_REGISTRY}}/${{ env.IMG_OPENLDAP }}:stable
   push_images_to_ghcr:
     name: Push images to GitHub Container Registry
     runs-on: ubuntu-18.04
@@ -98,7 +98,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Login to GitHub Container Registry
-        uses: azure/docker-login@v2
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
