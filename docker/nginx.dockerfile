@@ -14,3 +14,5 @@ RUN ln -s /etc/nginx/sites-available/web-servers.conf  /etc/nginx/conf.d/web-ser
 ENV TZ "Asia/Taipei"
 
 EXPOSE 80 5000 5001 6000 6001 7000 7001
+
+LABEL org.opencontainers.image.source=https://github.com/karatejb/AspNetCore.IdentityServer4.Sample
